@@ -2,11 +2,15 @@
 #include <QIcon>
 #include <QCoreApplication>
 #include <QDebug>
+#include <windows.h>
+#include <QInputDialog>
+
+static bool bipsonor = true;
 
 QComputer::QComputer(QWidget *parent){
-    setFixedSize(250,230);
+    setFixedSize(300,250);
     setWindowTitle("UTComputer");
-    setWindowIcon(QIcon(QCoreApplication::applicationDirPath() + "/icone.jpg"));
+    setWindowIcon(QIcon("D:/Cours/UTC/P16/LO21/UTComputer/Images/icone.jpg"));
 
 
     pile = new Pile();
@@ -14,10 +18,23 @@ QComputer::QComputer(QWidget *parent){
 
     //Menu
     menuBar = new QMenuBar();
-    menuParam = menuBar->addMenu("&Parametre");
+    menuFichier = menuBar->addMenu("&Fichier");
     menuVar = menuBar->addMenu("&Variable");
     menuProg = menuBar->addMenu("&Programme");
     menuCaract = menuBar->addMenu("&Caractere");
+    Parametres = menuFichier->addMenu("&Paramètres");
+
+    //Action
+    actionQuitter = new QAction("&Quitter", this);
+    bipSonore = new QAction("&Desactiver bip sonore", this);
+    nbVariable = new QAction("&Modifier affichage pile", this);
+
+
+    //Ajouts actions
+    menuFichier->addAction(bipSonore);
+    menuFichier->addAction(nbVariable);
+    menuFichier->addAction(actionQuitter);
+
 
 
     //Layout
@@ -26,13 +43,6 @@ QComputer::QComputer(QWidget *parent){
 
     //Clavier tactile
     LayoutTactile = new QGridLayout;
-    /*LayoutTactile = new QVBoxLayout;
-    LayoutBas = new QHBoxLayout;
-    LayoutCalcule = new QVBoxLayout;;
-    LayoutChiffre = new QVBoxLayout;;
-    layoutLigne1 = new QHBoxLayout;
-    layoutLigne2 = new QHBoxLayout;
-    layoutLigne3 = new QHBoxLayout;*/
 
     //Button tactile
     button1 = new QPushButton("1");
@@ -109,35 +119,6 @@ QComputer::QComputer(QWidget *parent){
 
 
 
-    /*
-    LayoutTactile->addLayout(LayoutBas);
-
-    LayoutChiffre->addLayout(layoutLigne1);
-    LayoutChiffre->addLayout(layoutLigne2);
-    LayoutChiffre->addLayout(layoutLigne3);
-    LayoutChiffre->addWidget(button0);
-
-    layoutLigne1->addWidget(button7);
-    layoutLigne1->addWidget(button8);
-    layoutLigne1->addWidget(button9);
-
-    layoutLigne2->addWidget(button4);
-    layoutLigne2->addWidget(button5);
-    layoutLigne2->addWidget(button6);
-
-    layoutLigne3->addWidget(button1);
-    layoutLigne3->addWidget(button2);
-    layoutLigne3->addWidget(button3);
-
-    LayoutCalcule->addWidget(buttonplus);
-    LayoutCalcule->addWidget(buttonmoins);
-    LayoutCalcule->addWidget(buttonfois);
-    LayoutCalcule->addWidget(buttondiv);
-    LayoutCalcule->addWidget(buttonentree);
-
-    LayoutBas->addLayout(LayoutChiffre);
-    LayoutBas->addLayout(LayoutCalcule);
-*/
 
     //Connect
     QObject::connect(pile, SIGNAL(modificationEtat()), this, SLOT(refresh()));
@@ -153,9 +134,13 @@ QComputer::QComputer(QWidget *parent){
     QObject::connect(button9, SIGNAL(clicked()), this, SLOT(setTexte()));
     QObject::connect(button0, SIGNAL(clicked()), this, SLOT(setTexte()));
 
+    //Connect bar
+    QObject::connect(actionQuitter, SIGNAL(triggered()), qApp, SLOT(quit()));
+    QObject::connect(bipSonore, SIGNAL(triggered()), this, SLOT(desactiverBip()));
+    QObject::connect(nbVariable, SIGNAL(triggered()), this, SLOT(choixNombreVariable()));
+
     setLayout(LayoutPrincipale);
     layout()->setMenuBar(menuBar);
-
 }
 
 void QComputer::setTexte(){
@@ -169,9 +154,7 @@ void QComputer::setTexte(){
 
 void QComputer::refresh(){
     int row = 0;
-
     vuePile->clear();
-
     for(Pile::iterator it=pile->begin(); it!=pile->end(); ++it){
         vuePile->setItem(row, 0, new QTableWidgetItem(QString::number((*it).getValue())));
         row++;
@@ -180,6 +163,46 @@ void QComputer::refresh(){
 
 void QComputer::getNextCommande(){
     controleur->commande(commande->text());
+
     message->setText(pile->getMessage());
+
+    if(bipsonor==true){
+        if(pile->getMessage()!="")
+            Beep(523,200);
+    }
+
     commande->clear();
+}
+
+void QComputer::choixNombreVariable(){
+    int variable = QInputDialog::getInt(this, "Nombre à afficher", "Combien de variable voulez-vous afficher dans la pile ?"
+                                        ,pile->getNbItemsToAffiche(),1);
+
+    int nbchanger = variable-pile->getNbItemsToAffiche();
+    if(nbchanger>0){
+        for(int i(0); i<nbchanger; i++)
+            vuePile->insertRow(vuePile->rowCount());
+    }
+    else{
+        for(int i = pile->getNbItemsToAffiche(); i>variable; i--)
+            vuePile->removeRow(i-1);
+    }
+
+    pile->setNbItemsToAffiche(variable);
+
+    vuePile->repaint();
+    refresh();
+}
+
+
+void QComputer::desactiverBip(){
+    if(bipsonor==true){
+        bipsonor=false;
+        bipSonore->setText("Activer bip sonore");
+    }
+    else{
+        bipsonor=true;
+        bipSonore->setText("Desactiver bip sonore");
+    }
+
 }

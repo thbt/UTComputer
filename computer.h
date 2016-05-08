@@ -127,7 +127,7 @@ public:
     unsigned int taille() const { return nb; }
     void affiche(QTextStream& f) const;
     Expression& top() const;
-    void setNbItemsToAffiche(unsigned int n) { nb=n; }
+    void setNbItemsToAffiche(unsigned int n) { nbAffiche=n; }
     unsigned int getNbItemsToAffiche() const { return nbAffiche; }
     void setMessage(const QString& m) { message=m; modificationEtat(); }
     QString getMessage() const { return message; }

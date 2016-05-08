@@ -117,6 +117,7 @@ bool estUnNombre(const QString s){
 
 
 void Controleur::commande(const QString& c){
+    expAff.setMessage("");
     if (estUnNombre(c)){
         expAff.push(expMng.addExpression(c.toInt()));
     }else{

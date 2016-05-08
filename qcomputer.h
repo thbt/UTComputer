@@ -22,20 +22,20 @@ class QComputer : public QWidget{
 
         //Layout tactile
         QGridLayout *LayoutTactile;
-        /*QVBoxLayout *LayoutTactile;
-        QHBoxLayout *LayoutBas;
-        QVBoxLayout *LayoutCalcule;
-        QVBoxLayout *LayoutChiffre;
-        QHBoxLayout *layoutLigne1;
-        QHBoxLayout *layoutLigne2;
-        QHBoxLayout *layoutLigne3;*/
 
         //Menu
         QMenuBar* menuBar;
-        QMenu *menuParam;
+        QMenu *menuFichier;
         QMenu *menuVar;
         QMenu *menuProg;
         QMenu *menuCaract;
+        QMenu *Parametres;
+
+        //Actions menu
+        QAction *actionQuitter;
+        QAction *bipSonore;
+        QAction *nbVariable;
+
 
         //Composants
         QLineEdit* message;
@@ -62,12 +62,15 @@ class QComputer : public QWidget{
 
         Pile* pile;
         Controleur* controleur;
+
     public:
         explicit QComputer(QWidget *parent = 0);
     public slots:
         void refresh();
         void getNextCommande();
         void setTexte();
+        void desactiverBip();
+        void choixNombreVariable();
     };
 
 #endif // QCOMPUTER_H
