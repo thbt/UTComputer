@@ -11,10 +11,21 @@ public:
 	virtual string toString() const = 0;
 };
 
-class ILiteral : public IOperand {};
+enum Type { INTEGER, RATIONAL, REAL, COMPLEX, EXPRESSION, PROGRAM };
 
+class ILiteral : public IOperand {
+	Type type;
+public:
+	ILiteral(Type t) : type(t) {}
+
+	Type getType() const { return type; }
+
+	virtual string toString() const = 0;
+	//virtual void accept(IOperator&) = 0;
+};
+
+/*
 enum NumberType { integer, rational, real, complex };
-
 class NumberLiteral : public ILiteral {
 	double reNum;
 	double reDen;
@@ -29,83 +40,76 @@ public:
 
 	string toString() const;
 };
+*/
 
+// TODO Pour l'instant ne sert a rien.. a supprimer ?
+class INumberLiteral : public ILiteral {
+public:
+	INumberLiteral(Type t) : ILiteral(t) {}
 
-/*
-class INumberLiteral : public ILiteral {};
+	virtual string toString() const = 0;
+	//virtual void accept(IOperator&) = 0;
+};
 
 class IntegerLiteral : public INumberLiteral {
 	int value;
 public:
-	IntegerLiteral(int v) : value(v) {}
+	IntegerLiteral(int v) : INumberLiteral(INTEGER), value(v) {}
 
 	int getValue() const { return value; }
 
 	string toString() const { return to_string(value); }
+	//void accept(IOperator& o) { o.visitIntegerLiteral(this); }
 };
 
+// TODO on conserve le fait que le numérateur soit une entier ou seulement un int ?
 // TODO simplificateur
 class RationalLiteral : public INumberLiteral {
-	IntegerLiteral numerator;
-	IntegerLiteral denominator;
+	int numerator;
+	int denominator;
 public:
-	RationalLiteral(int n, int d) : numerator(IntegerLiteral(n)), denominator(IntegerLiteral(d)) {}
-	RationalLiteral(IntegerLiteral n = IntegerLiteral(0), IntegerLiteral d = IntegerLiteral(1)) : numerator(n), denominator(d) {}
-
-	ILiteral* eval() { return this; }
-
-	string toString() const { return numerator.toString() + "/" + denominator.toString(); }
+	RationalLiteral(int n, int d) : INumberLiteral(RATIONAL), numerator(n), denominator(d) {}
+	string toString() const { return to_string(numerator) + "/" + to_string(denominator); }
 };
 
-// TODO : utiliser un double et pas se faire chier ?
 // TODO : Exception pour 0.0
 class RealLiteral : public INumberLiteral {
-	IntegerLiteral integer;
-	IntegerLiteral mantissa;
+	double value;
 public:
-	RealLiteral(int i, int m = 0) : integer(IntegerLiteral(i)), mantissa(IntegerLiteral(m)) {}
-	RealLiteral(IntegerLiteral i = IntegerLiteral(0), IntegerLiteral m = IntegerLiteral(0)) : integer(i), mantissa(m) {}
-
-	ILiteral* eval() { return this; }
-
-	string toString() const { return integer.toString() + "." + mantissa.toString(); }
+	RealLiteral(double v) : INumberLiteral(REAL), value(v) {}
+	string toString() const { return to_string(value); }
 };
 
 class ComplexLiteral : public ILiteral {
 	INumberLiteral* real;
 	INumberLiteral* imaginary;
 public:
-	ComplexLiteral(INumberLiteral* r = new IntegerLiteral(0), INumberLiteral* i = new IntegerLiteral(0)) : real(r), imaginary(i) {}
-
-	ILiteral* eval() { return this; }
-
+	ComplexLiteral(INumberLiteral* r = new IntegerLiteral(0), INumberLiteral* i = new IntegerLiteral(0)) 
+		: ILiteral(COMPLEX), real(r), imaginary(i) {}
 	string toString() const { return real->toString() + "$" + imaginary->toString(); }
 };
-*/
-
-/*
-class AtomLiteral : public IOperand {
-	string name;
-	IOperand* identity;
-public:
-	AtomLiteral(string n, ILiteral* i) : name(n), identity(i) {}
-
-	IOperand* eval() { return identity; }
-
-	string toString() const { return name; }
-};
-*/
-
 
 class ExpressionLiteral : public ILiteral {
 	string expression;
 public:
-	ExpressionLiteral(string e) : expression(e) {}
+	ExpressionLiteral(string e) : ILiteral(EXPRESSION), expression(e) {}
 };
 
 class ProgramLiteral : public ILiteral {
 	string program;
 public:
-	ProgramLiteral(string p) : program(p) {}
+	ProgramLiteral(string p) : ILiteral(PROGRAM), program(p) {}
 };
 
+/*
+class AtomLiteral : public IOperand {
+string name;
+IOperand* identity;
+public:
+AtomLiteral(string n, ILiteral* i) : name(n), identity(i) {}
+
+IOperand* eval() { return identity; }
+
+string toString() const { return name; }
+};
+*/

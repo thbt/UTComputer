@@ -111,12 +111,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Literal.cpp" />
+    <ClCompile Include="LiteralFactory.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Operator.cpp" />
     <ClCompile Include="Stack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Literal.h" />
+    <ClInclude Include="LiteralFactory.h" />
     <ClInclude Include="Manager.h" />
     <ClInclude Include="Operator.h" />
     <ClInclude Include="Stack.h" />

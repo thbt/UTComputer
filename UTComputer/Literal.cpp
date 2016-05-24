@@ -2,6 +2,7 @@
 #include <string>
 #include <sstream>
 
+/*
 string NumberLiteral::toString() const {
 	std::stringstream ss;
 
@@ -31,3 +32,4 @@ string NumberLiteral::toString() const {
 
 	return ss.str();
 };
+*/
