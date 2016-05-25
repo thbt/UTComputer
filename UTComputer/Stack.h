@@ -5,7 +5,7 @@
 
 // TODO voir comment utiliser la seconde partie du template de stack
 // utilisation du pattern adapteur d'objet
-// utilisation du pattern singleton
+// utilisation du pattern singleton a mettre en place
 class Stack {
 	std::vector<ILiteral*> stack;
 public:
