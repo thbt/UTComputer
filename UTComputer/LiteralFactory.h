@@ -9,4 +9,6 @@ public:
 	void operator=(const LiteralFactory&) = delete; // Suppression de l'opérateur d'affectation.
 
 	ILiteral* makeLiteral(int n) const;
+	ILiteral* makeLiteral(double n) const;
+	ILiteral* makeLiteral(pair<int,int> n) const;
 };

@@ -70,6 +70,14 @@ class RationalLiteral : public INumberLiteral {
 public:
 	RationalLiteral(int n, int d) : INumberLiteral(RATIONAL), numerator(n), denominator(d) {}
 	string toString() const { return to_string(numerator) + "/" + to_string(denominator); }
+
+	std::pair<int, int> getValue() const {
+		std::pair<int, int> twoValues;
+		twoValues.first = numerator;
+		twoValues.second = denominator;
+		return twoValues;
+	}
+
 };
 
 // TODO : Exception pour 0.0
@@ -78,6 +86,7 @@ class RealLiteral : public INumberLiteral {
 public:
 	RealLiteral(double v) : INumberLiteral(REAL), value(v) {}
 	string toString() const { return to_string(value); }
+	double getValue() const { return value; }
 };
 
 class ComplexLiteral : public ILiteral {
@@ -87,18 +96,32 @@ public:
 	ComplexLiteral(INumberLiteral* r = new IntegerLiteral(0), INumberLiteral* i = new IntegerLiteral(0)) 
 		: ILiteral(COMPLEX), real(r), imaginary(i) {}
 	string toString() const { return real->toString() + "$" + imaginary->toString(); }
+
+	/* Zzzzz
+	std::pair<INumberLiteral, INumberLiteral> getValue() const {
+		std::pair<INumberLiteral, INumberLiteral> twoValues;
+		twoValues.first = *real;
+		twoValues.second = *imaginary;
+		return twoValues;
+	}*/
 };
 
 class ExpressionLiteral : public ILiteral {
 	string expression;
 public:
 	ExpressionLiteral(string e) : ILiteral(EXPRESSION), expression(e) {}
+	string getValue() const {
+		return expression;
+	}
 };
 
 class ProgramLiteral : public ILiteral {
 	string program;
 public:
 	ProgramLiteral(string p) : ILiteral(PROGRAM), program(p) {}
+	string getValue() const {
+		return program;
+	}
 };
 
 /*
