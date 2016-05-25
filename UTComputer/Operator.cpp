@@ -7,9 +7,19 @@ void PlusOp::interpret(Stack* s) {
 
 	Type lt = left->getType();
 	Type rt = right->getType();
-	
-	if(lt == INTEGER && rt == INTEGER) {
-		int n = dynamic_cast<IntegerLiteral*>(right)->getValue() + dynamic_cast<IntegerLiteral*>(left)->getValue();
-		s->push(LiteralFactory::getInstance().makeLiteral(n));
+
+	switch(lt) {
+	case INTEGER:
+		int lval = dynamic_cast<IntegerLiteral*>(left)->getValue();
+		switch(rt) {
+		case INTEGER:
+			int rval = dynamic_cast<IntegerLiteral*>(right)->getValue();
+			int n = lval + rval;
+			s->push(LiteralFactory::getInstance().makeLiteral(n));
+		case REAL:
+			double rval = dynamic_cast<RealLiteral*>(right)->getValue();
+		}
+		break;
+
 	}
 }
