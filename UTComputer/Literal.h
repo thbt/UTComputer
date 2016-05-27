@@ -68,7 +68,7 @@ class RationalLiteral : public INumberLiteral {
 	int numerator;
 	int denominator;
 public:
-	RationalLiteral(int n, int d) : INumberLiteral(RATIONAL), numerator(n), denominator(d) {}
+	RationalLiteral(int n, int d) : INumberLiteral(RATIONAL), numerator(n), denominator(d) { simplification(); }
 	string toString() const { return to_string(numerator) + "/" + to_string(denominator); }
 
 	std::pair<int, int> getValue() const {
@@ -77,6 +77,8 @@ public:
 		twoValues.second = denominator;
 		return twoValues;
 	}
+
+	void simplification();
 
 };
 
@@ -96,6 +98,12 @@ public:
 	ComplexLiteral(INumberLiteral* r = new IntegerLiteral(0), INumberLiteral* i = new IntegerLiteral(0)) 
 		: ILiteral(COMPLEX), real(r), imaginary(i) {}
 	string toString() const { return real->toString() + "$" + imaginary->toString(); }
+
+	INumberLiteral& Re() const { return *real; }
+	INumberLiteral& Im() const { return *imaginary; }
+
+	Type getTypeReal() const { return real->getType(); }
+	Type getTypeIm() const { return imaginary->getType(); }
 
 	/* Zzzzz
 	std::pair<INumberLiteral, INumberLiteral> getValue() const {
@@ -136,3 +144,27 @@ IOperand* eval() { return identity; }
 string toString() const { return name; }
 };
 */
+
+template<class T>
+bool isEntier(T& a){
+	Entier *e = dynamic_cast<Entier*>(&a);
+	return e != nullptr;
+}
+
+template<class T>
+bool isReel(T& a){
+	Reel *r = dynamic_cast<Reel*>(&a);
+	return r != nullptr;
+}
+
+template<class T>
+bool isRationnel(T& a){
+	Rationnel *r = dynamic_cast<Rationnel*>(&a);
+	return r != nullptr;
+}
+
+template<class T>
+bool isComplexe(T& a){
+	Complexe *c = dynamic_cast<Complexe*>(&a);
+	return c != nullptr;
+}

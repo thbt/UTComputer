@@ -11,4 +11,5 @@ public:
 	ILiteral* makeLiteral(int n) const;
 	ILiteral* makeLiteral(double n) const;
 	ILiteral* makeLiteral(pair<int,int> n) const;
+	ILiteral* makeLiteral(INumberLiteral* re, INumberLiteral* im) const;
 };
