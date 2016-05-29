@@ -28,3 +28,24 @@ public:
 
 	//void visitIntegerLiteral(IntegerLiteral* l);
 };
+
+class MinusOp : public IOperator {
+public:
+	MinusOp() : IOperator("-", 2) {}
+	void interpret(Stack* s);
+	//void visitIntegerLiteral(IntegerLiteral* l);
+};
+
+class MultiOp : public IOperator {
+public:
+	MultiOp() : IOperator("*", 2) {}
+	void interpret(Stack* s);
+	//void visitIntegerLiteral(IntegerLiteral* l);
+};
+
+class DivOp : public IOperator {
+public:
+	DivOp() : IOperator("/", 2) {}
+	void interpret(Stack* s);
+	//void visitIntegerLiteral(IntegerLiteral* l);
+};
