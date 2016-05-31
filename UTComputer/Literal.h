@@ -48,6 +48,7 @@ public:
 	INumberLiteral(Type t) : ILiteral(t) {}
 
 	virtual string toString() const = 0;
+	virtual bool isNul() const = 0;
 	//virtual void accept(IOperator&) = 0;
 };
 
@@ -57,6 +58,11 @@ public:
 	IntegerLiteral(int v) : INumberLiteral(INTEGER), value(v) {}
 
 	int getValue() const { return value; }
+	bool isNul() const {
+		if (value == 0)
+			return true;
+		return false;
+	}
 
 	string toString() const { return to_string(value); }
 	//void accept(IOperator& o) { o.visitIntegerLiteral(this); }
@@ -78,6 +84,12 @@ public:
 		return twoValues;
 	}
 
+	bool isNul() const {
+		if (numerator == 0)
+			return true;
+		return false;
+	}
+
 	void simplification();
 
 };
@@ -89,6 +101,11 @@ public:
 	RealLiteral(double v) : INumberLiteral(REAL), value(v) {}
 	string toString() const { return to_string(value); }
 	double getValue() const { return value; }
+	bool isNul() const {
+		if (value == 0)
+			return true;
+		return false;
+	}
 };
 
 class ComplexLiteral : public ILiteral {

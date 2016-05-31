@@ -1,13 +1,23 @@
 #include "Operator.h"
 #include "LiteralFactory.h"
+#include "OperatorException.h"
 
 void PlusOp::interpret(Stack* s) {
-	//enum Type { INTEGER, RATIONAL, REAL, COMPLEX, EXPRESSION, PROGRAM };
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : + prend deux arguments");
+
 	ILiteral* right = s->top(); s->pop();
 	ILiteral* left = s->top(); s->pop();
 
 	Type lt = left->getType();
 	Type rt = right->getType();
+
+	if ((lt != INTEGER && lt != REAL && lt != RATIONAL && lt != COMPLEX) || (rt != INTEGER && rt != REAL && rt != RATIONAL && rt != COMPLEX)) {
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : / ne prend que des nombres (Entier, Réel, Rationnel ou Complexe)");
+	}
+
 
 	pair<int, int> pairRa;
 	INumberLiteral* pRe;
@@ -17,198 +27,204 @@ void PlusOp::interpret(Stack* s) {
 	double r;
 	Type t;
 
-	//cout << "Type 1 : " << rt << ", type 2 : " << lt << endl;
-
 	switch (lt) {
+	case INTEGER:
+		intVal = dynamic_cast<IntegerLiteral*>(left)->getValue();
+		switch (rt) {
 		case INTEGER:
-			intVal = dynamic_cast<IntegerLiteral*>(left)->getValue();
-			switch (rt) {
-				case INTEGER:
-					s->push(LiteralFactory::getInstance().makeLiteral(intVal + dynamic_cast<IntegerLiteral*>(right)->getValue()));
-					break;
-				case REAL:
-					s->push(LiteralFactory::getInstance().makeLiteral(intVal + dynamic_cast<RealLiteral*>(right)->getValue()));
-					break;
-				case RATIONAL:
-					pairRa.first = dynamic_cast<RationalLiteral*>(right)->getValue().first + (intVal*dynamic_cast<RationalLiteral*>(right)->getValue().second);
-					pairRa.second = dynamic_cast<RationalLiteral*>(right)->getValue().second;
-					s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
-					break;
-				case COMPLEX:
-					t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
-					pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
-					switch (t){
-						case INTEGER:
-							s->push(LiteralFactory::getInstance().makeLiteral(new IntegerLiteral(intVal + dynamic_cast<IntegerLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
-							break;
-						case REAL:
-							s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(intVal + dynamic_cast<RealLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
-							break;
-						case RATIONAL:
-							s->push(LiteralFactory::getInstance().makeLiteral(new RationalLiteral(dynamic_cast<RationalLiteral*>(pRe)->getValue().first + (intVal*dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().second),
-								dynamic_cast<RationalLiteral*>(pRe)->getValue().second),
-								&dynamic_cast<ComplexLiteral*>(right)->Im()));
-							break;
-					}
-					break;
-				
-			}
+			s->push(LiteralFactory::getInstance().makeLiteral(intVal + dynamic_cast<IntegerLiteral*>(right)->getValue()));
 			break;
-			
-		case RATIONAL:
-			pairRa.first = dynamic_cast<RationalLiteral*>(left)->getValue().first;
-			pairRa.second = dynamic_cast<RationalLiteral*>(left)->getValue().second;
-			switch (rt) {
-			case INTEGER:
-				pairRa.first += dynamic_cast<IntegerLiteral*>(right)->getValue()*pairRa.second;
-				s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
-				break;
-			case REAL:
-				r = (float)pairRa.first / (float)pairRa.second;
-				s->push(LiteralFactory::getInstance().makeLiteral(r + dynamic_cast<RealLiteral*>(right)->getValue()));
-				break;
-			case RATIONAL:
-				pairRa.first *= dynamic_cast<RationalLiteral*>(right)->getValue().second;
-				pairRa.first += dynamic_cast<RationalLiteral*>(right)->getValue().first * pairRa.second;
-				pairRa.second *= dynamic_cast<RationalLiteral*>(right)->getValue().second;
-				s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
-				break;
-			case COMPLEX:
-				t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
-				pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
-				switch (t){
-				case INTEGER:
-					s->push(LiteralFactory::getInstance().makeLiteral(
-						new RationalLiteral(dynamic_cast<IntegerLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue()*pairRa.second + pairRa.first, pairRa.second),
-						&dynamic_cast<ComplexLiteral*>(right)->Im()));
-					break;
-				case REAL:
-					r = (float)pairRa.first / (float)pairRa.second;
-					s->push(LiteralFactory::getInstance().makeLiteral(
-						new RealLiteral(r + dynamic_cast<RealLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue()),
-						&dynamic_cast<ComplexLiteral*>(right)->Im()));					
-					break;
-				case RATIONAL:
-					pairRa.second *= dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().second;
-					s->push(LiteralFactory::getInstance().makeLiteral(
-						new RationalLiteral(pairRa.first*dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().second + dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().first * pairRa.second, dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().second*pairRa.second),
-						&dynamic_cast<ComplexLiteral*>(right)->Im()));
-					break;
-				}
-				break;
-			}
-			break;
-
 		case REAL:
-			doubleVal = dynamic_cast<RealLiteral*>(left)->getValue();
-			switch (rt) {
+			s->push(LiteralFactory::getInstance().makeLiteral(intVal + dynamic_cast<RealLiteral*>(right)->getValue()));
+			break;
+		case RATIONAL:
+			pairRa.first = dynamic_cast<RationalLiteral*>(right)->getValue().first + (intVal*dynamic_cast<RationalLiteral*>(right)->getValue().second);
+			pairRa.second = dynamic_cast<RationalLiteral*>(right)->getValue().second;
+			s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
+			break;
+		case COMPLEX:
+			t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
+			pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
+			switch (t){
 			case INTEGER:
-				s->push(LiteralFactory::getInstance().makeLiteral(doubleVal + dynamic_cast<IntegerLiteral*>(right)->getValue()));
+				s->push(LiteralFactory::getInstance().makeLiteral(new IntegerLiteral(intVal + dynamic_cast<IntegerLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
 				break;
 			case REAL:
-				s->push(LiteralFactory::getInstance().makeLiteral(doubleVal + dynamic_cast<RealLiteral*>(right)->getValue()));
+				s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(intVal + dynamic_cast<RealLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
 				break;
 			case RATIONAL:
-				pairRa.first = dynamic_cast<RationalLiteral*>(right)->getValue().first;
-				pairRa.second = dynamic_cast<RationalLiteral*>(right)->getValue().second;
-				r = (float)pairRa.first / (float)pairRa.second;
-				s->push(LiteralFactory::getInstance().makeLiteral(r + doubleVal));
+				s->push(LiteralFactory::getInstance().makeLiteral(new RationalLiteral(dynamic_cast<RationalLiteral*>(pRe)->getValue().first + (intVal*dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().second),
+					dynamic_cast<RationalLiteral*>(pRe)->getValue().second),
+					&dynamic_cast<ComplexLiteral*>(right)->Im()));
 				break;
-			case COMPLEX:
-				t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
-				pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
-				switch (t){
-				case INTEGER:
-					s->push(LiteralFactory::getInstance().makeLiteral(new IntegerLiteral(doubleVal + dynamic_cast<IntegerLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
-					break;
-				case REAL:
-					s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(doubleVal + dynamic_cast<RealLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
-					break;
-				case RATIONAL:
-					r = (float)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (float)dynamic_cast<RationalLiteral*>(pRe)->getValue().second;
-					s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(r+doubleVal),
-						&dynamic_cast<ComplexLiteral*>(right)->Im()));
-					break;
-				}
-				break;
-
 			}
 			break;
 
+		}
+		break;
+
+	case RATIONAL:
+		pairRa.first = dynamic_cast<RationalLiteral*>(left)->getValue().first;
+		pairRa.second = dynamic_cast<RationalLiteral*>(left)->getValue().second;
+		switch (rt) {
+		case INTEGER:
+			pairRa.first += dynamic_cast<IntegerLiteral*>(right)->getValue()*pairRa.second;
+			s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
+			break;
+		case REAL:
+			r = (float)pairRa.first / (float)pairRa.second;
+			s->push(LiteralFactory::getInstance().makeLiteral(r + dynamic_cast<RealLiteral*>(right)->getValue()));
+			break;
+		case RATIONAL:
+			pairRa.first *= dynamic_cast<RationalLiteral*>(right)->getValue().second;
+			pairRa.first += dynamic_cast<RationalLiteral*>(right)->getValue().first * pairRa.second;
+			pairRa.second *= dynamic_cast<RationalLiteral*>(right)->getValue().second;
+			s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
+			break;
 		case COMPLEX:
-			pRe = &dynamic_cast<ComplexLiteral*>(left)->Re();
-			pIm = &dynamic_cast<ComplexLiteral*>(left)->Im();
-			
-			if (rt != COMPLEX){
-				s->push(right);
-				s->push(left);
-				interpret(s);
+			t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
+			pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
+			switch (t){
+			case INTEGER:
+				s->push(LiteralFactory::getInstance().makeLiteral(
+					new RationalLiteral(dynamic_cast<IntegerLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue()*pairRa.second + pairRa.first, pairRa.second),
+					&dynamic_cast<ComplexLiteral*>(right)->Im()));
+				break;
+			case REAL:
+				r = (float)pairRa.first / (float)pairRa.second;
+				s->push(LiteralFactory::getInstance().makeLiteral(
+					new RealLiteral(r + dynamic_cast<RealLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue()),
+					&dynamic_cast<ComplexLiteral*>(right)->Im()));
+				break;
+			case RATIONAL:
+				pairRa.second *= dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().second;
+				s->push(LiteralFactory::getInstance().makeLiteral(
+					new RationalLiteral(pairRa.first*dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().second + dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().first * pairRa.second, dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->getValue().second*pairRa.second),
+					&dynamic_cast<ComplexLiteral*>(right)->Im()));
+				break;
+			}
+			break;
+		}
+		break;
+
+	case REAL:
+		doubleVal = dynamic_cast<RealLiteral*>(left)->getValue();
+		switch (rt) {
+		case INTEGER:
+			s->push(LiteralFactory::getInstance().makeLiteral(doubleVal + dynamic_cast<IntegerLiteral*>(right)->getValue()));
+			break;
+		case REAL:
+			s->push(LiteralFactory::getInstance().makeLiteral(doubleVal + dynamic_cast<RealLiteral*>(right)->getValue()));
+			break;
+		case RATIONAL:
+			pairRa.first = dynamic_cast<RationalLiteral*>(right)->getValue().first;
+			pairRa.second = dynamic_cast<RationalLiteral*>(right)->getValue().second;
+			r = (float)pairRa.first / (float)pairRa.second;
+			s->push(LiteralFactory::getInstance().makeLiteral(r + doubleVal));
+			break;
+		case COMPLEX:
+			t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
+			pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
+			switch (t){
+			case INTEGER:
+				s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(doubleVal + dynamic_cast<IntegerLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
+				break;
+			case REAL:
+				s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(doubleVal + dynamic_cast<RealLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
+				break;
+			case RATIONAL:
+				r = (float)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (float)dynamic_cast<RationalLiteral*>(pRe)->getValue().second;
+				s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(r + doubleVal),
+					&dynamic_cast<ComplexLiteral*>(right)->Im()));
+				break;
+			}
+			break;
+
+		}
+		break;
+
+	case COMPLEX:
+		pRe = &dynamic_cast<ComplexLiteral*>(left)->Re();
+		pIm = &dynamic_cast<ComplexLiteral*>(left)->Im();
+
+		if (rt != COMPLEX){
+			s->push(right);
+			s->push(left);
+			interpret(s);
+		}
+		else{
+			s->push(pRe);
+			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
+			interpret(s);
+			ILiteral* partiReel = s->top(); s->pop();
+			s->push(pIm);
+			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
+			interpret(s);
+			ILiteral* partiIm = s->top(); s->pop();
+			t = partiReel->getType();
+			if (t == INTEGER){
+				t = partiIm->getType();
+				switch (t){
+				case INTEGER:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(partiReel), dynamic_cast<IntegerLiteral*>(partiIm)));
+					break;
+				case REAL:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(partiReel), dynamic_cast<RealLiteral*>(partiIm)));
+					break;
+				case RATIONAL:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(partiReel), dynamic_cast<RationalLiteral*>(partiIm)));
+					break;
+				}
+			}
+			else if (t == REAL){
+				t = partiIm->getType();
+				switch (t){
+				case INTEGER:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RealLiteral*>(partiReel), dynamic_cast<IntegerLiteral*>(partiIm)));
+					break;
+				case REAL:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RealLiteral*>(partiReel), dynamic_cast<RealLiteral*>(partiIm)));
+					break;
+				case RATIONAL:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RealLiteral*>(partiReel), dynamic_cast<RationalLiteral*>(partiIm)));
+					break;
+				}
 			}
 			else{
-				s->push(pRe);
-				s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-				interpret(s);
-				ILiteral* partiReel = s->top(); s->pop();
-				s->push(pIm);
-				s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
-				interpret(s);
-				ILiteral* partiIm = s->top(); s->pop();
-				t = partiReel->getType();
-				if (t == INTEGER){
-					t = partiIm->getType();
-					switch (t){
-					case INTEGER :
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(partiReel), dynamic_cast<IntegerLiteral*>(partiIm)));
-						break;
-					case REAL :
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(partiReel), dynamic_cast<RealLiteral*>(partiIm)));
-						break;
-					case RATIONAL :
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(partiReel), dynamic_cast<RationalLiteral*>(partiIm)));
-						break;
-					}
-				}
-				else if (t == REAL){
-					t = partiIm->getType();
-					switch (t){
-					case INTEGER:
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RealLiteral*>(partiReel), dynamic_cast<IntegerLiteral*>(partiIm)));
-						break;
-					case REAL:
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RealLiteral*>(partiReel), dynamic_cast<RealLiteral*>(partiIm)));
-						break;
-					case RATIONAL:
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RealLiteral*>(partiReel), dynamic_cast<RationalLiteral*>(partiIm)));
-						break;
-					}
-				}
-				else{
-					t = partiIm->getType();
-					switch (t){
-					case INTEGER:
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(partiReel), dynamic_cast<IntegerLiteral*>(partiIm)));
-						break;
-					case REAL:
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(partiReel), dynamic_cast<RealLiteral*>(partiIm)));
-						break;
-					case RATIONAL:
-						s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(partiReel), dynamic_cast<RationalLiteral*>(partiIm)));
-						break;
-					}
+				t = partiIm->getType();
+				switch (t){
+				case INTEGER:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(partiReel), dynamic_cast<IntegerLiteral*>(partiIm)));
+					break;
+				case REAL:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(partiReel), dynamic_cast<RealLiteral*>(partiIm)));
+					break;
+				case RATIONAL:
+					s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(partiReel), dynamic_cast<RationalLiteral*>(partiIm)));
+					break;
 				}
 			}
+		}
 
-			break;
+		break;
 	}
 }
 
 void MinusOp::interpret(Stack* s) {
-	//enum Type { INTEGER, RATIONAL, REAL, COMPLEX, EXPRESSION, PROGRAM };
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : - prend deux arguments");
+
 	ILiteral* right = s->top(); s->pop();
 	ILiteral* left = s->top(); s->pop();
 
 	Type lt = left->getType();
 	Type rt = right->getType();
+
+	if ((lt != INTEGER && lt != REAL && lt != RATIONAL && lt != COMPLEX) || (rt != INTEGER && rt != REAL && rt != RATIONAL && rt != COMPLEX)) {
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : / ne prend que des nombres (Entier, Réel, Rationnel ou Complexe)");
+	}
 
 	pair<int, int> pairRa;
 	INumberLiteral* pRe;
@@ -290,8 +306,8 @@ void MinusOp::interpret(Stack* s) {
 					&dynamic_cast<ComplexLiteral*>(right)->Im()));
 				break;
 			case RATIONAL:
-					s->push(LiteralFactory::getInstance().makeLiteral(
-					new RationalLiteral(pairRa.first*dynamic_cast<RationalLiteral*>(pRe)->getValue().second - dynamic_cast<RationalLiteral*>(pRe)->getValue().first * pairRa.second, 
+				s->push(LiteralFactory::getInstance().makeLiteral(
+					new RationalLiteral(pairRa.first*dynamic_cast<RationalLiteral*>(pRe)->getValue().second - dynamic_cast<RationalLiteral*>(pRe)->getValue().first * pairRa.second,
 					pairRa.second * dynamic_cast<RationalLiteral*>(pRe)->getValue().second),
 					&dynamic_cast<ComplexLiteral*>(right)->Im()));
 				break;
@@ -320,7 +336,7 @@ void MinusOp::interpret(Stack* s) {
 			pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
 			switch (t){
 			case INTEGER:
-				s->push(LiteralFactory::getInstance().makeLiteral(new IntegerLiteral(doubleVal - dynamic_cast<IntegerLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
+				s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(doubleVal - dynamic_cast<IntegerLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
 				break;
 			case REAL:
 				s->push(LiteralFactory::getInstance().makeLiteral(new RealLiteral(doubleVal - dynamic_cast<RealLiteral*>(pRe)->getValue()), &dynamic_cast<ComplexLiteral*>(right)->Im()));
@@ -347,7 +363,7 @@ void MinusOp::interpret(Stack* s) {
 			ComplexLiteral* cmpI = dynamic_cast<ComplexLiteral*>(s->top()); s->pop();
 			t = cmpI->Re().getType();
 			switch (t) {
-			case(INTEGER):
+			case(INTEGER) :
 				s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(LiteralFactory::getInstance().makeLiteral(-dynamic_cast<IntegerLiteral*>(&cmpI->Re())->getValue())), &cmpI->Im()));
 				break;
 			case(REAL) :
@@ -356,7 +372,7 @@ void MinusOp::interpret(Stack* s) {
 			case(RATIONAL) :
 				pairRa = dynamic_cast<RationalLiteral*>(&cmpI->Re())->getValue();
 				pairRa.first *= -1;
-				s->push(LiteralFactory::getInstance().makeLiteral(new RationalLiteral(pairRa.first,pairRa.second), &cmpI->Im()));
+				s->push(LiteralFactory::getInstance().makeLiteral(new RationalLiteral(pairRa.first, pairRa.second), &cmpI->Im()));
 				break;
 			}
 		}
@@ -419,11 +435,20 @@ void MinusOp::interpret(Stack* s) {
 }
 
 void MultiOp::interpret(Stack* s) {
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : * prend deux arguments");
+
 	ILiteral* right = s->top(); s->pop();
 	ILiteral* left = s->top(); s->pop();
 
 	Type lt = left->getType();
 	Type rt = right->getType();
+
+	if (lt != INTEGER || lt != REAL || lt != RATIONAL || lt != COMPLEX || rt != INTEGER || rt != REAL || rt != RATIONAL || rt != COMPLEX) {
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : / ne prend que des nombres (Entier, Réel, Rationnel ou Complexe)");
+	}
 
 	pair<int, int> pairRa;
 	INumberLiteral* pRe;
@@ -432,6 +457,7 @@ void MultiOp::interpret(Stack* s) {
 	double doubleVal;
 	double r;
 	Type t, t2;
+
 
 	INumberLiteral* INL1 = new IntegerLiteral(0);
 	INumberLiteral* INL2 = new IntegerLiteral(0);
@@ -551,7 +577,7 @@ void MultiOp::interpret(Stack* s) {
 			r = (double)pairRa.first / (double)pairRa.second;
 			s->push(LiteralFactory::getInstance().makeLiteral(r * doubleVal));
 			break;
-		case COMPLEX: 
+		case COMPLEX:
 			t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
 			pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
 			t2 = dynamic_cast<ComplexLiteral*>(right)->Im().getType();
@@ -664,11 +690,38 @@ void MultiOp::interpret(Stack* s) {
 }
 
 void DivOp::interpret(Stack* s){
-	/*ILiteral* right = s->top(); s->pop();
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : / a besoin de deux arguments");
+
+	ILiteral* right = s->top(); s->pop();
 	ILiteral* left = s->top(); s->pop();
 
 	Type lt = left->getType();
 	Type rt = right->getType();
+
+	if ((lt != INTEGER && lt != REAL && lt != RATIONAL && lt != COMPLEX) || (rt != INTEGER && rt != REAL && rt != RATIONAL && rt != COMPLEX)) {
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : / ne prend que des nombres (Entier, Réel, Rationnel ou Complexe)");
+	}
+
+	if (rt == COMPLEX){
+		if (dynamic_cast<ComplexLiteral*>(right)->Re().isNul() && dynamic_cast<ComplexLiteral*>(right)->Im().isNul()){
+			s->push(left);
+			s->push(right);
+			throw OperatorException("Erreur : Division par zéro impossible");
+		}
+	}
+	else{
+		if (dynamic_cast<INumberLiteral*>(right)->isNul()){
+			s->push(left);
+			s->push(right);
+			throw OperatorException("Erreur : Division par zéro impossible");
+		}
+	}
+
+
+
 
 	pair<int, int> pairRa;
 	INumberLiteral* pRe;
@@ -678,21 +731,28 @@ void DivOp::interpret(Stack* s){
 	double r;
 	Type t, t2;
 
+	MinusOp mop;
+	PlusOp pop;
+	MultiOp muop;
+
+	pair<int, int> pairReel;
+	pair<int, int> pairIm;
+
 	INumberLiteral* INL1 = new IntegerLiteral(0);
 	INumberLiteral* INL2 = new IntegerLiteral(0);
 
-	switch (lt) { // à faire
+	switch (lt) {
 	case INTEGER:
 		intVal = dynamic_cast<IntegerLiteral*>(left)->getValue();
 		switch (rt) {
 		case INTEGER:
-			s->push(LiteralFactory::getInstance().makeLiteral(intVal / dynamic_cast<IntegerLiteral*>(right)->getValue()));
+			s->push(LiteralFactory::getInstance().makeLiteral((double)intVal / dynamic_cast<IntegerLiteral*>(right)->getValue()));
 			break;
 		case REAL:
 			s->push(LiteralFactory::getInstance().makeLiteral(intVal / dynamic_cast<RealLiteral*>(right)->getValue()));
 			break;
 		case RATIONAL:
-			pairRa.first = dynamic_cast<RationalLiteral*>(right)->getValue().second;
+			pairRa.first = dynamic_cast<RationalLiteral*>(right)->getValue().second * intVal;
 			pairRa.second = dynamic_cast<RationalLiteral*>(right)->getValue().first;
 			s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
 			break;
@@ -703,78 +763,161 @@ void DivOp::interpret(Stack* s){
 			pIm = &dynamic_cast<ComplexLiteral*>(right)->Im();
 			switch (t){
 			case INTEGER:
-				INL1 = new IntegerLiteral(intVal * dynamic_cast<IntegerLiteral*>(pRe)->getValue());
+				switch (t2){
+				case INTEGER:
+					pairReel.first = dynamic_cast<IntegerLiteral*>(pRe)->getValue() * intVal;
+					pairReel.second = (dynamic_cast<IntegerLiteral*>(pRe)->getValue()*dynamic_cast<IntegerLiteral*>(pRe)->getValue()) + (dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue());
+					INL1 = new RationalLiteral(pairReel.first, pairReel.second);
+					pairIm.first = dynamic_cast<IntegerLiteral*>(pIm)->getValue() * intVal;
+					pairIm.second = -((dynamic_cast<IntegerLiteral*>(pRe)->getValue()*dynamic_cast<IntegerLiteral*>(pRe)->getValue()) + (dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					INL2 = new RationalLiteral(pairIm.first, pairIm.second);
+					break;
+				case REAL:
+					INL1 = new RealLiteral((intVal * dynamic_cast<IntegerLiteral*>(pRe)->getValue()) / (dynamic_cast<IntegerLiteral*>(pRe)->getValue()*dynamic_cast<IntegerLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((-intVal * dynamic_cast<RealLiteral*>(pIm)->getValue()) / (dynamic_cast<IntegerLiteral*>(pRe)->getValue()*dynamic_cast<IntegerLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					break;
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new IntegerLiteral(intVal));
+					muop.interpret(s);
+					if ((INL1 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
+						INL1 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new IntegerLiteral(-intVal));
+					muop.interpret(s);
+					for (auto it = s->begin(); it != s->end(); it++) {
+						std::cout << (*it)->toString() << std::endl;
+					}
+					if ((INL2 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
+						INL2 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
+					break;
+				}
 				break;
+
 			case REAL:
-				INL1 = new RealLiteral(intVal * dynamic_cast<RealLiteral*>(pRe)->getValue());
+				switch (t2){
+				case INTEGER:
+					INL1 = new RealLiteral((intVal * dynamic_cast<RealLiteral*>(pRe)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((-intVal * dynamic_cast<IntegerLiteral*>(pIm)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					break;
+				case REAL:
+					INL1 = new RealLiteral((intVal * dynamic_cast<RealLiteral*>(pRe)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((-intVal * dynamic_cast<RealLiteral*>(pIm)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					break;
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new IntegerLiteral(intVal));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new IntegerLiteral(-intVal));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+					break;
+				}
 				break;
 			case RATIONAL:
-				INL1 = new RationalLiteral(intVal * dynamic_cast<RationalLiteral*>(pRe)->getValue().first, dynamic_cast<RationalLiteral*>(pRe)->getValue().second);
-				break;
-			}
+				switch (t2){
+				case INTEGER:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new IntegerLiteral(intVal));
+					muop.interpret(s);
+					if ((INL1 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
+						INL1 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
 
-			switch (t2){
-			case INTEGER:
-				INL2 = new IntegerLiteral(intVal * dynamic_cast<IntegerLiteral*>(pIm)->getValue());
-				break;
-			case REAL:
-				INL2 = new RealLiteral(intVal * dynamic_cast<RealLiteral*>(pIm)->getValue());
-				break;
-			case RATIONAL:
-				INL2 = new RationalLiteral(intVal * dynamic_cast<RationalLiteral*>(pIm)->getValue().first, dynamic_cast<RationalLiteral*>(pIm)->getValue().second);
-				break;
-			}
-			s->push(LiteralFactory::getInstance().makeLiteral(INL1, INL2));
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new IntegerLiteral(-intVal));
+					muop.interpret(s);
+					if ((INL2 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
+						INL2 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
 
-			break;
+					break;
+				case REAL:
+					INL1 = new RealLiteral((intVal * ((double)(dynamic_cast<RationalLiteral*>(pRe)->getValue().first) / (double)(dynamic_cast<RationalLiteral*>(pRe)->getValue().second))) / ((((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)*((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)) + (dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue())));
+					INL2 = new RealLiteral((-intVal * dynamic_cast<RealLiteral*>(pIm)->getValue()) / ((((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)*((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)) + (dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue())));
+					break;
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new IntegerLiteral(intVal));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RationalLiteral*>(s->top()); s->pop();
 
-		}
-		break;
-
-	case RATIONAL:
-		pairRa.first = dynamic_cast<RationalLiteral*>(left)->getValue().first;
-		pairRa.second = dynamic_cast<RationalLiteral*>(left)->getValue().second;
-		switch (rt) {
-		case INTEGER:
-			pairRa.first *= dynamic_cast<IntegerLiteral*>(right)->getValue();
-			s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
-			break;
-		case REAL:
-			r = (float)pairRa.first / (float)pairRa.second;
-			s->push(LiteralFactory::getInstance().makeLiteral(r * dynamic_cast<RealLiteral*>(right)->getValue()));
-			break;
-		case RATIONAL:
-			pairRa.first *= dynamic_cast<RationalLiteral*>(right)->getValue().first;
-			pairRa.second *= dynamic_cast<RationalLiteral*>(right)->getValue().second;
-			s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
-			break;
-		case COMPLEX:
-			t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
-			pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
-			t2 = dynamic_cast<ComplexLiteral*>(right)->Im().getType();
-			pIm = &dynamic_cast<ComplexLiteral*>(right)->Im();
-			switch (t){
-			case INTEGER:
-				INL1 = new RationalLiteral(pairRa.first * dynamic_cast<IntegerLiteral*>(pRe)->getValue(), pairRa.second);
-				break;
-			case REAL:
-				INL1 = new RealLiteral((double)pairRa.first / (double)pairRa.second * dynamic_cast<RealLiteral*>(pRe)->getValue());
-				break;
-			case RATIONAL:
-				INL1 = new RationalLiteral(pairRa.first * dynamic_cast<RationalLiteral*>(pRe)->getValue().first, pairRa.second * dynamic_cast<RationalLiteral*>(pRe)->getValue().second);
-				break;
-			}
-
-			switch (t2){
-			case INTEGER:
-				INL2 = new RationalLiteral(pairRa.first * dynamic_cast<IntegerLiteral*>(pIm)->getValue(), pairRa.second);
-				break;
-			case REAL:
-				INL2 = new RealLiteral((double)pairRa.first / (double)pairRa.second * dynamic_cast<RealLiteral*>(pIm)->getValue());
-				break;
-			case RATIONAL:
-				INL2 = new RationalLiteral(pairRa.first * dynamic_cast<RationalLiteral*>(pIm)->getValue().first, pairRa.second * dynamic_cast<RationalLiteral*>(pRe)->getValue().second);
-				break;
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new IntegerLiteral(-intVal));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RationalLiteral*>(s->top()); s->pop();
+					break;
+				}
 			}
 			s->push(LiteralFactory::getInstance().makeLiteral(INL1, INL2));
 			break;
@@ -785,16 +928,13 @@ void DivOp::interpret(Stack* s){
 		doubleVal = dynamic_cast<RealLiteral*>(left)->getValue();
 		switch (rt) {
 		case INTEGER:
-			s->push(LiteralFactory::getInstance().makeLiteral(doubleVal * dynamic_cast<IntegerLiteral*>(right)->getValue()));
+			s->push(LiteralFactory::getInstance().makeLiteral(doubleVal / dynamic_cast<IntegerLiteral*>(right)->getValue()));
 			break;
 		case REAL:
-			s->push(LiteralFactory::getInstance().makeLiteral(doubleVal * dynamic_cast<RealLiteral*>(right)->getValue()));
+			s->push(LiteralFactory::getInstance().makeLiteral(doubleVal / dynamic_cast<RealLiteral*>(right)->getValue()));
 			break;
 		case RATIONAL:
-			pairRa.first = dynamic_cast<RationalLiteral*>(right)->getValue().first;
-			pairRa.second = dynamic_cast<RationalLiteral*>(right)->getValue().second;
-			r = (double)pairRa.first / (double)pairRa.second;
-			s->push(LiteralFactory::getInstance().makeLiteral(r * doubleVal));
+			s->push(LiteralFactory::getInstance().makeLiteral(doubleVal / ((double)dynamic_cast<RationalLiteral*>(right)->getValue().first / (double)dynamic_cast<RationalLiteral*>(right)->getValue().second)));
 			break;
 		case COMPLEX:
 			t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
@@ -803,60 +943,448 @@ void DivOp::interpret(Stack* s){
 			pIm = &dynamic_cast<ComplexLiteral*>(right)->Im();
 			switch (t){
 			case INTEGER:
-				INL1 = new RealLiteral(doubleVal * dynamic_cast<IntegerLiteral*>(pRe)->getValue());
-				break;
-			case REAL:
-				INL1 = new RealLiteral(doubleVal * dynamic_cast<RealLiteral*>(pRe)->getValue());
-				break;
-			case RATIONAL:
-				INL1 = new RealLiteral(doubleVal * ((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second));
-				break;
-			}
+				switch (t2){
+				case INTEGER:
+					INL1 = new RealLiteral((doubleVal * dynamic_cast<IntegerLiteral*>(pRe)->getValue()) / (dynamic_cast<IntegerLiteral*>(pRe)->getValue()*dynamic_cast<IntegerLiteral*>(pRe)->getValue() + dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((-doubleVal * dynamic_cast<IntegerLiteral*>(pIm)->getValue()) / (dynamic_cast<IntegerLiteral*>(pRe)->getValue()*dynamic_cast<IntegerLiteral*>(pRe)->getValue() + dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					break;
+				case REAL:
+					INL1 = new RealLiteral((doubleVal * dynamic_cast<IntegerLiteral*>(pRe)->getValue()) / (dynamic_cast<IntegerLiteral*>(pRe)->getValue()*dynamic_cast<IntegerLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((-doubleVal * dynamic_cast<RealLiteral*>(pIm)->getValue()) / (dynamic_cast<IntegerLiteral*>(pRe)->getValue()*dynamic_cast<IntegerLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					break;
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RealLiteral(doubleVal));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 
-			switch (t2){
-			case INTEGER:
-				INL2 = new RealLiteral(doubleVal * dynamic_cast<IntegerLiteral*>(pIm)->getValue());
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RealLiteral(-doubleVal));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+					break;
+				}
 				break;
+
 			case REAL:
-				INL2 = new RealLiteral(doubleVal * dynamic_cast<RealLiteral*>(pIm)->getValue());
+				switch (t2){
+				case INTEGER:
+					INL1 = new RealLiteral((doubleVal * dynamic_cast<RealLiteral*>(pRe)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((-doubleVal * dynamic_cast<IntegerLiteral*>(pIm)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					break;
+				case REAL:
+					INL1 = new RealLiteral((doubleVal * dynamic_cast<RealLiteral*>(pRe)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((-doubleVal * dynamic_cast<RealLiteral*>(pIm)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					break;
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RealLiteral(doubleVal));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RealLiteral(-doubleVal));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+					break;
+				}
 				break;
+
 			case RATIONAL:
-				INL2 = new RealLiteral(doubleVal * ((double)dynamic_cast<RationalLiteral*>(pIm)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pIm)->getValue().second));
-				break;
+				switch (t2){
+				case INTEGER:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RealLiteral(doubleVal));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RealLiteral(-doubleVal));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
+					break;
+				case REAL:
+					INL1 = new RealLiteral((doubleVal * ((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)) / ((((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)*((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)) + (dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue())));
+					INL2 = new RealLiteral((-doubleVal * dynamic_cast<RealLiteral*>(pIm)->getValue()) / ((((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)*((double)dynamic_cast<RationalLiteral*>(pRe)->getValue().first / (double)dynamic_cast<RationalLiteral*>(pRe)->getValue().second)) + (dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue())));
+					break;
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RealLiteral(doubleVal));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RealLiteral(-doubleVal));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+					break;
+				}
 			}
 			s->push(LiteralFactory::getInstance().makeLiteral(INL1, INL2));
 			break;
 		}
 		break;
 
-	case COMPLEX:
+	case RATIONAL:
+		pairRa.first = dynamic_cast<RationalLiteral*>(left)->getValue().first;
+		pairRa.second = dynamic_cast<RationalLiteral*>(left)->getValue().second;
+		switch (rt) {
+		case INTEGER:
+			pairReel.first = pairRa.first;
+			pairReel.second = pairRa.second*dynamic_cast<IntegerLiteral*>(right)->getValue();
+			s->push(LiteralFactory::getInstance().makeLiteral(pairReel));
+			break;
+		case REAL:
+			s->push(LiteralFactory::getInstance().makeLiteral(((double)pairRa.first / (double)pairRa.second) / dynamic_cast<RealLiteral*>(right)->getValue()));
+			break;
+		case RATIONAL:
+			pairRa.first *= dynamic_cast<RationalLiteral*>(right)->getValue().second;
+			pairRa.second *= dynamic_cast<RationalLiteral*>(right)->getValue().first;
+			s->push(LiteralFactory::getInstance().makeLiteral(pairRa));
+			break;
+		case COMPLEX:
+			t = dynamic_cast<ComplexLiteral*>(right)->Re().getType();
+			pRe = &dynamic_cast<ComplexLiteral*>(right)->Re();
+			t2 = dynamic_cast<ComplexLiteral*>(right)->Im().getType();
+			pIm = &dynamic_cast<ComplexLiteral*>(right)->Im();
+			switch (t){
+			case INTEGER:
+				switch (t2){
+				case INTEGER:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+					break;
+
+				case REAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+					break;
+
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(pairRa.first, pairRa.second));
+					muop.interpret(s);
+					if ((INL1 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
+						INL1 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
+					muop.interpret(s);
+					if ((INL2 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
+						INL2 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
+					break;
+				}
+				break;
+
+			case REAL:
+				switch (t2){
+				case INTEGER:
+					INL1 = new RealLiteral((((double)pairRa.first / (double)pairRa.second) * dynamic_cast<RealLiteral*>(pRe)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((((double)-pairRa.first / (double)pairRa.second) * dynamic_cast<IntegerLiteral*>(pIm)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<IntegerLiteral*>(pIm)->getValue()*dynamic_cast<IntegerLiteral*>(pIm)->getValue()));
+					break;
+				case REAL:
+					INL1 = new RealLiteral((((double)pairRa.first / (double)pairRa.second) * dynamic_cast<RealLiteral*>(pRe)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					INL2 = new RealLiteral((((double)-pairRa.first / (double)pairRa.second) * dynamic_cast<RealLiteral*>(pIm)->getValue()) / (dynamic_cast<RealLiteral*>(pRe)->getValue()*dynamic_cast<RealLiteral*>(pRe)->getValue() + dynamic_cast<RealLiteral*>(pIm)->getValue()*dynamic_cast<RealLiteral*>(pIm)->getValue()));
+					break;
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+					break;
+				}
+				break;
+
+			case RATIONAL: /* MARQUE */
+				switch (t2){
+				case INTEGER:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(pairRa.first, pairRa.second));
+					muop.interpret(s);
+					if ((INL1 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
+						INL1 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
+					muop.interpret(s);
+					if ((INL2 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
+						INL2 = dynamic_cast<RealLiteral*>(s->top());
+					s->pop();
+					break;
+				case REAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RealLiteral*>(s->top()), s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
+					break;
+				case RATIONAL:
+					s->push(pRe);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL1 = dynamic_cast<RationalLiteral*>(s->top()); s->pop();
+
+					s->push(pIm);
+					s->push(pRe);
+					s->push(pRe);
+					muop.interpret(s);
+					s->push(pIm);
+					s->push(pIm);
+					muop.interpret(s);
+					pop.interpret(s);
+					interpret(s);
+					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
+					muop.interpret(s);
+					INL2 = dynamic_cast<RationalLiteral*>(s->top()); s->pop();
+					break;
+				}
+			}
+			s->push(LiteralFactory::getInstance().makeLiteral(INL1, INL2));
+			break;
+		}
+		break;
+
+	case COMPLEX: // MARQUE A TESTER
 		pRe = &dynamic_cast<ComplexLiteral*>(left)->Re();
 		pIm = &dynamic_cast<ComplexLiteral*>(left)->Im();
 
 		if (rt != COMPLEX){
+			s->push(new IntegerLiteral(1));
 			s->push(right);
+			muop.interpret(s);
 			s->push(left);
 			interpret(s);
 		}
-		else{ //(aa' – bb') + i (ab' + ba')
+		else{ //(aa' + bb')/a'²+b'² + i (ba' - ab')/a'²+b'²
 			s->push(pRe);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-			interpret(s);
+			muop.interpret(s);
 			s->push(pIm);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
+			muop.interpret(s);
+			pop.interpret(s);
+			s->push(pIm);
+			s->push(pIm);
+			muop.interpret(s);
+			s->push(pRe);
+			s->push(pRe);
+			muop.interpret(s);
+			pop.interpret(s);
 			interpret(s);
-			MinusOp mop;
-			mop.interpret(s);
 			ILiteral* partiReel = s->top(); s->pop();
 
-			s->push(pRe);
-			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
-			interpret(s);
+			//i(ba' - ab') / a'²+b'²
 			s->push(pIm);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-			interpret(s);
-			PlusOp pop;
+			muop.interpret(s);
+			s->push(pRe);
+			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
+			muop.interpret(s);
+			mop.interpret(s);
+			s->push(pIm);
+			s->push(pIm);
+			muop.interpret(s);
+			s->push(pRe);
+			s->push(pRe);
+			muop.interpret(s);
 			pop.interpret(s);
+			interpret(s);
 			ILiteral* partiIm = s->top(); s->pop();
 
 			t = partiReel->getType();
@@ -906,6 +1434,271 @@ void DivOp::interpret(Stack* s){
 
 		break;
 	}
-	*/
+}
 
+void DivEntOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : DIV prend deux arguments");
+
+	ILiteral* right = s->top(); s->pop();
+	ILiteral* left = s->top(); s->pop();
+
+	Type lt = left->getType();
+	Type rt = right->getType();
+
+	if (lt != INTEGER || rt != INTEGER) {
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : DIV ne prend que des entiers");
+	}
+
+	if (dynamic_cast<IntegerLiteral*>(right)->getValue() == 0){
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : division par 0 interdite");
+	}
+
+	int divEntier = dynamic_cast<IntegerLiteral*>(left)->getValue() / dynamic_cast<IntegerLiteral*>(right)->getValue();
+	s->push(LiteralFactory::getInstance().makeLiteral(divEntier));
+}
+
+void ModulOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : MOD a besoin de deux arguments");
+
+	ILiteral* right = s->top(); s->pop();
+	ILiteral* left = s->top(); s->pop();
+
+	Type lt = left->getType();
+	Type rt = right->getType();
+
+	if (lt != INTEGER || rt != INTEGER) {
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : MOD ne prend que des entiers");
+	}
+
+	if (dynamic_cast<IntegerLiteral*>(right)->getValue() == 0){
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : division par 0 interdite");
+	}
+
+	int divEntier = dynamic_cast<IntegerLiteral*>(left)->getValue() % dynamic_cast<IntegerLiteral*>(right)->getValue();
+	s->push(LiteralFactory::getInstance().makeLiteral(divEntier));
+}
+
+void NegOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : NEG a besoin d'un argument");
+
+	ILiteral* number = s->top(); s->pop();
+	Type t = number->getType();
+	pair<int, int> rationalNeg;
+
+	if (t != INTEGER && t != REAL && t != RATIONAL && t != COMPLEX) {
+		s->push(number);
+		throw OperatorException("Erreur : NEG n'accepte que les nombres (Entier,Réel,Rationnel ou Complexe)");
+	}
+
+	switch (t){
+	case INTEGER:
+		s->push(LiteralFactory::getInstance().makeLiteral(-dynamic_cast<IntegerLiteral*>(number)->getValue()));
+		break;
+	case REAL:
+		s->push(LiteralFactory::getInstance().makeLiteral(-dynamic_cast<RealLiteral*>(number)->getValue()));
+		break;
+	case RATIONAL:
+		rationalNeg.first = -dynamic_cast<RationalLiteral*>(number)->getValue().first;
+		rationalNeg.second = dynamic_cast<RationalLiteral*>(number)->getValue().second;
+		s->push(LiteralFactory::getInstance().makeLiteral(rationalNeg));
+		break;
+	case COMPLEX:
+		INumberLiteral* pRe = &dynamic_cast<ComplexLiteral*>(number)->Re();
+		INumberLiteral* pIm = &dynamic_cast<ComplexLiteral*>(number)->Im();
+		Type tRe = pRe->getType();
+		Type tIm = pIm->getType();
+
+		switch (tRe){
+		case INTEGER:
+			pRe = new IntegerLiteral(-dynamic_cast<IntegerLiteral*>(pRe)->getValue());
+			break;
+
+		case REAL:
+			pRe = new RealLiteral(-dynamic_cast<RealLiteral*>(pRe)->getValue());
+			break;
+
+		case RATIONAL:
+			pRe = new RationalLiteral(-dynamic_cast<RationalLiteral*>(pRe)->getValue().first, dynamic_cast<RationalLiteral*>(pRe)->getValue().second);
+			break;
+		}
+
+		switch (tIm){
+		case INTEGER:
+			pIm = new IntegerLiteral(-dynamic_cast<IntegerLiteral*>(pIm)->getValue());
+			break;
+
+		case REAL:
+			pIm = new RealLiteral(-dynamic_cast<RealLiteral*>(pIm)->getValue());
+			break;
+
+		case RATIONAL:
+			pIm = new RationalLiteral(-dynamic_cast<RationalLiteral*>(pIm)->getValue().first, dynamic_cast<RationalLiteral*>(pIm)->getValue().second);
+			break;
+		}
+		s->push(LiteralFactory::getInstance().makeLiteral(pRe,pIm));
+		break;
+	}
+}
+
+void NumOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : NUM a besoin d'un argument");
+
+	ILiteral* number = s->top(); s->pop();
+
+	Type t = number->getType();
+
+	if (t != INTEGER && t != RATIONAL) {
+		s->push(number);
+		throw OperatorException("Erreur :NUM n'accepte que les entiers ou les rationnels");
+	}
+
+	if (t == INTEGER)
+		s->push(number);
+	else
+		s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(number)->getValue().first));
+}
+
+void DenOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : DEN a besoin d'un argument");
+
+	ILiteral* number = s->top(); s->pop();
+
+	Type t = number->getType();
+
+	if (t != INTEGER && t != RATIONAL) {
+		s->push(number);
+		throw OperatorException("Erreur : DEN n'accepte que les entiers ou les rationnels");
+	}
+
+	if (t == INTEGER)
+		s->push(number);
+	else
+		s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(number)->getValue().second));
+}
+
+void $Op::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : $ a besoin de deux arguments");
+
+	ILiteral* right = s->top(); s->pop();
+	ILiteral* left = s->top(); s->pop();
+
+	Type lt = left->getType();
+	Type rt = right->getType();
+
+	if ((lt != INTEGER && lt!= REAL && lt!= RATIONAL) || (rt != INTEGER && rt != REAL && rt != RATIONAL)) {
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : $ ne prend que des entier, réel ou rationel");
+	}
+
+	s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<INumberLiteral*>(left), dynamic_cast<INumberLiteral*>(right)));
+}
+
+void ReOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : RE a besoin d'un argument");
+
+	ILiteral* number = s->top(); s->pop();
+	Type t = number->getType();
+
+	if (t != INTEGER && t != RATIONAL && t != REAL && t != COMPLEX) {
+		s->push(number);
+		throw OperatorException("Erreur : RE n'accepte que les nombres (entier, réel, rationnel ou complexe)");
+	}
+
+
+	if (t == INTEGER || t == RATIONAL || t == REAL)
+		s->push(number);
+	else{
+		Type t = dynamic_cast<ComplexLiteral*>(number)->Re().getType();
+		switch (t){
+		case INTEGER:
+			s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(&dynamic_cast<ComplexLiteral*>(number)->Re())->getValue()));
+			break;
+		case REAL:
+			s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RealLiteral*>(&dynamic_cast<ComplexLiteral*>(number)->Re())->getValue()));
+			break;
+		case RATIONAL:
+			s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(number)->Re())->getValue()));
+			break;
+		}
+	}
+}
+
+void ImOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : RE a besoin d'un argument");
+
+	ILiteral* number = s->top(); s->pop();
+	Type t = number->getType();
+
+	if (t != INTEGER && t != RATIONAL && t != REAL && t != COMPLEX) {
+		s->push(number);
+		throw OperatorException("Erreur : RE n'accepte que les nombres (entier, réel, rationnel ou complexe)");
+	}
+
+
+	if (t == INTEGER || t == RATIONAL || t == REAL)
+		s->push(number);
+	else{
+		Type t = dynamic_cast<ComplexLiteral*>(number)->Re().getType();
+		switch (t){
+		case INTEGER:
+			s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<IntegerLiteral*>(&dynamic_cast<ComplexLiteral*>(number)->Im())->getValue()));
+			break;
+		case REAL:
+			s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RealLiteral*>(&dynamic_cast<ComplexLiteral*>(number)->Im())->getValue()));
+			break;
+		case RATIONAL:
+			s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(&dynamic_cast<ComplexLiteral*>(number)->Im())->getValue()));
+			break;
+		}
+	}
+}
+
+void DupOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : DUP a besoin d'un argument");
+
+	ILiteral* number = s->top(); s->push(number);
+}
+
+void DropOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : DropOp a besoin d'un argument");
+
+	s->pop();
+}
+
+void SwapOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : SwapOp a besoin d'un argument");
+
+	ILiteral* lit = s->top(); s->pop();
+	ILiteral* lit2 = s->top(); s->pop();
+	s->push(lit);
+	s->push(lit2);
+}
+
+void ClearOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : ClearOp a besoin d'un argument");
+
+	int size = s->size();
+	for (int i = 0; i < size; i++)
+		s->pop();
 }

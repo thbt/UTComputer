@@ -10,11 +10,18 @@ ILiteral* LiteralFactory::makeLiteral(int n) const {
 }
 
 ILiteral* LiteralFactory::makeLiteral(double n) const {
-	return new RealLiteral(n);
+	if (floor(n) == n)
+		return new IntegerLiteral((int)n);
+	else
+		return new RealLiteral(n);
 }
 
 ILiteral* LiteralFactory::makeLiteral(pair<int, int> n) const{
-	return new RationalLiteral(n.first, n.second);
+	RationalLiteral* R = new RationalLiteral(n.first, n.second);
+	if (R->getValue().second == 1)
+		return new IntegerLiteral(R->getValue().first);
+	else
+		return R;
 }
 
 ILiteral* LiteralFactory::makeLiteral(INumberLiteral* re, INumberLiteral* im) const{
