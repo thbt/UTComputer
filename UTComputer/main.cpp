@@ -16,7 +16,7 @@ int main() {
 
 	Stack s;
 	s.push(&n3);
-	s.push(&n4);
+	s.push(&n6);
 
 	//s.push(&n1);
 	//s.push(&n3);
@@ -70,8 +70,17 @@ int main() {
 		//SwapOp swap;
 		//swap.interpret(&s);
 
-		ClearOp clear;
-		clear.interpret(&s);
+		//ClearOp clear;
+		//clear.interpret(&s);
+
+		//EqualOp equal;
+		//equal.interpret(&s);
+
+		//DifferentOp different;
+		//different.interpret(&s);
+
+		InfEqOp infEq;
+		infEq.interpret(&s);
 	}
 	catch (OperatorException oe){
 		cerr << oe.getInfo() << endl;

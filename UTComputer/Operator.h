@@ -119,3 +119,39 @@ public:
 	ClearOp() : IOperator("CLEAR", 0) {}
 	void interpret(Stack* s);
 };
+
+class EqualOp : public IOperator {
+public:
+	EqualOp() : IOperator("=", 2) {}
+	void interpret(Stack* s);
+};
+
+class DifferentOp : public IOperator {
+public:
+	DifferentOp() : IOperator("!=", 2) {}
+	void interpret(Stack* s);
+};
+
+class InfEqOp : public IOperator {
+public:
+	InfEqOp() : IOperator("=<", 2) {}
+	void interpret(Stack* s);
+};
+
+class InfOp : public IOperator {
+public:
+	InfOp() : IOperator("<", 2){}
+	void interpret(Stack* s);
+};
+
+class SupOp : public IOperator {
+public:
+	SupOp() : IOperator(">", 2){}
+	void interpret(Stack* s);
+};
+
+class SupEqOp : public IOperator {
+public:
+	SupEqOp() : IOperator("=>", 2){}
+	void interpret(Stack* s);
+};
