@@ -1962,7 +1962,7 @@ void InfEqOp::interpret(Stack* s) {
 	case INTEGER:
 		switch (rt){
 		case INTEGER:
-			s->push(new IntegerLiteral((dynamic_cast<IntegerLiteral*>(left)->getValue()<=dynamic_cast<IntegerLiteral*>(right)->getValue())));
+			s->push(new IntegerLiteral((dynamic_cast<IntegerLiteral*>(left)->getValue() <= dynamic_cast<IntegerLiteral*>(right)->getValue())));
 			break;
 		case REAL:
 			s->push(new IntegerLiteral((dynamic_cast<IntegerLiteral*>(left)->getValue() <= dynamic_cast<RealLiteral*>(right)->getValue())));
@@ -2187,4 +2187,180 @@ void SupEqOp::interpret(Stack* s) {
 		}
 		break;
 	}
+}
+
+void AndOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : AND a besoin d'au moins deux arguments");
+
+	ILiteral* right = s->top(); s->pop();
+	Type rt = right->getType();
+
+	ILiteral* left = s->top(); s->pop();
+	Type lt = left->getType();
+
+	switch (rt){
+	case INTEGER:
+		if (dynamic_cast<IntegerLiteral*>(right)->isNul()){
+			s->push(new IntegerLiteral(0));
+			return;
+		}
+		break;
+
+	case REAL:
+		if (dynamic_cast<RealLiteral*>(right)->isNul()){
+			s->push(new IntegerLiteral(0));
+			return;
+		}
+		break;
+
+	case RATIONAL:
+		if (dynamic_cast<RationalLiteral*>(right)->isNul()){
+			s->push(new IntegerLiteral(0));
+			return;
+		}
+		break;
+
+	case COMPLEX:
+		if (dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->isNul()
+			&& dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Im())->isNul()){
+			s->push(new IntegerLiteral(0));
+			return;
+		}
+		break;
+	}
+
+	switch (lt){
+	case INTEGER:
+		if (dynamic_cast<IntegerLiteral*>(left)->isNul()){
+			s->push(new IntegerLiteral(0));
+			return;
+		}
+		break;
+
+	case REAL:
+		if (dynamic_cast<RealLiteral*>(left)->isNul()){
+			s->push(new IntegerLiteral(0));
+			return;
+		}
+		break;
+
+	case RATIONAL:
+		if (dynamic_cast<RationalLiteral*>(left)->isNul()){
+			s->push(new IntegerLiteral(0));
+			return;
+		}
+		break;
+
+	case COMPLEX:
+		if (dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(left)->Re())->isNul()
+			&& dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(left)->Im())->isNul()){
+			s->push(new IntegerLiteral(0));
+			return;
+		}
+		break;
+	}
+
+	s->push(new IntegerLiteral(1));
+}
+
+void OrOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : OR a besoin d'au moins deux arguments");
+
+	ILiteral* right = s->top(); s->pop();
+	Type rt = right->getType();
+
+	ILiteral* left = s->top(); s->pop();
+	Type lt = left->getType();
+
+	int orBool = 0;
+
+	switch (rt){
+	case INTEGER:
+		if (!dynamic_cast<IntegerLiteral*>(right)->isNul())
+			orBool++;
+		break;
+
+	case REAL:
+		if (!dynamic_cast<RealLiteral*>(right)->isNul())
+			orBool++;
+		break;
+
+	case RATIONAL:
+		if (!dynamic_cast<RationalLiteral*>(right)->isNul())
+			orBool++;
+		break;
+
+	case COMPLEX:
+		if (!dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->isNul()
+			|| !dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Im())->isNul())
+			orBool++;
+		break;
+	}
+
+	switch (lt){
+	case INTEGER:
+		if (!dynamic_cast<IntegerLiteral*>(left)->isNul())
+			orBool++;
+		break;
+
+	case REAL:
+		if (!dynamic_cast<RealLiteral*>(left)->isNul())
+			orBool++;
+		break;
+
+	case RATIONAL:
+		if (!dynamic_cast<RationalLiteral*>(left)->isNul())
+			orBool++;
+		break;
+
+	case COMPLEX:
+		if (!dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(left)->Re())->isNul()
+			|| !dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(left)->Im())->isNul())
+			orBool++;
+		break;
+	}
+
+	if (orBool == 0)
+		s->push(new IntegerLiteral(0));
+	else
+		s->push(new IntegerLiteral(1));
+}
+
+void OrOp::interpret(Stack* s){
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : AND a besoin d'au moins un argument");
+
+	ILiteral* right = s->top(); s->pop();
+	Type rt = right->getType();
+
+	switch (rt){
+	case INTEGER:
+		if (dynamic_cast<IntegerLiteral*>(right)->isNul()){
+			s->push(new IntegerLiteral(1));
+		}
+		break;
+
+	case REAL:
+		if (dynamic_cast<RealLiteral*>(right)->isNul()){
+			s->push(new IntegerLiteral(1));
+		}
+		break;
+
+	case RATIONAL:
+		if (dynamic_cast<RationalLiteral*>(right)->isNul()){
+			s->push(new IntegerLiteral(1));
+		}
+		break;
+
+	case COMPLEX:
+		if (dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Re())->isNul()
+			&& dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(right)->Im())->isNul()){
+			s->push(new IntegerLiteral(1));
+			return;
+		}
+		break;
+	}
+	s->push(new IntegerLiteral(1));
 }

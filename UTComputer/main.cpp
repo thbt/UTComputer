@@ -7,8 +7,8 @@
 int main() {
 	IntegerLiteral n1(0);
 	RealLiteral n2(4.5);
-	RationalLiteral n3(10, 3);
-	ComplexLiteral n4(new RealLiteral(10.5), new IntegerLiteral(10));
+	RationalLiteral n3(0,1);
+	ComplexLiteral n4(new RealLiteral(0), new IntegerLiteral(0));
 	IntegerLiteral n5(10);
 	IntegerLiteral n6(5);
 	ComplexLiteral n7(new RationalLiteral(0,1), new RationalLiteral(0,3));
@@ -16,7 +16,7 @@ int main() {
 
 	Stack s;
 	s.push(&n3);
-	s.push(&n6);
+	s.push(&n8);
 
 	//s.push(&n1);
 	//s.push(&n3);
@@ -79,8 +79,14 @@ int main() {
 		//DifferentOp different;
 		//different.interpret(&s);
 
-		InfEqOp infEq;
-		infEq.interpret(&s);
+		//InfEqOp infEq;
+		//infEq.interpret(&s);
+
+		//AndOp and;
+		//and.interpret(&s);
+
+		OrOp or;
+		or.interpret(&s);
 	}
 	catch (OperatorException oe){
 		cerr << oe.getInfo() << endl;

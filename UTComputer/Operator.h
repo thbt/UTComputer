@@ -155,3 +155,21 @@ public:
 	SupEqOp() : IOperator("=>", 2){}
 	void interpret(Stack* s);
 };
+
+class AndOp : public IOperator {
+public:
+	AndOp() : IOperator("AND", 2){}
+	void interpret(Stack* s);
+};
+
+class OrOp : public IOperator {
+public:
+	OrOp() : IOperator("OR", 2){}
+	void interpret(Stack* s);
+};
+
+class NotOp : public IOperator {
+public:
+	NotOp() : IOperator("NOT", 1){}
+	void interpret(Stack* s);
+};
