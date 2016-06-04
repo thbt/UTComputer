@@ -2328,7 +2328,7 @@ void OrOp::interpret(Stack* s){
 		s->push(new IntegerLiteral(1));
 }
 
-void OrOp::interpret(Stack* s){
+void NotOp::interpret(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : AND a besoin d'au moins un argument");
 
