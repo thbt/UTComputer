@@ -81,7 +81,20 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Link>
+      <GenerateMapFile>true</GenerateMapFile>
+    </Link>
+    <Link>
+      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
+    </Link>
+    <Link>
+      <MapExports>true</MapExports>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -110,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Literal.cpp" />
     <ClCompile Include="LiteralFactory.cpp" />
     <ClCompile Include="main.cpp" />
@@ -117,6 +131,7 @@
     <ClCompile Include="Stack.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Controller.h" />
     <ClInclude Include="Literal.h" />
     <ClInclude Include="LiteralFactory.h" />
     <ClInclude Include="Manager.h" />

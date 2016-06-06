@@ -16,6 +16,28 @@ Controller::Controller(Stack& s) : stack(s) {
 	dispatcher.emplace("+", PlusOp());
 	dispatcher.emplace("-", MinusOp());
 	dispatcher.emplace("*", MultiOp());
+	dispatcher.emplace("/", DivOp());
+	dispatcher.emplace("DIV", DivEntOp());
+	dispatcher.emplace("MOD", ModulOp());
+	dispatcher.emplace("NEG", NegOp());
+	dispatcher.emplace("NUM", NumOp());
+	dispatcher.emplace("DEN", DenOp());
+	dispatcher.emplace("$", $Op());
+	dispatcher.emplace("RE", ReOp());
+	dispatcher.emplace("IM", ImOp());
+	dispatcher.emplace("DUP", DupOp());
+	dispatcher.emplace("DROP", DropOp());
+	dispatcher.emplace("SWAP", SwapOp());
+	dispatcher.emplace("CLEAR", ClearOp());
+	dispatcher.emplace("EQUAL", EqualOp());
+	dispatcher.emplace("!=", DifferentOp());
+	dispatcher.emplace("=<", InfEqOp());
+	dispatcher.emplace("<", InfOp());
+	dispatcher.emplace(">", SupOp());
+	dispatcher.emplace(">=", SupEqOp());
+	dispatcher.emplace("AND", AndOp());
+	dispatcher.emplace("OR", OrOp());
+	dispatcher.emplace("NOT", NotOp());
 }
 
 void Controller::command(const std::string& str) {

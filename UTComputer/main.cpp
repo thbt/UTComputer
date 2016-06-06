@@ -17,20 +17,9 @@
 
 #include "Controller.h"
 
-int main() {
-	/*
-	IntegerLiteral n1(0);
-	RealLiteral n2(4.5);
-	RationalLiteral n3(0,1);
-	ComplexLiteral n4(new RealLiteral(0), new IntegerLiteral(0));
-	IntegerLiteral n5(10);
-	IntegerLiteral n6(5);
-	ComplexLiteral n7(new RationalLiteral(0,1), new RationalLiteral(0,3));
-	RationalLiteral n8(4, 2);
-	*/
-	
+int main() {	
 	Stack s;
-	std::string rpn = "2 2 + 3 * 5 -";
+	std::string rpn = "2$3/4 4$4/3 *";
 	
 	Controller c(s);
 	c.command(rpn);
