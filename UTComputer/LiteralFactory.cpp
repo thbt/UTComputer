@@ -1,4 +1,6 @@
 #include "LiteralFactory.h"
+#include <math.h>
+#include <algorithm>
 
 const LiteralFactory& LiteralFactory::getInstance() {
 	static LiteralFactory instance;
@@ -16,7 +18,7 @@ ILiteral* LiteralFactory::makeLiteral(double n) const {
 		return new RealLiteral(n);
 }
 
-ILiteral* LiteralFactory::makeLiteral(pair<int, int> n) const{
+ILiteral* LiteralFactory::makeLiteral(std::pair<int, int> n) const{
 	RationalLiteral* R = new RationalLiteral(n.first, n.second);
 	if (R->getValue().second == 1)
 		return new IntegerLiteral(R->getValue().first);
@@ -26,4 +28,33 @@ ILiteral* LiteralFactory::makeLiteral(pair<int, int> n) const{
 
 ILiteral* LiteralFactory::makeLiteral(INumberLiteral* re, INumberLiteral* im) const{
 	return new ComplexLiteral(re, im);
+}
+
+INumberLiteral* LiteralFactory::makeNumberLiteral(std::string str) const {
+	if(str.find('/') != std::string::npos) {
+		size_t pos = str.find('/');
+		int num = std::stoi(str.substr(0, pos));
+		int den = std::stoi(str.substr(pos + 1, str.length()));
+		
+		return new RationalLiteral(num,den);
+	} else if(str.find('.') != std::string::npos) {
+		return new RealLiteral(std::stod(str));
+	} else {
+		return new IntegerLiteral(std::stoi(str));
+	}
+}
+
+ILiteral* LiteralFactory::makeLiteral(std::string str) const {
+	if(str[0] == '[')
+		return new ProgramLiteral(str);
+	else if(str[0] == '`')
+		return new ExpressionLiteral(str);
+	else if(str.find('$') != std::string::npos) {
+		size_t pos = str.find('$');
+		INumberLiteral* re = makeNumberLiteral(str.substr(0, pos));
+		INumberLiteral* im = makeNumberLiteral(str.substr(pos + 1, str.length()));
+			
+		return new ComplexLiteral(re, im);
+	} else
+		return makeNumberLiteral(str);
 }

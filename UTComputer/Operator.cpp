@@ -2,7 +2,7 @@
 #include "LiteralFactory.h"
 #include "OperatorException.h"
 
-void PlusOp::interpret(Stack* s) {
+void PlusOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : + prend deux arguments");
 
@@ -15,11 +15,11 @@ void PlusOp::interpret(Stack* s) {
 	if ((lt != INTEGER && lt != REAL && lt != RATIONAL && lt != COMPLEX) || (rt != INTEGER && rt != REAL && rt != RATIONAL && rt != COMPLEX)) {
 		s->push(left);
 		s->push(right);
-		throw OperatorException("Erreur : / ne prend que des nombres (Entier, Réel, Rationnel ou Complexe)");
+		throw OperatorException("Erreur : / ne prend que des nombres (Entier, RŽel, Rationnel ou Complexe)");
 	}
 
 
-	pair<int, int> pairRa;
+	std::pair<int, int> pairRa;
 	INumberLiteral* pRe;
 	INumberLiteral* pIm;
 	int intVal;
@@ -150,16 +150,15 @@ void PlusOp::interpret(Stack* s) {
 		if (rt != COMPLEX){
 			s->push(right);
 			s->push(left);
-			interpret(s);
-		}
-		else{
+			this->operator()(s);
+		} else {
 			s->push(pRe);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-			interpret(s);
+			this->operator()(s);
 			ILiteral* partiReel = s->top(); s->pop();
 			s->push(pIm);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
-			interpret(s);
+			this->operator()(s);
 			ILiteral* partiIm = s->top(); s->pop();
 			t = partiReel->getType();
 			if (t == INTEGER){
@@ -210,7 +209,7 @@ void PlusOp::interpret(Stack* s) {
 	}
 }
 
-void MinusOp::interpret(Stack* s) {
+void MinusOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : - prend deux arguments");
 
@@ -226,7 +225,7 @@ void MinusOp::interpret(Stack* s) {
 		throw OperatorException("Erreur : / ne prend que des nombres (Entier, Réel, Rationnel ou Complexe)");
 	}
 
-	pair<int, int> pairRa;
+	std::pair<int, int> pairRa;
 	INumberLiteral* pRe;
 	INumberLiteral* pIm;
 	int intVal;
@@ -359,7 +358,7 @@ void MinusOp::interpret(Stack* s) {
 		if (rt != COMPLEX){
 			s->push(right);
 			s->push(left);
-			interpret(s);
+			this->operator()(s);
 			ComplexLiteral* cmpI = dynamic_cast<ComplexLiteral*>(s->top()); s->pop();
 			t = cmpI->Re().getType();
 			switch (t) {
@@ -379,11 +378,11 @@ void MinusOp::interpret(Stack* s) {
 		else{
 			s->push(pRe);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-			interpret(s);
+			this->operator()(s);
 			ILiteral* partiReel = s->top(); s->pop();
 			s->push(pIm);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
-			interpret(s);
+			this->operator()(s);
 			ILiteral* partiIm = s->top(); s->pop();
 			t = partiReel->getType();
 			if (t == INTEGER){
@@ -434,7 +433,7 @@ void MinusOp::interpret(Stack* s) {
 	}
 }
 
-void MultiOp::interpret(Stack* s) {
+void MultiOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : * prend deux arguments");
 
@@ -444,13 +443,14 @@ void MultiOp::interpret(Stack* s) {
 	Type lt = left->getType();
 	Type rt = right->getType();
 
-	if (lt != INTEGER || lt != REAL || lt != RATIONAL || lt != COMPLEX || rt != INTEGER || rt != REAL || rt != RATIONAL || rt != COMPLEX) {
+	if ((lt != INTEGER && lt != REAL && lt != RATIONAL && lt != COMPLEX) ||
+		(rt != INTEGER && rt != REAL && rt != RATIONAL && rt != COMPLEX)) {
 		s->push(left);
 		s->push(right);
-		throw OperatorException("Erreur : / ne prend que des nombres (Entier, Réel, Rationnel ou Complexe)");
+		throw OperatorException("Erreur : * ne prend que des nombres (Entier, RŽel, Rationnel ou Complexe)");
 	}
 
-	pair<int, int> pairRa;
+	std::pair<int, int> pairRa;
 	INumberLiteral* pRe;
 	INumberLiteral* pIm;
 	int intVal;
@@ -617,27 +617,27 @@ void MultiOp::interpret(Stack* s) {
 		if (rt != COMPLEX){
 			s->push(right);
 			s->push(left);
-			interpret(s);
+			this->operator()(s);
 		}
 		else{ //(aa' – bb') + i (ab' + ba')
 			s->push(pRe);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-			interpret(s);
+			this->operator()(s);
 			s->push(pIm);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
-			interpret(s);
+			this->operator()(s);
 			MinusOp mop;
-			mop.interpret(s);
+			mop(s);
 			ILiteral* partiReel = s->top(); s->pop();
 
 			s->push(pRe);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
-			interpret(s);
+			this->operator()(s);
 			s->push(pIm);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-			interpret(s);
+			this->operator()(s);
 			PlusOp pop;
-			pop.interpret(s);
+			pop(s);
 			ILiteral* partiIm = s->top(); s->pop();
 
 			t = partiReel->getType();
@@ -689,7 +689,7 @@ void MultiOp::interpret(Stack* s) {
 	}
 }
 
-void DivOp::interpret(Stack* s){
+void DivOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : / a besoin de deux arguments");
 
@@ -723,7 +723,7 @@ void DivOp::interpret(Stack* s){
 
 
 
-	pair<int, int> pairRa;
+	std::pair<int, int> pairRa;
 	INumberLiteral* pRe;
 	INumberLiteral* pIm;
 	int intVal;
@@ -735,8 +735,8 @@ void DivOp::interpret(Stack* s){
 	PlusOp pop;
 	MultiOp muop;
 
-	pair<int, int> pairReel;
-	pair<int, int> pairIm;
+	std::pair<int, int> pairReel;
+	std::pair<int, int> pairIm;
 
 	INumberLiteral* INL1 = new IntegerLiteral(0);
 	INumberLiteral* INL2 = new IntegerLiteral(0);
@@ -780,14 +780,14 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new IntegerLiteral(intVal));
-					muop.interpret(s);
+					muop(s);
 					if ((INL1 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
 						INL1 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
@@ -795,14 +795,14 @@ void DivOp::interpret(Stack* s){
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new IntegerLiteral(-intVal));
-					muop.interpret(s);
+					muop(s);
 					for (auto it = s->begin(); it != s->end(); it++) {
 						std::cout << (*it)->toString() << std::endl;
 					}
@@ -827,27 +827,27 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new IntegerLiteral(intVal));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new IntegerLiteral(-intVal));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 					break;
 				}
@@ -858,14 +858,14 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new IntegerLiteral(intVal));
-					muop.interpret(s);
+					muop(s);
 					if ((INL1 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
 						INL1 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
@@ -873,14 +873,14 @@ void DivOp::interpret(Stack* s){
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new IntegerLiteral(-intVal));
-					muop.interpret(s);
+					muop(s);
 					if ((INL2 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
 						INL2 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
@@ -894,27 +894,27 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new IntegerLiteral(intVal));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RationalLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new IntegerLiteral(-intVal));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RationalLiteral*>(s->top()); s->pop();
 					break;
 				}
@@ -956,27 +956,27 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RealLiteral(doubleVal));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RealLiteral(-doubleVal));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 					break;
 				}
@@ -996,27 +996,27 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RealLiteral(doubleVal));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RealLiteral(-doubleVal));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 					break;
 				}
@@ -1028,28 +1028,28 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RealLiteral(doubleVal));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RealLiteral(-doubleVal));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
 					break;
@@ -1061,27 +1061,27 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RealLiteral(doubleVal));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RealLiteral(-doubleVal));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 					break;
 				}
@@ -1120,27 +1120,27 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 					break;
 
@@ -1148,27 +1148,27 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 					break;
 
@@ -1176,14 +1176,14 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					if ((INL1 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
 						INL1 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
@@ -1191,14 +1191,14 @@ void DivOp::interpret(Stack* s){
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					if ((INL2 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
 						INL2 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
@@ -1220,27 +1220,27 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 					break;
 				}
@@ -1252,14 +1252,14 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					if ((INL1 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
 						INL1 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
@@ -1267,14 +1267,14 @@ void DivOp::interpret(Stack* s){
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					if ((INL2 = dynamic_cast<RationalLiteral*>(s->top())) == nullptr)
 						INL2 = dynamic_cast<RealLiteral*>(s->top());
 					s->pop();
@@ -1283,54 +1283,54 @@ void DivOp::interpret(Stack* s){
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RealLiteral*>(s->top()), s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RealLiteral*>(s->top()); s->pop();
 					break;
 				case RATIONAL:
 					s->push(pRe);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL1 = dynamic_cast<RationalLiteral*>(s->top()); s->pop();
 
 					s->push(pIm);
 					s->push(pRe);
 					s->push(pRe);
-					muop.interpret(s);
+					muop(s);
 					s->push(pIm);
 					s->push(pIm);
-					muop.interpret(s);
-					pop.interpret(s);
-					interpret(s);
+					muop(s);
+					pop(s);
+					this->operator()(s);
 					s->push(new RationalLiteral(-pairRa.first, pairRa.second));
-					muop.interpret(s);
+					muop(s);
 					INL2 = dynamic_cast<RationalLiteral*>(s->top()); s->pop();
 					break;
 				}
@@ -1347,44 +1347,44 @@ void DivOp::interpret(Stack* s){
 		if (rt != COMPLEX){
 			s->push(new IntegerLiteral(1));
 			s->push(right);
-			muop.interpret(s);
+			muop(s);
 			s->push(left);
-			interpret(s);
+			this->operator()(s);
 		}
 		else{ //(aa' + bb')/a'²+b'² + i (ba' - ab')/a'²+b'²
 			s->push(pRe);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-			muop.interpret(s);
+			muop(s);
 			s->push(pIm);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
-			muop.interpret(s);
-			pop.interpret(s);
+			muop(s);
+			pop(s);
 			s->push(pIm);
 			s->push(pIm);
-			muop.interpret(s);
+			muop(s);
 			s->push(pRe);
 			s->push(pRe);
-			muop.interpret(s);
-			pop.interpret(s);
-			interpret(s);
+			muop(s);
+			pop(s);
+			this->operator()(s);
 			ILiteral* partiReel = s->top(); s->pop();
 
 			//i(ba' - ab') / a'²+b'²
 			s->push(pIm);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Re());
-			muop.interpret(s);
+			muop(s);
 			s->push(pRe);
 			s->push(&dynamic_cast<ComplexLiteral*>(right)->Im());
-			muop.interpret(s);
-			mop.interpret(s);
+			muop(s);
+			mop(s);
 			s->push(pIm);
 			s->push(pIm);
-			muop.interpret(s);
+			muop(s);
 			s->push(pRe);
 			s->push(pRe);
-			muop.interpret(s);
-			pop.interpret(s);
-			interpret(s);
+			muop(s);
+			pop(s);
+			this->operator()(s);
 			ILiteral* partiIm = s->top(); s->pop();
 
 			t = partiReel->getType();
@@ -1436,7 +1436,7 @@ void DivOp::interpret(Stack* s){
 	}
 }
 
-void DivEntOp::interpret(Stack* s){
+void DivEntOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : DIV prend deux arguments");
 
@@ -1462,7 +1462,7 @@ void DivEntOp::interpret(Stack* s){
 	s->push(LiteralFactory::getInstance().makeLiteral(divEntier));
 }
 
-void ModulOp::interpret(Stack* s){
+void ModulOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : MOD a besoin de deux arguments");
 
@@ -1488,13 +1488,13 @@ void ModulOp::interpret(Stack* s){
 	s->push(LiteralFactory::getInstance().makeLiteral(divEntier));
 }
 
-void NegOp::interpret(Stack* s){
+void NegOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : NEG a besoin d'un argument");
 
 	ILiteral* number = s->top(); s->pop();
 	Type t = number->getType();
-	pair<int, int> rationalNeg;
+	std::pair<int, int> rationalNeg;
 
 	if (t != INTEGER && t != REAL && t != RATIONAL && t != COMPLEX) {
 		s->push(number);
@@ -1551,7 +1551,7 @@ void NegOp::interpret(Stack* s){
 	}
 }
 
-void NumOp::interpret(Stack* s){
+void NumOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : NUM a besoin d'un argument");
 
@@ -1570,7 +1570,7 @@ void NumOp::interpret(Stack* s){
 		s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(number)->getValue().first));
 }
 
-void DenOp::interpret(Stack* s){
+void DenOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : DEN a besoin d'un argument");
 
@@ -1589,7 +1589,7 @@ void DenOp::interpret(Stack* s){
 		s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<RationalLiteral*>(number)->getValue().second));
 }
 
-void $Op::interpret(Stack* s){
+void $Op::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : $ a besoin de deux arguments");
 
@@ -1608,7 +1608,7 @@ void $Op::interpret(Stack* s){
 	s->push(LiteralFactory::getInstance().makeLiteral(dynamic_cast<INumberLiteral*>(left), dynamic_cast<INumberLiteral*>(right)));
 }
 
-void ReOp::interpret(Stack* s){
+void ReOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : RE a besoin d'un argument");
 
@@ -1639,7 +1639,7 @@ void ReOp::interpret(Stack* s){
 	}
 }
 
-void ImOp::interpret(Stack* s){
+void ImOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : RE a besoin d'un argument");
 
@@ -1670,21 +1670,21 @@ void ImOp::interpret(Stack* s){
 	}
 }
 
-void DupOp::interpret(Stack* s){
+void DupOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : DUP a besoin d'un argument");
 
 	ILiteral* number = s->top(); s->push(number);
 }
 
-void DropOp::interpret(Stack* s){
+void DropOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : DropOp a besoin d'un argument");
 
 	s->pop();
 }
 
-void SwapOp::interpret(Stack* s){
+void SwapOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : SwapOp a besoin d'un argument");
 
@@ -1694,7 +1694,7 @@ void SwapOp::interpret(Stack* s){
 	s->push(lit2);
 }
 
-void ClearOp::interpret(Stack* s){
+void ClearOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : ClearOp a besoin d'un argument");
 
@@ -1703,7 +1703,7 @@ void ClearOp::interpret(Stack* s){
 		s->pop();
 }
 
-void EqualOp::interpret(Stack* s){
+void EqualOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : = a besoin d'au moins deux arguments");
 
@@ -1822,7 +1822,7 @@ void EqualOp::interpret(Stack* s){
 	}
 }
 
-void DifferentOp::interpret(Stack* s){
+void DifferentOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : != a besoin d'au moins deux arguments");
 
@@ -1941,7 +1941,7 @@ void DifferentOp::interpret(Stack* s){
 	}
 }
 
-void InfEqOp::interpret(Stack* s) {
+void InfEqOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : =< a besoin d'au moins deux arguments");
 
@@ -2003,7 +2003,7 @@ void InfEqOp::interpret(Stack* s) {
 	}
 }
 
-void SupOp::interpret(Stack* s) {
+void SupOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : > a besoin d'au moins deux arguments");
 
@@ -2065,7 +2065,7 @@ void SupOp::interpret(Stack* s) {
 	}
 }
 
-void InfOp::interpret(Stack* s) {
+void InfOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : < a besoin d'au moins deux arguments");
 
@@ -2127,7 +2127,7 @@ void InfOp::interpret(Stack* s) {
 	}
 }
 
-void SupEqOp::interpret(Stack* s) {
+void SupEqOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : >= a besoin d'au moins deux arguments");
 
@@ -2189,7 +2189,7 @@ void SupEqOp::interpret(Stack* s) {
 	}
 }
 
-void AndOp::interpret(Stack* s){
+void AndOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : AND a besoin d'au moins deux arguments");
 
@@ -2264,7 +2264,7 @@ void AndOp::interpret(Stack* s){
 	s->push(new IntegerLiteral(1));
 }
 
-void OrOp::interpret(Stack* s){
+void OrOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : OR a besoin d'au moins deux arguments");
 
@@ -2328,7 +2328,7 @@ void OrOp::interpret(Stack* s){
 		s->push(new IntegerLiteral(1));
 }
 
-void NotOp::interpret(Stack* s){
+void NotOp::operator()(Stack* s){
 	if (s->size() < this->getArity())
 		throw OperatorException("Erreur : AND a besoin d'au moins un argument");
 

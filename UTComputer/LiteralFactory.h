@@ -1,8 +1,12 @@
 #pragma once
+
+#include <string>
 #include "Literal.h"
+
 
 class LiteralFactory {
 	LiteralFactory() {};
+	INumberLiteral* makeNumberLiteral(std::string str) const;
 public:
 	static const LiteralFactory& getInstance();
 	LiteralFactory(const LiteralFactory&) = delete; // Suppression du constructeur de recopie.
@@ -10,6 +14,8 @@ public:
 
 	ILiteral* makeLiteral(int n) const;
 	ILiteral* makeLiteral(double n) const;
-	ILiteral* makeLiteral(pair<int,int> n) const;
+	ILiteral* makeLiteral(std::pair<int,int> n) const;
 	ILiteral* makeLiteral(INumberLiteral* re, INumberLiteral* im) const;
+	
+	ILiteral* makeLiteral(std::string str) const;
 };

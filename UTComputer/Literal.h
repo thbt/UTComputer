@@ -2,13 +2,11 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
-
 // TODO: destructor where its needed
 
 class IOperand {
 public:
-	virtual string toString() const = 0;
+	virtual std::string toString() const = 0;
 };
 
 enum Type { INTEGER, RATIONAL, REAL, COMPLEX, EXPRESSION, PROGRAM };
@@ -20,7 +18,7 @@ public:
 
 	Type getType() const { return type; }
 
-	virtual string toString() const = 0;
+	virtual std::string toString() const = 0;
 	//virtual void accept(IOperator&) = 0;
 };
 
@@ -47,7 +45,7 @@ class INumberLiteral : public ILiteral {
 public:
 	INumberLiteral(Type t) : ILiteral(t) {}
 
-	virtual string toString() const = 0;
+	virtual std::string toString() const = 0;
 	virtual bool isNul() const = 0;
 	//virtual void accept(IOperator&) = 0;
 };
@@ -64,7 +62,7 @@ public:
 		return false;
 	}
 
-	string toString() const { return to_string(value); }
+	std::string toString() const { return std::to_string(value); }
 	//void accept(IOperator& o) { o.visitIntegerLiteral(this); }
 };
 
@@ -75,7 +73,7 @@ class RationalLiteral : public INumberLiteral {
 	int denominator;
 public:
 	RationalLiteral(int n, int d) : INumberLiteral(RATIONAL), numerator(n), denominator(d) { simplification(); }
-	string toString() const { return to_string(numerator) + "/" + to_string(denominator); }
+	std::string toString() const { return std::to_string(numerator) + "/" + std::to_string(denominator); }
 
 	std::pair<int, int> getValue() const {
 		std::pair<int, int> twoValues;
@@ -99,7 +97,7 @@ class RealLiteral : public INumberLiteral {
 	double value;
 public:
 	RealLiteral(double v) : INumberLiteral(REAL), value(v) {}
-	string toString() const { return to_string(value); }
+	std::string toString() const { return std::to_string(value); }
 	double getValue() const { return value; }
 	bool isNul() const {
 		if (value == 0)
@@ -114,7 +112,7 @@ class ComplexLiteral : public ILiteral {
 public:
 	ComplexLiteral(INumberLiteral* r = new IntegerLiteral(0), INumberLiteral* i = new IntegerLiteral(0)) 
 		: ILiteral(COMPLEX), real(r), imaginary(i) {}
-	string toString() const { return real->toString() + "$" + imaginary->toString(); }
+	std::string toString() const { return real->toString() + "$" + imaginary->toString(); }
 
 	INumberLiteral& Re() const { return *real; }
 	INumberLiteral& Im() const { return *imaginary; }
@@ -132,21 +130,27 @@ public:
 };
 
 class ExpressionLiteral : public ILiteral {
-	string expression;
+	std::string expression;
 public:
-	ExpressionLiteral(string e) : ILiteral(EXPRESSION), expression(e) {}
-	string getValue() const {
+	ExpressionLiteral(std::string e) : ILiteral(EXPRESSION), expression(e) {}
+	std::string getValue() const {
 		return expression;
 	}
+	
+	std::string toString() const { return expression; }
+	bool isNul() const { return expression == ""; }
 };
 
 class ProgramLiteral : public ILiteral {
-	string program;
+	std::string program;
 public:
-	ProgramLiteral(string p) : ILiteral(PROGRAM), program(p) {}
-	string getValue() const {
+	ProgramLiteral(std::string p) : ILiteral(PROGRAM), program(p) {}
+	std::string getValue() const {
 		return program;
 	}
+	
+	std::string toString() const { return program; }
+	bool isNul() const { return program == ""; }
 };
 
 /*
@@ -161,27 +165,3 @@ IOperand* eval() { return identity; }
 string toString() const { return name; }
 };
 */
-
-template<class T>
-bool isEntier(T& a){
-	Entier *e = dynamic_cast<Entier*>(&a);
-	return e != nullptr;
-}
-
-template<class T>
-bool isReel(T& a){
-	Reel *r = dynamic_cast<Reel*>(&a);
-	return r != nullptr;
-}
-
-template<class T>
-bool isRationnel(T& a){
-	Rationnel *r = dynamic_cast<Rationnel*>(&a);
-	return r != nullptr;
-}
-
-template<class T>
-bool isComplexe(T& a){
-	Complexe *c = dynamic_cast<Complexe*>(&a);
-	return c != nullptr;
-}
