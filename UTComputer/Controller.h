@@ -1,14 +1,16 @@
-//
-//  Controller.hpp
-//  UTComputer
-//
-//  Created by Thibaut Roy on 06/06/16.
-//  Copyright © 2016 tyrius. All rights reserved.
-//
+#pragma once
 
-#ifndef Controller_hpp
-#define Controller_hpp
+#include <string>
+#include <functional>
+#include <map>
 
-#include <stdio.h>
+#include "Stack.h"
+#include "Operator.h"
 
-#endif /* Controller_hpp */
+class Controller {
+	Stack& stack;
+	std::map<std::string, std::function<void(Stack* s)>> dispatcher;
+public: 
+	Controller(Stack& s);
+	void command(const std::string& str);
+};
