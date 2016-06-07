@@ -1,42 +1,45 @@
 #pragma once
 
+#include <QObject>
+
 #include <string>
 #include <functional>
 #include <map>
 #include <vector>
 #include <stack>
-#include <QObject>
 
 #include "Stack.h"
 #include "Operator.h"
 
 
 class Controller : public QObject {
-	Controller();
+    Q_OBJECT
+
+    Controller();
 
     unsigned int NumberDisplay;
-	Stack stack;
-	std::map<std::string, std::function<void(Stack* s)>> dispatcher;
-	std::stack<StackMemento*> undoStack;
-	std::stack<StackMemento*> redoStack;
+    Stack stack;
+    std::map<std::string, std::function<void(Stack* s)>> dispatcher;
+    std::stack<StackMemento*> undoStack;
+    std::stack<StackMemento*> redoStack;
 
-public: 
-	static Controller& instance();
+public:
+    static Controller& instance();
 
-	void command(const std::string& str);
-	void execute(std::string op);
+    void command(const std::string& str);
+    void execute(std::string op);
 
-	void undo();
-	void redo();
+    void undo();
+    void redo();
 
     unsigned int getNbDisplay() const;
     void setNbDisplay(unsigned int nb);
 
-    std::vector<ILiteral*>::const_reverse_iterator Controller::beginStack() const{
+    std::vector<ILiteral*>::const_reverse_iterator beginStack() const{
         return stack.begin();
     }
 
-    std::vector<ILiteral*>::const_reverse_iterator Controller::endStack() const{
+    std::vector<ILiteral*>::const_reverse_iterator endStack() const{
         return stack.end();
     }
 

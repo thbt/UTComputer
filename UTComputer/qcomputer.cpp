@@ -1,9 +1,11 @@
 #include "qcomputer.h"
+
 #include <QIcon>
 #include <QCoreApplication>
 #include <QDebug>
 #include <windows.h>
 #include <QInputDialog>
+
 #include "Controller.h"
 
 static bool bipsonor = true;
