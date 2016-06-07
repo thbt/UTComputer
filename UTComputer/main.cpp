@@ -14,7 +14,7 @@
 
 int main() {	
 	Stack s;
-	std::string rpn = "2 2 * 3 + UNDO REDO UNDO";
+	std::string rpn = "`2+2`";
 	
 	Controller::instance().command(rpn);
 	

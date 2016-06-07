@@ -18,6 +18,7 @@ Controller& Controller::instance() {
 }
 
 Controller::Controller() : stack() {
+	// on stocke les functors
 	dispatcher.emplace("+", PlusOp());
 	dispatcher.emplace("-", MinusOp());
 	dispatcher.emplace("*", MultiOp());
@@ -76,8 +77,28 @@ void Controller::command(const std::string& str) {
 	std::stringstream ss(str); // string to stream
 	std::string item;
 	std::vector<std::string> tokens;
-	while(getline(ss, item, ' '))
-		tokens.push_back(item);
+	std::string newToken = "";
+	while(getline(ss, item, ' ')) {
+		if(item[0] == '`') {
+			newToken += item;
+			if(item.back() == '`') {
+				tokens.push_back(newToken);
+				newToken = "";
+			}
+		} else if(item[0] == '[' || newToken[0] == '[') {
+			newToken = newToken + item + ' ';
+			if(item.back() == ']') {
+				tokens.push_back(newToken);
+				newToken = "";
+			}
+		} else
+			tokens.push_back(item);
+	}
+		
+	std::cout << "affichage tokens :" << std::endl;
+	for(auto it = tokens.begin(); it != tokens.end(); it++) {
+		std::cout << *it << std::endl;
+	}
 
 	// 2. Syntactic analysis
 	// TODO try catch pour l'instanciation des littéraux
