@@ -129,15 +129,16 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Operator.cpp" />
     <ClCompile Include="Stack.cpp" />
+    <ClCompile Include="StackMemento.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controller.h" />
     <ClInclude Include="Literal.h" />
     <ClInclude Include="LiteralFactory.h" />
-    <ClInclude Include="Manager.h" />
     <ClInclude Include="Operator.h" />
     <ClInclude Include="OperatorException.h" />
     <ClInclude Include="Stack.h" />
+    <ClInclude Include="StackMemento.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

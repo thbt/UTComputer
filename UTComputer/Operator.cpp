@@ -1,6 +1,7 @@
 #include "Operator.h"
 #include "LiteralFactory.h"
 #include "OperatorException.h"
+#include "Controller.h"
 
 void PlusOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
@@ -2363,4 +2364,12 @@ void NotOp::operator()(Stack* s){
 		break;
 	}
 	s->push(new IntegerLiteral(1));
+}
+
+void UndoOp::operator()(Stack* s) {
+	Controller::instance().undo();
+}
+
+void RedoOp::operator()(Stack* s) {
+	Controller::instance().redo();
 }

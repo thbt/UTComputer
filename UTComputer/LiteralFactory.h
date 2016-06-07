@@ -9,6 +9,7 @@ class LiteralFactory {
 	INumberLiteral* makeNumberLiteral(std::string str) const;
 public:
 	static const LiteralFactory& getInstance();
+
 	LiteralFactory(const LiteralFactory&) = delete; // Suppression du constructeur de recopie.
 	void operator=(const LiteralFactory&) = delete; // Suppression de l'opérateur d'affectation.
 

@@ -174,4 +174,16 @@ public:
 	void operator()(Stack* s);
 };
 
+class UndoOp : public IOperator {
+public:
+	UndoOp() : IOperator("UNDO", 0) {}
+	void operator()(Stack* s);
+};
+
+class RedoOp : public IOperator {
+public:
+	RedoOp() : IOperator("REDO", 0) {}
+	void operator()(Stack* s);
+};
+
 // Pour rajouter un opérateur, l'ajouter a la map de controleur

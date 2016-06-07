@@ -12,7 +12,12 @@
 #include "LiteralFactory.h"
 #include "OperatorException.h"
 
-Controller::Controller(Stack& s) : stack(s) {
+Controller& Controller::instance() {
+	static Controller instance;
+	return instance;
+}
+
+Controller::Controller() : stack() {
 	dispatcher.emplace("+", PlusOp());
 	dispatcher.emplace("-", MinusOp());
 	dispatcher.emplace("*", MultiOp());
@@ -38,6 +43,31 @@ Controller::Controller(Stack& s) : stack(s) {
 	dispatcher.emplace("AND", AndOp());
 	dispatcher.emplace("OR", OrOp());
 	dispatcher.emplace("NOT", NotOp());
+	dispatcher.emplace("UNDO", UndoOp());
+	dispatcher.emplace("REDO", RedoOp());
+}
+
+// TODO throw exception si l'opération n'existe pas
+void Controller::execute(std::string op) {
+	// On effectue une opération sur la stack -> on sauvegarde l'état
+	undoStack.push(stack.createMemento());
+	dispatcher[op](&stack);
+}
+
+// TODO throw exception si rien a pop
+void Controller::undo() {
+	undoStack.pop(); // pop la dernière opération
+	redoStack.push(stack.createMemento());
+	stack.setMemento(undoStack.top());
+	undoStack.pop(); // pop le undo de la stack
+}
+
+// TODO throw exception si rien a pop
+void Controller::redo() {
+	undoStack.pop(); // pop le undo de la stack
+	stack.setMemento(redoStack.top());
+	undoStack.push(stack.createMemento());
+	redoStack.pop();
 }
 
 void Controller::command(const std::string& str) {
@@ -58,7 +88,7 @@ void Controller::command(const std::string& str) {
 			stack.push(LiteralFactory::getInstance().makeLiteral(t));
 		else {// otherwise the token is an operator
 			try {
-				dispatcher[t](&stack);
+				execute(t);
 			} catch(OperatorException oe) {
 				std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
 			}

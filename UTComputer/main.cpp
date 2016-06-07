@@ -9,20 +9,14 @@
 #include <map>
 #include <functional> // for std::function
 
-#include "Literal.h"
 #include "Stack.h"
-#include "Operator.h"
-#include "OperatorException.h"
-#include "LiteralFactory.h"
-
 #include "Controller.h"
 
 int main() {	
 	Stack s;
-	std::string rpn = "2$3/4 4$4/3 *";
+	std::string rpn = "2 2 * 3 + UNDO REDO UNDO";
 	
-	Controller c(s);
-	c.command(rpn);
+	Controller::instance().command(rpn);
 	
 	system("pause");
 	return 0;

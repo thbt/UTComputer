@@ -18,6 +18,7 @@ public:
 
 	Type getType() const { return type; }
 
+	virtual ILiteral* clone() const = 0;
 	virtual std::string toString() const = 0;
 	//virtual void accept(IOperator&) = 0;
 };
@@ -44,16 +45,19 @@ public:
 class INumberLiteral : public ILiteral {
 public:
 	INumberLiteral(Type t) : ILiteral(t) {}
-
+	
+	virtual ILiteral* clone() const = 0;
 	virtual std::string toString() const = 0;
 	virtual bool isNul() const = 0;
 	//virtual void accept(IOperator&) = 0;
+
 };
 
 class IntegerLiteral : public INumberLiteral {
 	int value;
 public:
 	IntegerLiteral(int v) : INumberLiteral(INTEGER), value(v) {}
+	ILiteral* clone() const { return new IntegerLiteral(*this); }
 
 	int getValue() const { return value; }
 	bool isNul() const {
@@ -73,6 +77,8 @@ class RationalLiteral : public INumberLiteral {
 	int denominator;
 public:
 	RationalLiteral(int n, int d) : INumberLiteral(RATIONAL), numerator(n), denominator(d) { simplification(); }
+	ILiteral* clone() const { return new RationalLiteral(*this); }
+
 	std::string toString() const { return std::to_string(numerator) + "/" + std::to_string(denominator); }
 
 	std::pair<int, int> getValue() const {
@@ -97,6 +103,8 @@ class RealLiteral : public INumberLiteral {
 	double value;
 public:
 	RealLiteral(double v) : INumberLiteral(REAL), value(v) {}
+	ILiteral* clone() const { return new RealLiteral(*this); }
+
 	std::string toString() const { return std::to_string(value); }
 	double getValue() const { return value; }
 	bool isNul() const {
@@ -106,12 +114,15 @@ public:
 	}
 };
 
+// TODO overload copy operator bc pointers (en fait non parce que personne n'a acces aux pointeurs #encapsulation)
 class ComplexLiteral : public ILiteral {
 	INumberLiteral* real;
 	INumberLiteral* imaginary;
 public:
 	ComplexLiteral(INumberLiteral* r = new IntegerLiteral(0), INumberLiteral* i = new IntegerLiteral(0)) 
 		: ILiteral(COMPLEX), real(r), imaginary(i) {}
+	ILiteral* clone() const { return new ComplexLiteral(*this); }
+
 	std::string toString() const { return real->toString() + "$" + imaginary->toString(); }
 
 	INumberLiteral& Re() const { return *real; }
@@ -133,6 +144,8 @@ class ExpressionLiteral : public ILiteral {
 	std::string expression;
 public:
 	ExpressionLiteral(std::string e) : ILiteral(EXPRESSION), expression(e) {}
+	ILiteral* clone() const { return new ExpressionLiteral(*this); }
+
 	std::string getValue() const {
 		return expression;
 	}
@@ -145,6 +158,8 @@ class ProgramLiteral : public ILiteral {
 	std::string program;
 public:
 	ProgramLiteral(std::string p) : ILiteral(PROGRAM), program(p) {}
+	ILiteral* clone() const { return new ProgramLiteral(*this); }
+
 	std::string getValue() const {
 		return program;
 	}
@@ -152,16 +167,3 @@ public:
 	std::string toString() const { return program; }
 	bool isNul() const { return program == ""; }
 };
-
-/*
-class AtomLiteral : public IOperand {
-string name;
-IOperand* identity;
-public:
-AtomLiteral(string n, ILiteral* i) : name(n), identity(i) {}
-
-IOperand* eval() { return identity; }
-
-string toString() const { return name; }
-};
-*/
