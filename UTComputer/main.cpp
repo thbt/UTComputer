@@ -1,23 +1,9 @@
-#include <string>
-#include <iostream>
-#include <istream>
-#include <vector>
-#include <ostream>
-#include <iterator>
-#include <sstream>
-#include <algorithm>
-#include <map>
-#include <functional> // for std::function
+#include <QApplication>
+#include "qcomputer.h"
 
-#include "Stack.h"
-#include "Controller.h"
-
-int main() {	
-	Stack s;
-	std::string rpn = "`2+2`";
-	
-	Controller::instance().command(rpn);
-	
-	system("pause");
-	return 0;
+int main(int argc, char* argv[]){
+	QApplication app(argc, argv);
+    QComputer fenetre;
+    fenetre.show();
+    return app.exec();
 }

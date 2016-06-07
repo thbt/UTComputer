@@ -11,7 +11,7 @@ public:
 	IOperator(std::string s, unsigned int a) : symbol(s), arity(a) {}
 	std::string toString() const { return symbol; }
 	virtual void operator()(Stack* s) = 0; // Foncteur = classe-fonction
-	unsigned int getArity() const { return arity; };
+    unsigned int getArity() const { return arity; }
 
 	/*
 	// liste des types litteraux concrets !
@@ -193,5 +193,3 @@ public:
 	void operator()(Stack* s);
 };
 */
-
-// Pour rajouter un opérateur, l'ajouter a la map de controleur

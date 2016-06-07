@@ -126,10 +126,10 @@
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Literal.cpp" />
     <ClCompile Include="LiteralFactory.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Operator.cpp" />
     <ClCompile Include="Stack.cpp" />
     <ClCompile Include="StackMemento.cpp" />
+    <ClCompile Include="testCalculator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controller.h" />

@@ -2378,6 +2378,7 @@ void RedoOp::operator()(Stack* s) {
 	Controller::instance().redo();
 }
 
+/*
 void EvalOp::operator()(Stack* s) {
 	if(s->size() < this->getArity())
 		throw OperatorException("Erreur : EVAL a besoin d'au moins un argument");
@@ -2405,12 +2406,11 @@ void EvalOp::operator()(Stack* s) {
 
 		// If the token is a number, then add it to the output queue.
 		if(std::isdigit(c)) {
-			while(!expr.empty() && (c = expr.at(0)) && (std::isdigit(c) || c == decimal_sep)) {
+			while(!expr.empty() && (c = expr[0]) && (std::isdigit(c) || c == decimal_sep)) {
 				res += c;
 				expr.erase(0, 1);
 			}
 		}
 	}
-		
-
 }
+*/

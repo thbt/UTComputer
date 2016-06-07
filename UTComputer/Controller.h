@@ -5,13 +5,16 @@
 #include <map>
 #include <vector>
 #include <stack>
+#include <QObject>
 
 #include "Stack.h"
 #include "Operator.h"
 
-class Controller {
+
+class Controller : public QObject {
 	Controller();
 
+    unsigned int NumberDisplay;
 	Stack stack;
 	std::map<std::string, std::function<void(Stack* s)>> dispatcher;
 	std::stack<StackMemento*> undoStack;
@@ -25,4 +28,19 @@ public:
 
 	void undo();
 	void redo();
+
+    unsigned int getNbDisplay() const;
+    void setNbDisplay(unsigned int nb);
+
+    std::vector<ILiteral*>::const_reverse_iterator Controller::beginStack() const{
+        return stack.begin();
+    }
+
+    std::vector<ILiteral*>::const_reverse_iterator Controller::endStack() const{
+        return stack.end();
+    }
+
+signals :
+    void changeState();
+    void showError(std::string error);
 };
