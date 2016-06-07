@@ -18,5 +18,5 @@ public:
 	ILiteral* makeLiteral(std::pair<int,int> n) const;
 	ILiteral* makeLiteral(INumberLiteral* re, INumberLiteral* im) const;
 	
-	ILiteral* makeLiteral(std::string str) const;
+	ILiteral* makeLiteral(std::string str) const; // abstract factory
 };

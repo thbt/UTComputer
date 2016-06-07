@@ -138,6 +138,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\UTComputer - Copie\UTComputer\test.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="Debug\moc_Controller.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -145,6 +146,7 @@
     <ClCompile Include="Debug\moc_qcomputer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="ExpressionParser.cpp" />
     <ClCompile Include="Literal.cpp" />
     <ClCompile Include="LiteralFactory.cpp" />
     <ClCompile Include="Operator.cpp" />
@@ -160,6 +162,8 @@
     <ClCompile Include="qcomputer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExpressionParser.h" />
+    <ClInclude Include="test.h" />
     <CustomBuild Include="Controller.h">
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I." "-I\C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\release" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing Controller.h...</Message>

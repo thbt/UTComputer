@@ -20,6 +20,7 @@ class Controller : public QObject {
     unsigned int NumberDisplay;
     Stack stack;
     std::map<std::string, std::function<void(Stack* s)>> dispatcher;
+	std::map<std::string, ILiteral*> vars;
     std::stack<StackMemento*> undoStack;
     std::stack<StackMemento*> redoStack;
 
@@ -34,6 +35,8 @@ public:
 
     unsigned int getNbDisplay() const;
     void setNbDisplay(unsigned int nb);
+
+	std::vector<std::string> getOperators();
 
     std::vector<ILiteral*>::const_reverse_iterator beginStack() const{
         return stack.begin();

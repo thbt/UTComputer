@@ -2370,6 +2370,7 @@ void NotOp::operator()(Stack* s){
 	s->push(new IntegerLiteral(1));
 }
 
+// TODO catch exception
 void UndoOp::operator()(Stack* s) {
 	Controller::instance().undo();
 }
@@ -2378,7 +2379,7 @@ void RedoOp::operator()(Stack* s) {
 	Controller::instance().redo();
 }
 
-/*
+
 void EvalOp::operator()(Stack* s) {
 	if(s->size() < this->getArity())
 		throw OperatorException("Erreur : EVAL a besoin d'au moins un argument");
@@ -2392,10 +2393,10 @@ void EvalOp::operator()(Stack* s) {
 	// shunting yard
 	Stack rpnStack;
 
-	std::queue<std::string> outputQueue;
-	std::stack<std::string> operatorStack;
+	std::queue<std::string> output;
+	std::stack<std::string> operators;
 
-	std::string expr = dynamic_cast<ExpressionLiteral*>(arg)->getValue;
+	std::string expr = dynamic_cast<ExpressionLiteral*>(arg)->getValue();
 
 	while(!expr.empty()) { // tant qu'il reste des tokens
 		std::string token;
@@ -2404,13 +2405,33 @@ void EvalOp::operator()(Stack* s) {
 		expr.erase(0, 1);
 		token += c;
 
-		// If the token is a number, then add it to the output queue.
+		std::string symbols = "+*-/$<>=!";
+
+		// Si c'est un nombre...
 		if(std::isdigit(c)) {
-			while(!expr.empty() && (c = expr[0]) && (std::isdigit(c) || c == decimal_sep)) {
-				res += c;
+			while(!expr.empty() && (c = expr[0]) && (std::isdigit(c) || c == '.' || c == '$')) {
+				token += c;
 				expr.erase(0, 1);
 			}
+			output.push(token); // ... On l'ajoute dans la file
+		} else if(symbols.find(c) != std::string::npos) {
+			// Si c'est un opérateur représenté par un symbole : pousse
+			token += c;
+			expr.erase(0, 1);
+
+			// cas particuliers : opérateurs symboliques avec deux caractères
+			if((c == '!' || c == '>' || c == '<') && (expr[0] == '=')) {
+				token += expr[0];
+				expr.erase(0, 1);
+			}
+			operators.push(token);
+		} else if(std::isalpha(c)) {
+			// sinon c'est un opérateur représenté par une string
+			while(!expr.empty() && (c = expr[0]) && (std::isalpha(c) || std::isdigit(c))) {
+				token += c;
+				expr.erase(0, 1);
+			}
+			operators.push(token);
 		}
 	}
 }
-*/

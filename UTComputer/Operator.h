@@ -134,7 +134,7 @@ public:
 
 class InfEqOp : public IOperator {
 public:
-	InfEqOp() : IOperator("=<", 2) {}
+	InfEqOp() : IOperator("<=", 2) {}
 	void operator()(Stack* s);
 };
 
@@ -186,10 +186,9 @@ public:
 	void operator()(Stack* s);
 };
 
-/*
+
 class EvalOp : public IOperator {
 public:
 	EvalOp() : IOperator("EVAL", 1) {}
 	void operator()(Stack* s);
 };
-*/

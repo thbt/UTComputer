@@ -17,7 +17,7 @@ Controller& Controller::instance() {
     return instance;
 }
 
-Controller::Controller() : NumberDisplay(4) {
+Controller::Controller() : stack(), NumberDisplay(4) {
     // on stocke les functors
     dispatcher.emplace("+", PlusOp());
     dispatcher.emplace("-", MinusOp());
@@ -36,8 +36,9 @@ Controller::Controller() : NumberDisplay(4) {
     dispatcher.emplace("SWAP", SwapOp());
     dispatcher.emplace("CLEAR", ClearOp());
     dispatcher.emplace("EQUAL", EqualOp());
+	dispatcher.emplace("=", EqualOp());
     dispatcher.emplace("!=", DifferentOp());
-    dispatcher.emplace("=<", InfEqOp());
+    dispatcher.emplace("<=", InfEqOp());
     dispatcher.emplace("<", InfOp());
     dispatcher.emplace(">", SupOp());
     dispatcher.emplace(">=", SupEqOp());
@@ -46,25 +47,37 @@ Controller::Controller() : NumberDisplay(4) {
     dispatcher.emplace("NOT", NotOp());
     dispatcher.emplace("UNDO", UndoOp());
     dispatcher.emplace("REDO", RedoOp());
+
+	// variables de test
+	vars.emplace("X", new IntegerLiteral(5));
+	vars.emplace("V1", new RealLiteral(2.0));
 }
 
-// TODO throw exception si l'opération n'existe pas
 void Controller::execute(std::string op) {
-    // On effectue une opération sur la stack -> on sauvegarde l'état
-    undoStack.push(stack.createMemento());
-    dispatcher[op](&stack);
+	// Controle l'existence de la commande
+	if(dispatcher.find(op) == dispatcher.end())
+		throw OperatorException("L'opérateur n'existe pas.");
+	else {
+		// On effectue une opération sur la stack -> on sauvegarde l'état
+		undoStack.push(stack.createMemento());
+		dispatcher[op](&stack);
+	}
 }
 
-// TODO throw exception si rien a pop
 void Controller::undo() {
+	if(undoStack.empty())
+		throw OperatorException("Il n'y a rien a undo");
+
     undoStack.pop(); // pop la dernière opération
     redoStack.push(stack.createMemento());
     stack.setMemento(undoStack.top());
     undoStack.pop(); // pop le undo de la stack
 }
 
-// TODO throw exception si rien a pop
 void Controller::redo() {
+	if(redoStack.empty())
+		throw OperatorException("Il n'y a rien a redo");
+
     undoStack.pop(); // pop le undo de la stack
     stack.setMemento(redoStack.top());
     undoStack.push(stack.createMemento());
@@ -73,7 +86,6 @@ void Controller::redo() {
 
 void Controller::command(const std::string& str) {
     // 1. Tokenizer
-    // TODO Générer les bons tokens pour les programmes et les expressions
     std::stringstream ss(str); // string to stream
     std::string item;
     std::vector<std::string> tokens;
@@ -112,15 +124,15 @@ void Controller::command(const std::string& str) {
                 execute(t);
             } catch(OperatorException oe) {
                 showError(oe.getInfo());
-                //std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
+                std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
             }
         }
 
         // TODO a supprimer (uniquement pour debugger
-        //std::cout << "affichage stack :" << std::endl;
-        //for(auto it = stack.begin(); it != stack.end(); it++) {
-        //	std::cout << (*it)->toString() << std::endl;
-        //}
+        std::cout << "affichage stack :" << std::endl;
+        for(auto it = stack.begin(); it != stack.end(); it++) {
+        	std::cout << (*it)->toString() << std::endl;
+        }
     }
     changeState();
 }
@@ -132,3 +144,9 @@ void Controller::setNbDisplay(unsigned int nb){
     NumberDisplay = nb;
 }
 
+std::vector<std::string> Controller::getOperators() {
+	std::vector<std::string> v;
+	for(auto it = dispatcher.begin(); it != dispatcher.end(); ++it)
+		v.push_back(it->first);
+	return v;
+}
