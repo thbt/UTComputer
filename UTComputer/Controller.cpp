@@ -17,7 +17,7 @@ Controller& Controller::instance() {
 	return instance;
 }
 
-Controller::Controller() : stack() {
+Controller::Controller() : stack(), NumberDisplay(4) {
 	dispatcher.emplace("+", PlusOp());
 	dispatcher.emplace("-", MinusOp());
 	dispatcher.emplace("*", MultiOp());
@@ -90,14 +90,24 @@ void Controller::command(const std::string& str) {
 			try {
 				execute(t);
 			} catch(OperatorException oe) {
-				std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
+                showError(oe.getInfo());
+                //std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
 			}
 		}
 
 		// TODO a supprimer (uniquement pour debugger
-		std::cout << "affichage stack :" << std::endl;
-		for(auto it = stack.begin(); it != stack.end(); it++) {
-			std::cout << (*it)->toString() << std::endl;
-		}
+        //std::cout << "affichage stack :" << std::endl;
+        //for(auto it = stack.begin(); it != stack.end(); it++) {
+        //	std::cout << (*it)->toString() << std::endl;
+        //}
 	}
+    changeState();
 }
+
+unsigned int Controller::getNbDisplay() const{
+    return NumberDisplay;
+}
+void Controller::setNbDisplay(unsigned int nb){
+    NumberDisplay = nb;
+}
+
