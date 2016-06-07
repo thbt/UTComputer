@@ -186,4 +186,12 @@ public:
 	void operator()(Stack* s);
 };
 
+/*
+class EvalOp : public IOperator {
+public:
+	EvalOp() : IOperator("EVAL", 1) {}
+	void operator()(Stack* s);
+};
+*/
+
 // Pour rajouter un opérateur, l'ajouter a la map de controleur

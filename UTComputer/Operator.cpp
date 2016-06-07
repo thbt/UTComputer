@@ -1,3 +1,7 @@
+#include <stack>
+#include <queue>
+#include <cctype>
+
 #include "Operator.h"
 #include "LiteralFactory.h"
 #include "OperatorException.h"
@@ -2372,4 +2376,41 @@ void UndoOp::operator()(Stack* s) {
 
 void RedoOp::operator()(Stack* s) {
 	Controller::instance().redo();
+}
+
+void EvalOp::operator()(Stack* s) {
+	if(s->size() < this->getArity())
+		throw OperatorException("Erreur : EVAL a besoin d'au moins un argument");
+
+	ILiteral* arg = s->top(); s->pop();
+	Type at = arg->getType();
+
+	if(at != EXPRESSION)
+		throw OperatorException("Erreur : l'argument d'EVAL doit être une expression");
+
+	// shunting yard
+	Stack rpnStack;
+
+	std::queue<std::string> outputQueue;
+	std::stack<std::string> operatorStack;
+
+	std::string expr = dynamic_cast<ExpressionLiteral*>(arg)->getValue;
+
+	while(!expr.empty()) { // tant qu'il reste des tokens
+		std::string token;
+		// check if token is a number
+		char c = expr[0];
+		expr.erase(0, 1);
+		token += c;
+
+		// If the token is a number, then add it to the output queue.
+		if(std::isdigit(c)) {
+			while(!expr.empty() && (c = expr.at(0)) && (std::isdigit(c) || c == decimal_sep)) {
+				res += c;
+				expr.erase(0, 1);
+			}
+		}
+	}
+		
+
 }
