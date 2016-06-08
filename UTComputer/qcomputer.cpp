@@ -3,7 +3,7 @@
 #include <QIcon>
 #include <QCoreApplication>
 #include <QDebug>
-//#include <windows.h>
+#include <windows.h>
 #include <QInputDialog>
 
 #include "Controller.h"
@@ -129,7 +129,7 @@ QComputer::QComputer(QWidget *parent){
 
 	//Connect
 	QObject::connect(&Controller::instance(), SIGNAL(changeState()), this, SLOT(refresh()));
-	QObject::connect(&Controller::instance(), SIGNAL(showError(error)), this, SLOT(printError(error)));
+	QObject::connect(&Controller::instance(), SIGNAL(showError(std::string)), this, SLOT(printError(std::string)));
 	QObject::connect(commande, SIGNAL(returnPressed()), this, SLOT(getNextCommande()));
 	QObject::connect(button1, SIGNAL(clicked()), this, SLOT(setTexte()));
 	QObject::connect(button2, SIGNAL(clicked()), this, SLOT(setTexte()));
@@ -225,7 +225,7 @@ void QComputer::printError(std::string error){
 	message->setText(QString::fromStdString(error));
 
 	if(bipsonor==true){
-			//Beep(523,200);
+			Beep(523,200);
 	}
 
 }

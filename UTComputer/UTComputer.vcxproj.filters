@@ -73,9 +73,6 @@
     <ClCompile Include="Release\moc_qcomputer.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UTComputer - Copie\UTComputer\test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ExpressionParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
