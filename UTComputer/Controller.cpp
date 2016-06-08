@@ -7,6 +7,7 @@
 //
 
 #include <sstream>
+#include <algorithm>
 
 #include "Controller.h"
 #include "LiteralFactory.h"
@@ -59,7 +60,8 @@ void Controller::execute(std::string op) {
 		throw OperatorException("L'opérateur n'existe pas.");
 	else {
 		// On effectue une opération sur la stack -> on sauvegarde l'état
-		undoStack.push(stack.createMemento());
+		if(op != "UNDO" && op != "REDO")
+			undoStack.push(stack.createMemento());
 		dispatcher[op](&stack);
 	}
 }
@@ -67,21 +69,21 @@ void Controller::execute(std::string op) {
 void Controller::undo() {
 	if(undoStack.empty())
 		throw OperatorException("Il n'y a rien a undo");
-
-    undoStack.pop(); // pop la dernière opération
-    redoStack.push(stack.createMemento());
-    stack.setMemento(undoStack.top());
-    undoStack.pop(); // pop le undo de la stack
+	else {
+		redoStack.push(stack.createMemento());
+		stack.setMemento(undoStack.top());
+		undoStack.pop(); // pop la dernière opération
+	}
 }
 
 void Controller::redo() {
 	if(redoStack.empty())
 		throw OperatorException("Il n'y a rien a redo");
-
-    undoStack.pop(); // pop le undo de la stack
-    stack.setMemento(redoStack.top());
-    undoStack.push(stack.createMemento());
-    redoStack.pop();
+	else {
+		undoStack.push(stack.createMemento());
+		stack.setMemento(redoStack.top());
+		redoStack.pop();
+	}
 }
 
 void Controller::command(const std::string& str) {
@@ -114,14 +116,21 @@ void Controller::command(const std::string& str) {
 
     // 2. Syntactic analysis
     // TODO try catch pour l'instanciation des littéraux
-    for(std::string const& t : tokens) {
-        if(t[0] == '[' || t[0] == '`' || t[0] == '.' || (t[0] >= '0' && t[0] <= '9')) // Check if the token is a value (number/complex/expression/program)
-            stack.push(LiteralFactory::getInstance().makeLiteral(t));
-        else if(t[0] == '-' && t.length() > 1) // special case : negative number
-            stack.push(LiteralFactory::getInstance().makeLiteral(t));
+    for(std::string& t : tokens) {
+		if (t[0] == '[' || t[0] == '`' || t[0] == '.' || (t[0] >= '0' && t[0] <= '9')) { // Check if the token is a value (number/complex/expression/program)
+			stack.push(LiteralFactory::getInstance().makeLiteral(t));
+			changeState();
+		}
+		else if (t[0] == '-' && t.length() > 1) { // special case : negative number
+			stack.push(LiteralFactory::getInstance().makeLiteral(t));
+			changeState();
+		}
         else {// otherwise the token is an operator
             try {
+				transform(t.begin(), t.end(), t.begin(), ::toupper);
                 execute(t);
+				
+				changeState();
             } catch(OperatorException oe) {
                 showError(oe.getInfo());
                 std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
@@ -134,7 +143,6 @@ void Controller::command(const std::string& str) {
         	std::cout << (*it)->toString() << std::endl;
         }
     }
-    changeState();
 }
 
 unsigned int Controller::getNbDisplay() const{
@@ -150,3 +158,4 @@ std::vector<std::string> Controller::getOperators() {
 		v.push_back(it->first);
 	return v;
 }
+

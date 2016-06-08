@@ -2372,11 +2372,19 @@ void NotOp::operator()(Stack* s){
 
 // TODO catch exception
 void UndoOp::operator()(Stack* s) {
-	Controller::instance().undo();
+	try {
+		Controller::instance().undo();
+	} catch (OperatorException oe) {
+		throw oe;
+	}
 }
 
 void RedoOp::operator()(Stack* s) {
-	Controller::instance().redo();
+	try {
+		Controller::instance().redo();
+	} catch (OperatorException oe) {
+		throw oe;
+	}
 }
 
 
