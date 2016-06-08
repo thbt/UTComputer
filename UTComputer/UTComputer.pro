@@ -13,8 +13,8 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-	computer.cpp \
 	Controller.cpp \
+	ExpressionParser.cpp \
 	Literal.cpp \
 	LiteralFactory.cpp \
 	Operator.cpp \
@@ -23,8 +23,8 @@ SOURCES += main.cpp \
 	StackMemento.cpp
 
 HEADERS  += \
-	computer.h \
 	Controller.h \
+	ExpressionParser.h \
 	Literal.h \
 	LiteralFactory.h \
 	Operator.h \
@@ -36,6 +36,6 @@ HEADERS  += \
 FORMS    +=
 
 # workaround pour compiler avec msvc 2015
-INCLUDEPATH += "C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"
+#INCLUDEPATH += "C:/Program Files (x86)/Windows Kits/10/Include/10.0.10240.0/ucrt"
 
-LIBS += -L"C:/Program Files (x86)/Windows Kits/10/Lib/10.0.10240.0/ucrt/x64"
+#LIBS += -L"C:/Program Files (x86)/Windows Kits/10/Lib/10.0.10240.0/ucrt/x64"
