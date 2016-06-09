@@ -9,17 +9,18 @@
 #include <QDialogButtonBox>
 #include <qlabel.h>
 #include <qcombobox.h>
+#include <qtextedit.h>
 #include "Controller.h"
 
 #include <cctype>
 
 #include <direct.h>
 #define GetCurrentDir _getcwd
-
 static bool bipsonor = true;
 static bool cliquable = true;
 
-const std::string cheminVar = "./FichierSave/var.txt";
+const std::string pathVar = "\\SaveFiles\\variable.txt";
+const std::string pathFct = "\\SaveFiles\\fonction.txt";
 
 QComputer::QComputer(QWidget *parent){
     setFixedSize(450,250);
@@ -251,6 +252,9 @@ void QComputer::choixNombreVariable(){
 
 void QComputer::creationVar() {
 	QDialog* d = new QDialog();
+	d->setWindowTitle("Creer une variable");
+	d->setFixedHeight(100);
+	d->setFixedWidth(250);
 	QVBoxLayout* mainLayout = new QVBoxLayout();
 	QHBoxLayout* nameLayout = new QHBoxLayout();
 	QHBoxLayout* valeurLayout = new QHBoxLayout();
@@ -295,11 +299,19 @@ void QComputer::creationVar() {
 	}
 }
 
-
 void QComputer::modifVar() {
-	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	std::map<std::string, std::string> var = Controller::instance().getAtome(pathVar);
+
+	if (var.size() == 0) {
+		message->setText("Aucune variable à modifier");
+		return;
+	}
+
 	QDialog* d = new QDialog();
-	QGridLayout* LayoutCliquable = new QGridLayout;
+	d->setWindowTitle("Modifier une variable");
+	d->setFixedHeight(100);
+	d->setFixedWidth(250);
+	QGridLayout* mainLayout = new QGridLayout;
 	QLabel* labelNom = new QLabel("Nom :");
 	QLabel* labelVal = new QLabel("Valeur :");
 	QComboBox* lineNom = new QComboBox();
@@ -317,18 +329,18 @@ void QComputer::modifVar() {
 	QObject::connect(lineNom, SIGNAL(currentTextChanged(QString)), lineVal, SLOT(setText(QString)));
 	QObject::connect(lineVal, SIGNAL(textChanged(QString)), this, SLOT(setVariable(QString)));
 
-	LayoutCliquable->addWidget(labelNom, 0, 0);
-	LayoutCliquable->addWidget(lineNom, 0, 2, 1, 2);
-	LayoutCliquable->addWidget(labelVal, 2, 0);
-	LayoutCliquable->addWidget(lineVal, 2, 2, 1, 2);
-	LayoutCliquable->addWidget(buttonBox, 4, 0, 1, 4);
+	mainLayout->addWidget(labelNom, 0, 0);
+	mainLayout->addWidget(lineNom, 0, 2, 1, 2);
+	mainLayout->addWidget(labelVal, 2, 0);
+	mainLayout->addWidget(lineVal, 2, 2, 1, 2);
+	mainLayout->addWidget(buttonBox, 4, 0, 1, 4);
 
 	//mainLayout->addLayout(nameLayout);
 	//mainLayout->addLayout(valeurLayout);
 	//mainLayout->addWidget(buttonBox);
 
 
-	d->setLayout(LayoutCliquable);
+	d->setLayout(mainLayout);
 
 	int result = d->exec();
 	if (result == QDialog::Accepted)
@@ -347,29 +359,221 @@ void QComputer::modifVar() {
 }
 
 void QComputer::setVariable(QString value) {
-	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	std::map<std::string, std::string> var = Controller::instance().getAtome(pathVar);
 	if (!(var[value.toStdString()] == "")) {
 		QLineEdit *senderObj = qobject_cast<QLineEdit*>(sender());
 		senderObj->setText(QString::fromStdString(var[value.toStdString()]));
 	}
 }
 
+void QComputer::setFct() {
+	std::map<std::string, std::string> fcts = Controller::instance().getAtome(pathFct);
+	QTextEdit *senderObj = qobject_cast<QTextEdit*>(sender());
+	QString value = senderObj->toPlainText();
+	if (!(fcts[value.toStdString()] == "")) {
+		QString fct = QString::fromStdString(fcts[value.toStdString()]);
+		int position = fct.indexOf(" "); // find first space
+											  // 
+		while (position != std::string::npos)
+		{
+			fct.replace(position, 1, "\n");
+			position = fct.indexOf(" ", position + 1);
+		}
+		senderObj->setPlainText(fct);
+	}
+}
+
 void QComputer::supprimerVar() {
+	std::map<std::string, std::string> var = Controller::instance().getAtome(pathVar);
 
+	if (var.size() == 0) {
+		message->setText("Aucune variable à supprimer");
+		return;
+	}
 
+	QDialog* d = new QDialog();
+	d->setWindowTitle("Supprimer une variable");
+	d->setFixedHeight(75);
+	d->setFixedWidth(250);
+	QGridLayout* mainLayout = new QGridLayout;
+	QLabel* labelNom = new QLabel("Nom :");
+	QComboBox* lineNom = new QComboBox();
+
+	for (auto& item : var) {
+		lineNom->addItem(QString::fromStdString(item.first));
+	}
+
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+		| QDialogButtonBox::Cancel);
+
+	QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+	QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+
+	mainLayout->addWidget(labelNom, 0, 0);
+	mainLayout->addWidget(lineNom, 0, 1, 1, 4);
+	mainLayout->addWidget(buttonBox, 2, 0, 1, 4);
+
+	d->setLayout(mainLayout);
+
+	int result = d->exec();
+	if (result == QDialog::Accepted)
+	{
+		std::string nom = lineNom->currentText().toStdString();
+		Controller::instance().deleteAtome(pathVar, nom);
+		message->setText("");
+	}
 }
 
 void QComputer::creationFct() {
+	QDialog* d = new QDialog();
+	d->setWindowTitle("Creer une fonction");
+	d->setFixedHeight(200);
+	d->setFixedWidth(250);
+	QGridLayout* mainLayout = new QGridLayout;
+	QLabel* labelNom = new QLabel("Nom :");
+	QLabel* labelVal = new QLabel("Valeur :");
+	QLineEdit* lineNom = new QLineEdit();
+	QTextEdit* lineVal = new QTextEdit();
 
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+		| QDialogButtonBox::Cancel);
+
+	QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+	QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+
+
+	mainLayout->addWidget(labelNom, 0, 0);
+	mainLayout->addWidget(lineNom, 0, 2, 1, 2);
+	mainLayout->addWidget(labelVal, 2, 0);
+	mainLayout->addWidget(lineVal, 2, 2, 3, 2);
+	mainLayout->addWidget(buttonBox, 6, 0, 1, 4);
+
+
+	d->setLayout(mainLayout);
+
+	int result = d->exec();
+	if (result == QDialog::Accepted)
+	{
+		std::string nom = lineNom->text().toStdString();
+		std::string valeur = lineVal->toPlainText().toStdString();
+		if (!std::isupper(nom[0]) || (nom.find('|') != std::string::npos)) {
+			message->setText("Nom de variable invalide.");
+		}
+		else if (valeur[0] != '[' || valeur[valeur.size()-1] != ']') {
+			message->setText("Valeur incorrecte");
+		}
+		else {
+			std::replace(valeur.begin(), valeur.end(), '\n', ' ');
+			Controller::instance().createAtome(nom, valeur);
+			message->setText("");
+		}
+	}
 }
 
 void QComputer::modifFct() {
+	std::map<std::string, std::string> var = Controller::instance().getAtome(pathFct);
 
+	if (var.size() == 0) {
+		message->setText("Aucune fonction à modifier");
+		return;
+	}
+
+	QDialog* d = new QDialog();
+	d->setWindowTitle("Modifier une fonction");
+	d->setFixedHeight(200);
+	d->setFixedWidth(250);
+	QGridLayout* mainLayout = new QGridLayout;
+	QLabel* labelNom = new QLabel("Nom :");
+	QLabel* labelVal = new QLabel("Valeur :");
+	QComboBox* lineNom = new QComboBox();
+	QString cc = "Salt \\n slt \\n";
+	QString firstfct = QString::fromStdString(var.begin()->second);	
+	int position = firstfct.indexOf(" "); // find first space
+									  // 
+	while (position != std::string::npos)
+	{
+		firstfct.replace(position, 1, "\n");
+		position = firstfct.indexOf(" ", position + 1);
+	}
+	QTextEdit* lineVal = new QTextEdit;
+	lineVal->setPlainText(firstfct);
+
+	for (auto& item : var) {
+		lineNom->addItem(QString::fromStdString(item.first));
+	}
+
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+		| QDialogButtonBox::Cancel);
+
+	QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+	QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+	QObject::connect(lineNom, SIGNAL(currentTextChanged(QString)), lineVal, SLOT(setText(QString)));
+	QObject::connect(lineVal, SIGNAL(textChanged()), this, SLOT(setFct()));
+
+	mainLayout->addWidget(labelNom, 0, 0);
+	mainLayout->addWidget(lineNom, 0, 2, 1, 2);
+	mainLayout->addWidget(labelVal, 2, 0);
+	mainLayout->addWidget(lineVal, 2, 2, 3, 2);
+	mainLayout->addWidget(buttonBox, 6, 0, 1, 4);
+
+	d->setLayout(mainLayout);
+
+	int result = d->exec();
+	if (result == QDialog::Accepted)
+	{
+		std::string nom = lineNom->currentText().toStdString();
+		std::string valeur = lineVal->toPlainText().toStdString();
+
+		if (valeur[0] != '[' || valeur[valeur.size() - 1] != ']') {
+			message->setText("Valeur incorrecte");
+		}
+		else {
+			std::replace(valeur.begin(), valeur.end(), '\n', ' ');
+			Controller::instance().createAtome(nom, valeur);
+			message->setText("");
+		}
+	}
 }
 
 void QComputer::supprimerFct() {
+	std::map<std::string, std::string> var = Controller::instance().getAtome(pathFct);
 
+	if (var.size() == 0) {
+		message->setText("Aucune fonction à supprimer");
+		return;
+	}
 
+	QDialog* d = new QDialog();
+	d->setWindowTitle("Supprimer une fonction");
+	d->setFixedHeight(75);
+	d->setFixedWidth(250);
+	QGridLayout* mainLayout = new QGridLayout;
+	QLabel* labelNom = new QLabel("Nom :");
+	QComboBox* lineNom = new QComboBox();
+
+	for (auto& item : var) {
+		lineNom->addItem(QString::fromStdString(item.first));
+	}
+
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+		| QDialogButtonBox::Cancel);
+
+	QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+	QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+
+	mainLayout->addWidget(labelNom, 0, 0);
+	mainLayout->addWidget(lineNom, 0, 1, 1, 4);
+	mainLayout->addWidget(buttonBox, 2, 0, 1, 4);
+
+	d->setLayout(mainLayout);
+
+	int result = d->exec();
+	if (result == QDialog::Accepted)
+	{
+		std::string nom = lineNom->currentText().toStdString();
+		Controller::instance().deleteAtome(pathFct, nom);
+		message->setText("");
+	}
 }
 
 

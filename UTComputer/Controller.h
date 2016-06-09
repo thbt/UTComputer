@@ -48,7 +48,9 @@ public:
 
 	void createAtome(std::string name, std::string value);
 
-	std::map<std::string, std::string> getVariable();
+	std::map<std::string, std::string> getAtome(std::string path);
+
+	void deleteAtome(std::string path, std::string name);
 
 signals :
     void changeState();

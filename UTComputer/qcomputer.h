@@ -92,4 +92,5 @@ public:
 		void modifFct();
 		void supprimerFct();
 		void setVariable(QString value);
+		void setFct();
 };

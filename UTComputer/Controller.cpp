@@ -206,7 +206,7 @@ void Controller::createAtome(std::string nom, std::string value) {
 
 }
 
-std::map<std::string, std::string> Controller::getVariable() {
+std::map<std::string, std::string> Controller::getAtome(std::string path) {
 	std::map<std::string, std::string> variables;
 
 	char cCurrentPath[FILENAME_MAX];
@@ -217,7 +217,7 @@ std::map<std::string, std::string> Controller::getVariable() {
 	}
 	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
 	std::string str(cCurrentPath);
-	str += "\\SaveFiles\\variable.txt";
+	str += path;
 
 
 	std::ifstream monFlux(str, std::ios_base::app);
@@ -231,4 +231,34 @@ std::map<std::string, std::string> Controller::getVariable() {
 	}
 
 	return variables;
+}
+
+void Controller::deleteAtome(std::string path, std::string name) {
+	char cCurrentPath[FILENAME_MAX];
+
+	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
+	{
+		return;
+	}
+	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
+	std::string str(cCurrentPath);
+	std::string tmp = str + "\\SaveFiles\\temp.txt";
+	std::ofstream temp(tmp);
+	str += path;
+
+	std::ifstream monFlux(str, std::ios_base::app);
+	std::string line;
+
+	while (std::getline(monFlux, line))
+	{
+		if (line.compare(0, name.size(), name) != 0)
+		{
+			temp << line << std::endl;
+		}
+	}
+
+	temp.close();
+	monFlux.close();
+	remove(str.c_str());
+	rename(tmp.c_str(), str.c_str());
 }
