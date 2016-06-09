@@ -48,6 +48,8 @@ public:
 
 	void createAtome(std::string name, std::string value);
 
+	std::map<std::string, std::string> getVariable();
+
 signals :
     void changeState();
     void showError(std::string error);
