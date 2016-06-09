@@ -8,6 +8,7 @@
 #include <QSignalMapper>
 #include <QDialogButtonBox>
 #include <qlabel.h>
+#include <qcombobox.h>
 #include "Controller.h"
 
 #include <cctype>
@@ -253,7 +254,6 @@ void QComputer::creationVar() {
 	QVBoxLayout* mainLayout = new QVBoxLayout();
 	QHBoxLayout* nameLayout = new QHBoxLayout();
 	QHBoxLayout* valeurLayout = new QHBoxLayout();
-	QHBoxLayout* buttonLayout = new QHBoxLayout();
 	QLabel* labelNom = new QLabel("Nom :");
 	QLabel* labelVal = new QLabel("Valeur :");
 	QLineEdit* lineNom = new QLineEdit();
@@ -269,7 +269,6 @@ void QComputer::creationVar() {
 	nameLayout->addWidget(lineNom);
 	valeurLayout->addWidget(labelVal);
 	valeurLayout->addWidget(lineVal);
-	//buttonLayout->addWidget(buttonBox)
 
 	mainLayout->addLayout(nameLayout);
 	mainLayout->addLayout(valeurLayout);
@@ -298,8 +297,61 @@ void QComputer::creationVar() {
 
 
 void QComputer::modifVar() {
+	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	QDialog* d = new QDialog();
+	QGridLayout* LayoutCliquable = new QGridLayout;
+	QLabel* labelNom = new QLabel("Nom :");
+	QLabel* labelVal = new QLabel("Valeur :");
+	QComboBox* lineNom = new QComboBox();
+	QLineEdit* lineVal = new QLineEdit(QString::fromStdString(var.begin()->second));
+
+	for (auto& item : var) {
+		lineNom->addItem(QString::fromStdString(item.first));
+	}
+
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+		| QDialogButtonBox::Cancel);
+
+	QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+	QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+	QObject::connect(lineNom, SIGNAL(currentTextChanged(QString)), lineVal, SLOT(setText(QString)));
+	QObject::connect(lineVal, SIGNAL(textChanged(QString)), this, SLOT(setVariable(QString)));
+
+	LayoutCliquable->addWidget(labelNom, 0, 0);
+	LayoutCliquable->addWidget(lineNom, 0, 2, 1, 2);
+	LayoutCliquable->addWidget(labelVal, 2, 0);
+	LayoutCliquable->addWidget(lineVal, 2, 2, 1, 2);
+	LayoutCliquable->addWidget(buttonBox, 4, 0, 1, 4);
+
+	//mainLayout->addLayout(nameLayout);
+	//mainLayout->addLayout(valeurLayout);
+	//mainLayout->addWidget(buttonBox);
 
 
+	d->setLayout(LayoutCliquable);
+
+	int result = d->exec();
+	if (result == QDialog::Accepted)
+	{
+		std::string nom = lineNom->currentText().toStdString();
+		std::string valeur = lineVal->text().toStdString();
+
+		if (valeur[0] <= '0' || valeur[0] >= '9') {
+			message->setText("Valeur incorrecte");
+		}
+		else {
+			Controller::instance().createAtome(nom, valeur);
+			message->setText("");
+		}
+	}
+}
+
+void QComputer::setVariable(QString value) {
+	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	if (!(var[value.toStdString()] == "")) {
+		QLineEdit *senderObj = qobject_cast<QLineEdit*>(sender());
+		senderObj->setText(QString::fromStdString(var[value.toStdString()]));
+	}
 }
 
 void QComputer::supprimerVar() {

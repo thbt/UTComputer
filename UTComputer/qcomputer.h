@@ -91,4 +91,5 @@ public:
 		void creationFct();
 		void modifFct();
 		void supprimerFct();
+		void setVariable(QString value);
 };

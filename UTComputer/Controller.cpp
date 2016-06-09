@@ -213,7 +213,7 @@ std::map<std::string, std::string> Controller::getVariable() {
 
 	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
 	{
-		return;
+		return variables;
 	}
 	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
 	std::string str(cCurrentPath);
