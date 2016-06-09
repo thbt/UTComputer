@@ -12,13 +12,21 @@
 #include "Controller.h"
 #include "LiteralFactory.h"
 #include "OperatorException.h"
+#include <iostream>
+
+#include <fstream>
+#include <string>
+
+#include <direct.h>
+#define GetCurrentDir _getcwd
+
 
 Controller& Controller::instance() {
     static Controller instance;
     return instance;
 }
 
-Controller::Controller() : stack(), NumberDisplay(4) {
+Controller::Controller() : stack(), NumberDisplay(5) {
     // on stocke les functors
     dispatcher.emplace("+", PlusOp());
     dispatcher.emplace("-", MinusOp());
@@ -159,3 +167,41 @@ std::vector<std::string> Controller::getOperators() {
 	return v;
 }
 
+void Controller::createAtome(std::string nom, std::string value) {
+	char cCurrentPath[FILENAME_MAX];
+
+	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
+	{
+		return;
+	}
+	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
+	std::string str(cCurrentPath);
+	std::string tmp = str + "\\SaveFiles\\temp.txt";
+	std::ofstream temp(tmp);
+
+	if (value[0] == '[') 
+		str += "\\SaveFiles\\fonction.txt";
+	else 
+		str += "\\SaveFiles\\variable.txt";
+
+	std::ifstream monFlux(str, std::ios_base::app);
+	
+	std::string line;
+
+	while (std::getline(monFlux, line))
+	{
+		if (line.compare(0, nom.size(), nom)!=0)
+		{
+			temp << line << std::endl;
+		}
+	}
+
+
+	temp << nom << "|" << value << std::endl;
+
+	temp.close();
+	monFlux.close();
+	remove(str.c_str());
+	rename(tmp.c_str(), str.c_str());
+
+}

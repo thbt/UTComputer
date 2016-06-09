@@ -15,8 +15,9 @@
 class QComputer : public QWidget {
 	Q_OBJECT
 		//Layout
-		QVBoxLayout *LayoutPrincipale;
+	QVBoxLayout *LayoutPrincipale;
 	QHBoxLayout *LayoutMid;
+	QHBoxLayout *LayoutCommande;
 
 	//Layout cliquable
 	QWidget *WidgetCliquable;
@@ -27,13 +28,24 @@ class QComputer : public QWidget {
 	QMenu *menuFichier;
 	QMenu *menuVar;
 	QMenu *menuProg;
-	QMenu *menuCaract;
+	QMenu *menuOperator;
+
+	//Sous menu
+	QMenu *OpeStack;
+	QMenu *OpeNumerique;
+	QMenu *OpeLogique;
 
 	//Actions menu
 	QAction *actionQuitter;
 	QAction *bipSonore;
 	QAction *nbVariable;
 	QAction *clavierCliquable;
+	QAction *creerVariable;
+	QAction *modifVariable;
+	QAction *supprimerVariable;
+	QAction *creerFonction;
+	QAction *modifFonction;
+	QAction *supprimerFonction;
 
 
 	//Composants
@@ -63,12 +75,20 @@ class QComputer : public QWidget {
 
 public:
 	explicit QComputer(QWidget *parent = 0);
+	void createOperatorAction();
 	public slots:
-	void refresh();
-	void getNextCommande();
-	void printError(std::string error);
-	void setTexte();
-	void desactiverBip();
-	void choixNombreVariable();
-	void desactiverCliquable();
+		void refresh();
+		void getNextCommande();
+		void printError(std::string error);
+		void setTexte();
+		void desactiverBip();
+		void choixNombreVariable();
+		void desactiverCliquable();
+		void callOperator();
+		void creationVar();
+		void modifVar();
+		void supprimerVar();
+		void creationFct();
+		void modifFct();
+		void supprimerFct();
 };

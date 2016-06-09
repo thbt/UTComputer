@@ -152,7 +152,7 @@ public:
 
 class SupEqOp : public IOperator {
 public:
-	SupEqOp() : IOperator("=>", 2){}
+	SupEqOp() : IOperator(">=", 2){}
 	void operator()(Stack* s);
 };
 

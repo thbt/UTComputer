@@ -46,6 +46,8 @@ public:
         return stack.end();
     }
 
+	void createAtome(std::string name, std::string value);
+
 signals :
     void changeState();
     void showError(std::string error);

@@ -5,16 +5,35 @@
 #include <QDebug>
 #include <windows.h>
 #include <QInputDialog>
-
+#include <QSignalMapper>
+#include <QDialogButtonBox>
+#include <qlabel.h>
 #include "Controller.h"
+
+#include <cctype>
+
+#include <direct.h>
+#define GetCurrentDir _getcwd
 
 static bool bipsonor = true;
 static bool cliquable = true;
 
+const std::string cheminVar = "./FichierSave/var.txt";
+
 QComputer::QComputer(QWidget *parent){
-    setFixedSize(350,250);
+    setFixedSize(450,250);
     setWindowTitle("UTComputer");
-    setWindowIcon(QIcon("D:/Cours/UTC/P16/LO21/UTComputer/Images/icone.jpg"));
+	char cCurrentPath[FILENAME_MAX];
+
+	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
+	{
+		return;
+	}
+
+	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
+	std::string str(cCurrentPath);
+	str += "\\Images\\icone.jpg";
+    setWindowIcon(QIcon(QString::fromStdString(str)));
 
 
     //pile = new Pile();
@@ -25,13 +44,25 @@ QComputer::QComputer(QWidget *parent){
     menuFichier = menuBar->addMenu("&Fichier");
     menuVar = menuBar->addMenu("&Variable");
     menuProg = menuBar->addMenu("&Programme");
-    menuCaract = menuBar->addMenu("&Caracteres spéciaux");
+    menuOperator = menuBar->addMenu("&Operateurs");
+	OpeNumerique = menuOperator->addMenu("&Numerique");
+	OpeStack = menuOperator->addMenu("&Pile");
+	OpeLogique = menuOperator->addMenu("&Logique");
+	menuOperator->addSeparator();
+	createOperatorAction();
 
     //Action
     actionQuitter = new QAction("&Quitter", this);
     bipSonore = new QAction("&Desactiver bip sonore", this);
     nbVariable = new QAction("&Modifier affichage pile", this);
-    clavierCliquable = new QAction("&Desactiver le clavier cliquable", this);;
+    clavierCliquable = new QAction("&Desactiver le clavier cliquable", this);
+	creerVariable = new QAction("&Creer", this);
+	modifVariable = new QAction("&Modifier", this);
+	supprimerVariable = new QAction("&Supprimer", this);
+	creerFonction = new QAction("&Creer", this);
+	modifFonction = new QAction("&Modifier", this);
+	supprimerFonction = new QAction("&Supprimer", this);
+
 
 
     //Ajouts actions
@@ -39,12 +70,19 @@ QComputer::QComputer(QWidget *parent){
     menuFichier->addAction(nbVariable);
     menuFichier->addAction(clavierCliquable);
     menuFichier->addAction(actionQuitter);
+	menuProg->addAction(creerFonction);
+	menuProg->addAction(modifFonction);
+	menuProg->addAction(supprimerFonction);
+	menuVar->addAction(creerVariable);
+	menuVar->addAction(modifVariable);
+	menuVar->addAction(supprimerVariable);
 
 
 
     //Layout
     LayoutPrincipale = new QVBoxLayout;
     LayoutMid = new QHBoxLayout;
+	LayoutCommande = new QHBoxLayout;
 
     //Clavier cliquable
     LayoutCliquable = new QGridLayout;
@@ -90,14 +128,13 @@ QComputer::QComputer(QWidget *parent){
     LayoutCliquable->addWidget(button6, 1, 2);
     LayoutCliquable->addWidget(buttonmoins, 1, 5);
 
-    LayoutCliquable->addWidget(button3, 2, 0);
+    LayoutCliquable->addWidget(button1, 2, 0);
     LayoutCliquable->addWidget(button2, 2, 1);
-    LayoutCliquable->addWidget(button1, 2, 2);
+    LayoutCliquable->addWidget(button3, 2, 2);
     LayoutCliquable->addWidget(buttonfois, 2, 5);
 
     LayoutCliquable->addWidget(button0, 3, 0, 1,3);
-    LayoutCliquable->addWidget(buttonentree, 3, 5);
-
+    LayoutCliquable->addWidget(buttondiv, 3, 5);
 
     message = new QLineEdit();
     message->setReadOnly(true);
@@ -114,13 +151,16 @@ QComputer::QComputer(QWidget *parent){
     p.setColor(QPalette::Base, colorPile);
     vuePile->setPalette(p);
 
+	//Layout commande
     commande = new QLineEdit();
+	LayoutCommande->addWidget(commande);
+	LayoutCommande->addWidget(buttonentree);
 
 
     //Layout principale
     LayoutPrincipale->addWidget(message);
     LayoutPrincipale->addLayout(LayoutMid);
-    LayoutPrincipale->addWidget(commande);
+    LayoutPrincipale->addLayout(LayoutCommande);
 
     //Layout milieu
     LayoutMid->addWidget(vuePile);
@@ -142,11 +182,24 @@ QComputer::QComputer(QWidget *parent){
     QObject::connect(button9, SIGNAL(clicked()), this, SLOT(setTexte()));
     QObject::connect(button0, SIGNAL(clicked()), this, SLOT(setTexte()));
 
+	QObject::connect(buttonplus, SIGNAL(clicked()), this, SLOT(callOperator()));
+	QObject::connect(buttonmoins, SIGNAL(clicked()), this, SLOT(callOperator()));
+	QObject::connect(buttondiv, SIGNAL(clicked()), this, SLOT(callOperator()));
+	QObject::connect(buttonfois, SIGNAL(clicked()), this, SLOT(callOperator()));
+	QObject::connect(buttonentree, SIGNAL(clicked()), this, SLOT(getNextCommande()));
+
     //Connect bar
     QObject::connect(actionQuitter, SIGNAL(triggered()), qApp, SLOT(quit()));
     QObject::connect(bipSonore, SIGNAL(triggered()), this, SLOT(desactiverBip()));
     QObject::connect(nbVariable, SIGNAL(triggered()), this, SLOT(choixNombreVariable()));
     QObject::connect(clavierCliquable, SIGNAL(triggered()), this, SLOT(desactiverCliquable()));
+
+	QObject::connect(creerVariable, SIGNAL(triggered()), this, SLOT(creationVar()));
+	QObject::connect(modifVariable, SIGNAL(triggered()), this, SLOT(modifVar()));
+	QObject::connect(supprimerVariable, SIGNAL(triggered()), this, SLOT(supprimerVar()));
+	QObject::connect(creerFonction, SIGNAL(triggered()), this, SLOT(creationFct()));
+	QObject::connect(modifFonction, SIGNAL(triggered()), this, SLOT(modifFct()));
+	QObject::connect(supprimerFonction, SIGNAL(triggered()), this, SLOT(supprimerFct()));
 
     setLayout(LayoutPrincipale);
     layout()->setMenuBar(menuBar);
@@ -195,6 +248,78 @@ void QComputer::choixNombreVariable(){
     refresh();
 }
 
+void QComputer::creationVar() {
+	QDialog* d = new QDialog();
+	QVBoxLayout* mainLayout = new QVBoxLayout();
+	QHBoxLayout* nameLayout = new QHBoxLayout();
+	QHBoxLayout* valeurLayout = new QHBoxLayout();
+	QHBoxLayout* buttonLayout = new QHBoxLayout();
+	QLabel* labelNom = new QLabel("Nom :");
+	QLabel* labelVal = new QLabel("Valeur :");
+	QLineEdit* lineNom = new QLineEdit();
+	QLineEdit* lineVal = new QLineEdit();
+
+	QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+		| QDialogButtonBox::Cancel);
+
+	QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+	QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+
+	nameLayout->addWidget(labelNom);
+	nameLayout->addWidget(lineNom);
+	valeurLayout->addWidget(labelVal);
+	valeurLayout->addWidget(lineVal);
+	//buttonLayout->addWidget(buttonBox)
+
+	mainLayout->addLayout(nameLayout);
+	mainLayout->addLayout(valeurLayout);
+	mainLayout->addWidget(buttonBox);
+	
+
+	d->setLayout(mainLayout);
+
+	int result = d->exec();
+	if (result == QDialog::Accepted)
+	{
+		std::string nom = lineNom->text().toStdString();
+		std::string valeur = lineVal->text().toStdString();
+		if (!std::isupper(nom[0]) || (nom.find('|') != std::string::npos)) {
+			message->setText("Nom de variable invalide.");
+		}
+		else if (valeur[0] <= '0' || valeur[0] >= '9') {
+			message->setText("Valeur incorrecte");
+		}
+		else {
+			Controller::instance().createAtome(nom, valeur);
+			message->setText("");
+		}
+	}
+}
+
+
+void QComputer::modifVar() {
+
+
+}
+
+void QComputer::supprimerVar() {
+
+
+}
+
+void QComputer::creationFct() {
+
+}
+
+void QComputer::modifFct() {
+
+}
+
+void QComputer::supprimerFct() {
+
+
+}
+
 
 void QComputer::desactiverBip(){
     if(bipsonor==true){
@@ -227,5 +352,34 @@ void QComputer::printError(std::string error){
     if(bipsonor==true){
             Beep(523,200);
     }
+}
 
+void QComputer::callOperator() {
+	QAction *senderObj = qobject_cast<QAction*>(sender());
+	if(commande->text()=="")
+		commande->setText(senderObj->text());
+	else
+		commande->setText(commande->text() + " " + senderObj->text());
+}
+
+void QComputer::createOperatorAction(){
+	//operateur stack : DUP, DROP, SWAP , LASTOP, UNDO, REDO, CLEAR
+	//operateur numerique : +, -, *, /, DIV, NEG, NUM, DEN, $, RE, IM?
+	//operateur logique : =, !=, =<, <, >, AND, OR, NOT 
+	for (std::string t : Controller::instance().getOperators()) {
+		QAction *ope = new QAction(QString::fromStdString(t), this);
+		if (t == "DUP" || t == "DROP" || t == "SWAP" || t == "LASTOP" || t == "UNDO" || t == "REDO" || t == "CLEAR" || t == "MOD") { 
+			OpeStack->addAction(ope);
+		}
+		else if (t == "+" || t == "-" || t == "*" || t == "/" || t == "DIV" || t == "NEG" || t == "NUM" || t == "DEN" || t == "$" || t == "RE" || t == "IM") {
+			OpeNumerique->addAction(ope);
+		}
+		else if (t == "=" || t == "!=" || t == "<=" || t == ">" || t == ">=" || t == "<" || t == "AND" || t == "OR" || t == "NOT" || t == "EQUAL") {
+			OpeLogique->addAction(ope);
+		}
+		else {
+			menuOperator->addAction(ope);
+		}
+		connect(ope, SIGNAL(triggered()), this, SLOT(callOperator()));
+	}
 }
