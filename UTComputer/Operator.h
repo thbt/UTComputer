@@ -192,3 +192,9 @@ public:
 	EvalOp() : IOperator("EVAL", 1) {}
 	void operator()(Stack* s);
 };
+
+class IftOp : public IOperator {
+public:
+	IftOp() : IOperator("IFT", 2) {}
+	void operator()(Stack* s);
+};

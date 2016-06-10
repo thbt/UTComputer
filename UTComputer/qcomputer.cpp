@@ -10,6 +10,8 @@
 #include <qlabel.h>
 #include <qcombobox.h>
 #include <qtextedit.h>
+#include <QKeyEvent>
+#include <QShortcut>
 #include "Controller.h"
 
 #include <cctype>
@@ -22,7 +24,7 @@ QComputer::QComputer(QWidget *parent) {
 	setWindowTitle("UTComputer");
 	std::string str("Images/icone.jpg");
 	setWindowIcon(QIcon(QString::fromStdString(str)));
-
+	setFocus();
 
 	//pile = new Pile();
 	//controleur = new Controleur(ExpressionManager::getInstance(),*pile);
@@ -53,6 +55,8 @@ QComputer::QComputer(QWidget *parent) {
 
 
 
+
+
 	//Ajouts actions
 	menuFichier->addAction(bipSonore);
 	menuFichier->addAction(nbVariable);
@@ -65,6 +69,10 @@ QComputer::QComputer(QWidget *parent) {
 	menuVar->addAction(modifVariable);
 	menuVar->addAction(supprimerVariable);
 
+
+	voirPrgm = menuProg->addMenu("&Programmes");
+	voirVar = menuVar->addMenu("&Variables");
+	createVarAndProgAction();
 
 
 	//Layout
@@ -144,7 +152,6 @@ QComputer::QComputer(QWidget *parent) {
 	LayoutCommande->addWidget(commande);
 	LayoutCommande->addWidget(buttonentree);
 
-
 	//Layout principale
 	LayoutPrincipale->addWidget(message);
 	LayoutPrincipale->addLayout(LayoutMid);
@@ -153,6 +160,18 @@ QComputer::QComputer(QWidget *parent) {
 	//Layout milieu
 	LayoutMid->addWidget(vuePile);
 	LayoutMid->addWidget(WidgetCliquable);
+
+	QShortcut *shortcut1 = new QShortcut(QKeySequence("Ctrl+Z"), this);
+	QObject::connect(shortcut1, SIGNAL(activated()), this, SLOT(executeCtrlZ()));
+
+	QShortcut *shortcut2 = new QShortcut(QKeySequence("Ctrl+Y"), this);
+	QObject::connect(shortcut2, SIGNAL(activated()), this, SLOT(executeCtrlY()));
+
+	//QShortcut *shortcut3 = new QShortcut(QKeySequence("Ctrl+Z"), commande);
+	//QObject::connect(shortcut3, SIGNAL(activated()), this, SLOT(executeCtrlZ()));
+
+	//QShortcut *shortcut4 = new QShortcut(QKeySequence("Ctrl+Y"), commande);
+	//QObject::connect(shortcut4, SIGNAL(activated()), this, SLOT(executeCtrlY()));
 
 
 	//Connect
@@ -292,6 +311,7 @@ void QComputer::creationVar() {
 			else {
 				Controller::instance().createAtome(nom, valeur);
 				message->setText("");
+				createVarAndProgAction();
 			}
 		}
 	}
@@ -432,6 +452,7 @@ void QComputer::supprimerVar() {
 		std::string nom = lineNom->currentText().toStdString();
 		Controller::instance().deleteAtome(nom);
 		message->setText("");
+		createVarAndProgAction();
 	}
 }
 
@@ -483,6 +504,7 @@ void QComputer::creationFct() {
 				std::replace(valeur.begin(), valeur.end(), '\n', ' ');
 				Controller::instance().createAtome(nom, valeur);
 				message->setText("");
+				createVarAndProgAction();
 			}
 		}
 	}
@@ -604,9 +626,9 @@ void QComputer::supprimerFct() {
 		std::string nom = lineNom->currentText().toStdString();
 		Controller::instance().deleteAtome(nom);
 		message->setText("");
+		createVarAndProgAction();
 	}
 }
-
 
 void QComputer::desactiverBip(){
     if(bipsonor==true){
@@ -637,7 +659,7 @@ void QComputer::printError(std::string error){
     message->setText(QString::fromStdString(error));
 
     if(bipsonor==true){
-            Beep(523,200);
+		Beep(523,200);
     }
 }
 
@@ -647,6 +669,51 @@ void QComputer::callOperator() {
 		commande->setText(senderObj->text());
 	else
 		commande->setText(commande->text() + " " + senderObj->text());
+}
+
+void QComputer::createVarAndProgAction() {
+	QList<QAction*> lst = voirVar->actions();
+	for (int i = 0; i < lst.length(); i++)
+	{
+		delete lst.at(i);
+	}
+
+	lst = voirPrgm->actions();
+	for (int i = 0; i < lst.length(); i++)
+	{
+		delete lst.at(i);
+	}
+
+	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	if (var.size() == 0) {
+		QAction *var = new QAction("Aucune", this);
+		var->setDisabled(true);
+		voirVar->addAction(var);
+	}
+	else {
+		for (auto& item : var) {
+			QAction *var = new QAction(QString::fromStdString(item.first), this);
+			voirVar->addAction(var);
+			connect(var, SIGNAL(triggered()), this, SLOT(callOperator()));
+		}
+	}
+
+	std::map<std::string, std::string> fct = Controller::instance().getProgrammes();
+
+	if (fct.size() == 0) {
+		QAction *fct = new QAction("Aucune", this);
+		fct->setDisabled(true);
+		voirPrgm->addAction(fct);
+	}
+	else {
+		for (auto& item : fct) {
+			QAction *fct = new QAction(QString::fromStdString(item.first), this);
+			voirPrgm->addAction(fct);
+			connect(fct, SIGNAL(triggered()), this, SLOT(callOperator()));
+		}
+	}
+
+
 }
 
 void QComputer::createOperatorAction(){
@@ -674,4 +741,12 @@ void QComputer::createOperatorAction(){
 void QComputer::closeEvent(QCloseEvent *event)
 {
 	Controller::instance().saveAtome();
+}
+
+void QComputer::executeCtrlZ() {
+	Controller::instance().command("UNDO");
+}
+
+void QComputer::executeCtrlY() {
+	Controller::instance().command("REDO");
 }

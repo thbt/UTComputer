@@ -1252,7 +1252,7 @@ void DivOp::operator()(Stack* s) {
 				}
 				break;
 
-			case RATIONAL: /* MARQUE */
+			case RATIONAL:
 				switch (t2) {
 				case INTEGER:
 					s->push(pRe);
@@ -1353,9 +1353,9 @@ void DivOp::operator()(Stack* s) {
 		if (rt != COMPLEX) {
 			s->push(new IntegerLiteral(1));
 			s->push(right);
-			muop(s);
+			operator()(s);
 			s->push(left);
-			this->operator()(s);
+			muop(s);
 		}
 		else { //(aa' + bb')/a'²+b'² + i (ba' - ab')/a'²+b'²
 			s->push(pRe);
@@ -2712,6 +2712,47 @@ void EvalOp::operator()(Stack* s) {
 			operators.push(token);
 		}
 	}
+}
+
+void IftOp::operator()(Stack* s) {
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : IFT a besoin d'au moins deux arguments");
+
+	ILiteral* right = s->top(); s->pop();
+	Type rt = right->getType();
+
+	ILiteral* left = s->top(); s->pop();
+	Type lt = left->getType();
+
+	if (lt != INTEGER && lt != RATIONAL && lt != REAL && lt != COMPLEX) {
+		s->push(left);
+		s->push(right);
+		throw OperatorException("Erreur : le premier argument doit être un nombre (entier, reel, rationnel ou complexe)");
+	}
+
+	switch (lt) {
+	case INTEGER:
+		if (!dynamic_cast<IntegerLiteral*>(left)->isNul())
+			Controller::instance().command(right->toString());
+		break;
+
+	case REAL:
+		if (!dynamic_cast<RealLiteral*>(left)->isNul()) 
+			Controller::instance().command(right->toString());
+		break;
+
+	case RATIONAL:
+		if (!dynamic_cast<RationalLiteral*>(left)->isNul())
+			Controller::instance().command(right->toString());
+		break;
+
+	case COMPLEX:
+		if (!dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(left)->Re())->isNul()
+			|| !dynamic_cast<INumberLiteral*>(&dynamic_cast<ComplexLiteral*>(left)->Im())->isNul())
+			Controller::instance().command(right->toString());
+		break;
+	}
+
 }
 
 

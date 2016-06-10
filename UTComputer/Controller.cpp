@@ -56,6 +56,7 @@ Controller::Controller() : stack(), NumberDisplay(5) {
     dispatcher.emplace("NOT", NotOp());
     dispatcher.emplace("UNDO", UndoOp());
     dispatcher.emplace("REDO", RedoOp());
+	dispatcher.emplace("IFT", IftOp());
 
 	initAtome();
 }

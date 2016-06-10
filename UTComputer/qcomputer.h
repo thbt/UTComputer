@@ -34,6 +34,8 @@ class QComputer : public QWidget {
 	QMenu *OpeStack;
 	QMenu *OpeNumerique;
 	QMenu *OpeLogique;
+	QMenu *voirPrgm;
+	QMenu *voirVar;
 
 	//Actions menu
 	QAction *actionQuitter;
@@ -46,6 +48,7 @@ class QComputer : public QWidget {
 	QAction *creerFonction;
 	QAction *modifFonction;
 	QAction *supprimerFonction;
+
 
 
 	//Composants
@@ -76,7 +79,10 @@ class QComputer : public QWidget {
 public:
 	explicit QComputer(QWidget *parent = 0);
 	void createOperatorAction();
+	void createVarAndProgAction();
 	void closeEvent(QCloseEvent *event);
+	//void keyPressEvent(QKeyEvent *e);
+
 	public slots:
 		void refresh();
 		void getNextCommande();
@@ -95,4 +101,6 @@ public:
 		void setVariable(QString value);
 		void setFct();
 		void saveAndQuit();
+		void executeCtrlZ();
+		void executeCtrlY();
 };
