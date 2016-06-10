@@ -17,9 +17,9 @@
 #include <fstream>
 #include <string>
 
-#include <direct.h>
-#define GetCurrentDir _getcwd
 
+const std::string pathVar = "SaveFiles/variable.txt";
+const std::string pathFct = "SaveFiles/fonction.txt";
 
 Controller& Controller::instance() {
     static Controller instance;
@@ -57,9 +57,7 @@ Controller::Controller() : stack(), NumberDisplay(5) {
     dispatcher.emplace("UNDO", UndoOp());
     dispatcher.emplace("REDO", RedoOp());
 
-	// variables de test
-	vars.emplace("X", new IntegerLiteral(5));
-	vars.emplace("V1", new RealLiteral(2.0));
+	initAtome();
 }
 
 void Controller::execute(std::string op) {
@@ -168,97 +166,74 @@ std::vector<std::string> Controller::getOperators() {
 }
 
 void Controller::createAtome(std::string nom, std::string value) {
-	char cCurrentPath[FILENAME_MAX];
+	std::map<std::string, std::string>::iterator it;
 
-	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
-	{
-		return;
+	if (value[0] == '[') {
+		prgms[nom] = value;
+		//if (prgms.find(nom) != prgms.end())
+		//	prgms.erase(it);
+		//prgms.insert(nom, value);
 	}
-	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
-	std::string str(cCurrentPath);
-	std::string tmp = str + "\\SaveFiles\\temp.txt";
-	std::ofstream temp(tmp);
-
-	if (value[0] == '[') 
-		str += "\\SaveFiles\\fonction.txt";
-	else 
-		str += "\\SaveFiles\\variable.txt";
-
-	std::ifstream monFlux(str, std::ios_base::app);
-	
-	std::string line;
-
-	while (std::getline(monFlux, line))
-	{
-		if (line.compare(0, nom.size(), nom)!=0)
-		{
-			temp << line << std::endl;
-		}
+	else {
+		vars[nom] = value;
+		//it = vars.find(nom);
+		//if (it != vars.end())
+		//	vars.erase(it);
+		//vars.insert(nom, value);
 	}
-
-
-	temp << nom << "|" << value << std::endl;
-
-	temp.close();
-	monFlux.close();
-	remove(str.c_str());
-	rename(tmp.c_str(), str.c_str());
-
 }
 
-std::map<std::string, std::string> Controller::getAtome(std::string path) {
-	std::map<std::string, std::string> variables;
-
-	char cCurrentPath[FILENAME_MAX];
-
-	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
-	{
-		return variables;
-	}
-	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
-	std::string str(cCurrentPath);
-	str += path;
-
-
-	std::ifstream monFlux(str, std::ios_base::app);
+void Controller::initAtome() {
+	std::ifstream monFluxVar(pathVar, std::ios_base::app);
+	std::ifstream monFluxProg(pathFct, std::ios_base::app);
 
 	std::string line;
 	std::string delimiter = "|";
 
-	while (std::getline(monFlux, line))
+	while (std::getline(monFluxVar, line))
 	{
-		variables[line.substr(0, line.find(delimiter))] = line.substr(line.find(delimiter) + 1, line.length());
+		vars[line.substr(0, line.find(delimiter))] = line.substr(line.find(delimiter) + 1, line.length());
 	}
 
-	return variables;
+	while (std::getline(monFluxProg, line))
+	{
+		prgms[line.substr(0, line.find(delimiter))] = line.substr(line.find(delimiter) + 1, line.length());
+	}
 }
 
-void Controller::deleteAtome(std::string path, std::string name) {
-	char cCurrentPath[FILENAME_MAX];
+void Controller::saveAtome() {
+	std::ofstream monFluxVar(pathVar);
+	std::ofstream monFluxFct(pathFct);
 
-	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
-	{
-		return;
-	}
-	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0';
-	std::string str(cCurrentPath);
-	std::string tmp = str + "\\SaveFiles\\temp.txt";
-	std::ofstream temp(tmp);
-	str += path;
-
-	std::ifstream monFlux(str, std::ios_base::app);
-	std::string line;
-
-	while (std::getline(monFlux, line))
-	{
-		if (line.compare(0, name.size(), name) != 0)
-		{
-			temp << line << std::endl;
-		}
+	for (std::map<std::string, std::string>::iterator iter = vars.begin(); iter != vars.end(); ++iter) {
+		monFluxVar << iter->first << "|" << iter->second;
 	}
 
-	temp.close();
-	monFlux.close();
-	remove(str.c_str());
-	rename(tmp.c_str(), str.c_str());
+	for (std::map<std::string, std::string>::iterator iter = prgms.begin(); iter != prgms.end(); ++iter) {
+		monFluxFct << iter->first << "|" << iter->second;
+	}
 }
+
+std::map<std::string, std::string> Controller::getVariable() {
+	return vars;
+}
+
+std::map<std::string, std::string> Controller::getProgrammes() {
+	return prgms;
+}
+
+void Controller::deleteAtome(std::string name) {
+	std::map<std::string, std::string>::iterator it;
+
+	it = prgms.find(name);
+	if (it != prgms.end()){
+			prgms.erase(it);
+	}
+	else {
+		it = vars.find(name);
+		vars.erase(it);
+	}
+}
+
+std::string Controller::getPathVar() { return pathVar; };
+std::string Controller::getPathProg() { return pathFct; };

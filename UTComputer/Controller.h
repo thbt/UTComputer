@@ -12,6 +12,7 @@
 #include "Operator.h"
 
 
+
 class Controller : public QObject {
     Q_OBJECT
 
@@ -20,7 +21,8 @@ class Controller : public QObject {
     unsigned int NumberDisplay;
     Stack stack;
     std::map<std::string, std::function<void(Stack* s)>> dispatcher;
-	std::map<std::string, ILiteral*> vars;
+	std::map<std::string, std::string> vars;
+	std::map<std::string, std::string> prgms;
     std::stack<StackMemento*> undoStack;
     std::stack<StackMemento*> redoStack;
 
@@ -47,10 +49,13 @@ public:
     }
 
 	void createAtome(std::string name, std::string value);
-
-	std::map<std::string, std::string> getAtome(std::string path);
-
-	void deleteAtome(std::string path, std::string name);
+	void initAtome();
+	void deleteAtome(std::string name);
+	std::map<std::string, std::string> getVariable();
+	std::map<std::string, std::string> getProgrammes();
+	std::string getPathVar();
+	std::string getPathProg();
+	void saveAtome();
 
 signals :
     void changeState();

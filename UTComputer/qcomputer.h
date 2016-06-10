@@ -76,6 +76,7 @@ class QComputer : public QWidget {
 public:
 	explicit QComputer(QWidget *parent = 0);
 	void createOperatorAction();
+	void closeEvent(QCloseEvent *event);
 	public slots:
 		void refresh();
 		void getNextCommande();
@@ -86,11 +87,12 @@ public:
 		void desactiverCliquable();
 		void callOperator();
 		void creationVar();
-		void modifVar();
+		void modifVar(std::string name = "");
 		void supprimerVar();
 		void creationFct();
-		void modifFct();
+		void modifFct(std::string name = "");
 		void supprimerFct();
 		void setVariable(QString value);
 		void setFct();
+		void saveAndQuit();
 };
