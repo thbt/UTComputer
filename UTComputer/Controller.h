@@ -201,6 +201,13 @@ public:
 	*/
 	void saveAtome();
 
+	/**
+	*  \brief Dispatche le bon signal d'édition auprès de la vue
+	*
+	*  \param name Nom de l'atome a mettre à jour.
+	*/
+	void editAtom(std::string name);
+
 signals :
 	/**
 	*  \brief Signal pour prevenir qu'il y a un changement de l'etat de la pile.
@@ -217,4 +224,18 @@ signals :
 	* \param error l'erreur a afficher.
 	*/
     void showError(std::string error);
+
+	/**
+	*  \brief Signal pour prevenir qu'il y a une variable a éditer.
+	*
+	*  \param name Nom de l'atome variable a mettre à jour.
+	*/
+	void editVar(std::string name);
+
+	/**
+	*  \brief Signal pour prevenir qu'il y a un programme a éditer.
+	*
+	*  \param name Nom de l'atome programme a mettre à jour.
+	*/
+	void editProg(std::string name);
 };

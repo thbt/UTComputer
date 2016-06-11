@@ -2634,7 +2634,7 @@ void NotOp::operator()(Stack* s) {
 		}
 		break;
 	}
-	s->push(new IntegerLiteral(1));
+	s->push(new IntegerLiteral(0));
 }
 
 // TODO catch exception
@@ -2753,6 +2753,63 @@ void IftOp::operator()(Stack* s) {
 		break;
 	}
 
+}
+
+void StoOp::operator()(Stack* s) {
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : STO a besoin de 2 arguments");
+
+	ILiteral* second = s->top(); s->pop();
+	Type t = second->getType();
+
+	ILiteral* first = s->top(); s->pop();
+
+	// TODO vérifier que le nom n'est bien constitué que d'un seul
+	if (t != EXPRESSION) {
+		s->push(first);
+		s->push(second);
+		throw OperatorException("Erreur : le second argument doit être une expression");
+	}
+	else {
+		std::string name = second->toString().substr(1, second->toString().size() - 2);
+		std::string value = first->toString();
+
+		Controller::instance().createAtome(name, value);
+	}
+}
+
+void ForgetOp::operator()(Stack* s) {
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : FORGET a besoin d'un argument");
+
+	ILiteral* arg = s->top(); s->pop();
+	Type t = arg->getType();
+
+	if (t != EXPRESSION) {
+		s->push(arg);
+		throw OperatorException("Erreur : l'argument doit être une expression");
+	}
+	else {
+		std::string name = arg->toString().substr(1, arg->toString().size() - 2);
+		Controller::instance().deleteAtome(name);
+	}
+}
+
+void EditOp::operator()(Stack* s) {
+	if (s->size() < this->getArity())
+		throw OperatorException("Erreur : FORGET a besoin d'un argument");
+
+	ILiteral* arg = s->top(); s->pop();
+	Type t = arg->getType();
+
+	if (t != EXPRESSION) {
+		s->push(arg);
+		throw OperatorException("Erreur : l'argument doit être une expression");
+	}
+	else {
+		std::string name = arg->toString().substr(1, arg->toString().size() - 2);
+		Controller::instance().editAtom(name);
+	}
 }
 
 

@@ -17,7 +17,7 @@
 *
 * Contient les methodes de base que chaque methode aura
 */
-class IOperator : public IOperand {
+class IOperator {
 	std::string symbol; /*!< \brief Symbole utilise par l'utilisateur pour designer l'operateur*/
 	const unsigned int arity; /*!< \brief nombre d'element dont l'operateur a besoin (operateur unaire, binaire etc..)*/
 public:
@@ -372,6 +372,14 @@ public:
 	*  Construit l'operateur avec le symbole DROP et arité 1
 	*/
 	DropOp() : IOperator("DROP", 1) {}
+
+
+	/**
+	*	Recupere le premier element de la pile et le supprime.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -388,6 +396,14 @@ public:
 	*  Construit l'operateur avec le symbole SWAP et arité 0
 	*/
 	SwapOp() : IOperator("SWAP", 2) {}
+
+
+	/**
+	*	Recupere les deux premiers elements de la pile et échange leur position
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -404,6 +420,13 @@ public:
 	*  Construit l'operateur avec le symbole CLEAR et arité 0
 	*/
 	ClearOp() : IOperator("CLEAR", 0) {}
+
+
+	/**
+	*	Supprime tous les elements de la pile
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -420,6 +443,15 @@ public:
 	*  Construit l'operateur avec le symbole = et arité 2
 	*/
 	EqualOp() : IOperator("=", 2) {}
+
+
+	/**
+	*	Compare les deux premiers elements de la pile
+	*	Empile 1 si ils sont egaux, 0 sinon.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -436,6 +468,14 @@ public:
 	*  Construit l'operateur avec le symbole != et arité 2
 	*/
 	DifferentOp() : IOperator("!=", 2) {}
+
+	/**
+	*	Compare les deux premiers elements de la pile
+	*	Empile 1 si ils sont differents, 0 sinon.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -452,6 +492,14 @@ public:
 	*  Construit l'operateur avec le symbole <= et arité 2
 	*/
 	InfEqOp() : IOperator("<=", 2) {}
+
+	/**
+	*	Compare les deux premiers elements de la pile
+	*	Empile 1 si le premier est inferieur egale au deuxieme, 0 sinon.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -468,6 +516,14 @@ public:
 	*  Construit l'operateur avec le symbole < et arité 2
 	*/
 	InfOp() : IOperator("<", 2){}
+
+	/**
+	*	Compare les deux premiers elements de la pile
+	*	Empile 1 si le premier est inferieur au deuxieme, 0 sinon.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -484,6 +540,14 @@ public:
 	*  Construit l'operateur avec le symbole > et arité 2
 	*/
 	SupOp() : IOperator(">", 2){}
+
+	/**
+	*	Compare les deux premiers elements de la pile
+	*	Empile 1 si le premier est superieur au deuxieme, 0 sinon.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -500,6 +564,14 @@ public:
 	*  Construit l'operateur avec le symbole >= et arité 2
 	*/
 	SupEqOp() : IOperator(">=", 2){}
+
+	/**
+	*	Compare les deux premiers elements de la pile
+	*	Empile 1 si le premier est superieur ou egale au deuxieme, 0 sinon.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -517,6 +589,14 @@ public:
 	*  Construit l'operateur avec le symbole AND et arité 2
 	*/
 	AndOp() : IOperator("AND", 2){}
+
+	/**
+	*	ET logique entre les deux premiers elements de la pile
+	*	Empile 1 si aucun des deux elements est nul, 0 sinon.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -534,6 +614,14 @@ public:
 	*  Construit l'operateur avec le symbole OR et arité 2
 	*/
 	OrOp() : IOperator("OR", 2){}
+
+	/**
+	*	OR logique
+	*	Empile 1 si un des deux elements n'est pas nul, 0 sinon.
+	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -551,6 +639,14 @@ public:
 	*  Construit l'operateur avec le symbole NOT et arité 1
 	*/
 	NotOp() : IOperator("NOT", 1){}
+
+	/**
+	*	NOT logique
+	*	Empile 1 si l'element est nul, 0 sinon.
+	*	Genere une erreur si l'element n'est pas un entier, un reel, un rationnel ou un complexe
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -566,6 +662,12 @@ public:
 	*  Construit l'operateur avec le symbole UNDO et arité 0
 	*/
 	UndoOp() : IOperator("UNDO", 0) {}
+
+	/**
+	*	Appelle la methode undo du constructeur
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -581,6 +683,12 @@ public:
 	*  Construit l'operateur avec le symbole REDO et arité 0
 	*/
 	RedoOp() : IOperator("REDO", 0) {}
+
+	/**
+	*	Appelle la methode Redo du controleur
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -597,6 +705,14 @@ public:
 	*  Construit l'operateur avec le symbole EVAL et arité 1
 	*/
 	EvalOp() : IOperator("EVAL", 1) {}
+
+	/**
+	*	Recupere le premier element de la liste qui est une expression
+	*	Transforme l'expression en notation polonaise et l'execute
+	*	Genere une erreur si l'element n'est pas une expression.
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
 	void operator()(Stack* s);
 };
 
@@ -613,5 +729,62 @@ public:
 	*  Construit l'operateur avec le symbole IFT et arité 2
 	*/
 	IftOp() : IOperator("IFT", 2) {}
+
+	/**
+	*	Recupere les deux premiers elements de la liste.
+	*	Si l'element est non nul, alors on evalue le deuxieme element
+	*
+	*	Genere une erreur si le premier element n'est pas un entier, un reel, un rationnel ou un complexe.
+	*
+	*   \param s : Reference sur la stack pour executer l'operateur
+	*/
+	void operator()(Stack* s);
+};
+
+/*! \class StoOp
+* \brief Stock un atome
+*
+* Stocke un atome (représentant un programme ou une littérale)
+*/
+class StoOp : public IOperator {
+public:
+	/**
+	*  \brief Constructeur de l'operateur
+	*
+	*  Construit l'operateur avec le symbole EVAL et arité 1
+	*/
+	StoOp() : IOperator("STO", 2) {}
+	void operator()(Stack* s);
+};
+
+/*! \class StoOp
+* \brief Oublie un atome déjà stocké
+*
+* Supprime un atome (référençant un programme ou une autre littérale) de la liste des atomes connus
+*/
+class ForgetOp : public IOperator {
+public:
+	/**
+	*  \brief Constructeur de l'operateur
+	*
+	*  Construit l'operateur avec le symbole EVAL et arité 1
+	*/
+	ForgetOp() : IOperator("FORGET", 2) {}
+	void operator()(Stack* s);
+};
+
+/*! \class StoOp
+* \brief Stock un atome
+*
+* Stocke un atome (représentant un programme ou une littérale)
+*/
+class EditOp : public IOperator {
+public:
+	/**
+	*  \brief Constructeur de l'operateur
+	*
+	*  Construit l'operateur avec le symbole EVAL et arité 1
+	*/
+	EditOp() : IOperator("EDIT", 2) {}
 	void operator()(Stack* s);
 };

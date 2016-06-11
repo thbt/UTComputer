@@ -516,18 +516,18 @@ void QComputer::modifFct(std::string name) {
 	if (name != "") {
 		std::map<std::string, std::string>::iterator it = var.find(name);
 		if (it == var.end()) {
-			message->setText("Cette variable n'existe pas");
+			message->setText("Ce programme n'existe pas");
 			return;
 		}
 	}
 
 	if (var.size() == 0) {
-		message->setText("Aucune fonction à modifier");
+		message->setText("Aucun programme à modifier");
 		return;
 	}
 
 	QDialog* d = new QDialog();
-	d->setWindowTitle("Modifier une fonction");
+	d->setWindowTitle("Modifier un programme");
 	d->setFixedHeight(200);
 	d->setFixedWidth(250);
 	QGridLayout* mainLayout = new QGridLayout;
