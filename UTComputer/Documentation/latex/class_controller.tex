@@ -1,0 +1,399 @@
+\hypertarget{class_controller}{}\section{Controller Class Reference}
+\label{class_controller}\index{Controller@{Controller}}
+
+
+Gere les variables, les programmes, le parser, les etats de la pile et les erreurs.  
+
+
+
+
+{\ttfamily \#include $<$Controller.\+h$>$}
+
+Inheritance diagram for Controller\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_controller}
+\end{center}
+\end{figure}
+\subsection*{Signals}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_controller_a783956d7ffd422c814c8d62926c38f5c}{change\+State} ()
+\begin{DoxyCompactList}\small\item\em Signal pour prevenir qu\textquotesingle{}il y a un changement de l\textquotesingle{}etat de la pile. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_a82364c4f38974097562fb51658a0fe57}{show\+Error} (std\+::string error)
+\begin{DoxyCompactList}\small\item\em Signal pour prevenir qu\textquotesingle{}il y a une erreur a afficher. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_controller_a0d63fc78835ccac86a76fd8ced6e0493}{command} (const std\+::string \&str)
+\begin{DoxyCompactList}\small\item\em Execute des fonctions selon la string. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_a61a7e0cd9d6c886c6e3dda8152a4f97c}{execute} (std\+::string op)
+\begin{DoxyCompactList}\small\item\em Execute l\textquotesingle{}operateur envoye en param. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_a52b8812ceca0b4368dea2e2b4399d860}{undo} ()
+\begin{DoxyCompactList}\small\item\em Fais un undo sur la pile. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_aeb55fe16b48f14b00c179e95a0372a17}{redo} ()
+\begin{DoxyCompactList}\small\item\em Fais un redo sur la pile. \end{DoxyCompactList}\item 
+unsigned int \hyperlink{class_controller_a869d95a3345cb48983ab64fae0fac519}{get\+Nb\+Display} () const 
+\begin{DoxyCompactList}\small\item\em Getter de Nb\+Display. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_affcac054dbc82c6f408d228cb181e60e}{set\+Nb\+Display} (unsigned int nb)
+\begin{DoxyCompactList}\small\item\em Setter nb\+Display. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::string $>$ \hyperlink{class_controller_aa140be0706aba10fbd067244164e5fda}{get\+Operators} ()
+\begin{DoxyCompactList}\small\item\em Getter des keys de dispatcher. \end{DoxyCompactList}\item 
+std\+::vector$<$ \hyperlink{class_i_literal}{I\+Literal} $\ast$ $>$\+::const\+\_\+reverse\+\_\+iterator \hyperlink{class_controller_a846060845ee72a7240778d9156f9693b}{begin\+Stack} () const 
+\begin{DoxyCompactList}\small\item\em renvoie le debut de l\textquotesingle{}iterator de la pile. \end{DoxyCompactList}\item 
+std\+::vector$<$ \hyperlink{class_i_literal}{I\+Literal} $\ast$ $>$\+::const\+\_\+reverse\+\_\+iterator \hyperlink{class_controller_ae6efcb698a186b0de605b8878bf105a2}{end\+Stack} () const 
+\begin{DoxyCompactList}\small\item\em renvoie la fin de l\textquotesingle{}iterator de la pile. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_aa3873536ad6e6be5b4f929ba7347fea4}{create\+Atome} (std\+::string name, std\+::string value)
+\begin{DoxyCompactList}\small\item\em Creer une variable ou un programme. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_aeb8164eff0f45fc260e7772069fee191}{init\+Atome} ()
+\begin{DoxyCompactList}\small\item\em Recuper les atomes dans des fichiers. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_ae243ab9d63d518f9a9c0be3a3509c0fb}{delete\+Atome} (std\+::string name)
+\begin{DoxyCompactList}\small\item\em Supprime un atome. \end{DoxyCompactList}\item 
+std\+::map$<$ std\+::string, std\+::string $>$ \hyperlink{class_controller_a9ad371c267b0f5b2a0199d1fc81edd81}{get\+Variable} ()
+\begin{DoxyCompactList}\small\item\em Getter de vars. \end{DoxyCompactList}\item 
+std\+::map$<$ std\+::string, std\+::string $>$ \hyperlink{class_controller_a3f55dc59477f0c9626ff427206bc409e}{get\+Programmes} ()
+\begin{DoxyCompactList}\small\item\em Getter de prgms. \end{DoxyCompactList}\item 
+std\+::string \hyperlink{class_controller_a92b5c005c4e850fd54bd6601e358fc07}{get\+Path\+Var} ()
+\begin{DoxyCompactList}\small\item\em Renvoie le chemin ou sont stockes les variables. \end{DoxyCompactList}\item 
+std\+::string \hyperlink{class_controller_ad556badaa746c3443dabe9a19d172e76}{get\+Path\+Prog} ()
+\begin{DoxyCompactList}\small\item\em Renvoie le chemin ou sont stockes les programmes. \end{DoxyCompactList}\item 
+void \hyperlink{class_controller_a40d713f44478b4d71821176ecd17b64c}{save\+Atome} ()
+\begin{DoxyCompactList}\small\item\em Sauvegarde les atomes dans des fichiers. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{class_controller}{Controller} \& \hyperlink{class_controller_a20267babbfaf02b1d198292ffd1c3dd5}{instance} ()
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+unsigned int \hyperlink{class_controller_ab8a1a83d23b4bf6c27d3d8e6deef3f4d}{Number\+Display}\hypertarget{class_controller_ab8a1a83d23b4bf6c27d3d8e6deef3f4d}{}\label{class_controller_ab8a1a83d23b4bf6c27d3d8e6deef3f4d}
+
+\begin{DoxyCompactList}\small\item\em Nombre de variable a afficher. \end{DoxyCompactList}\item 
+\hyperlink{class_stack}{Stack} \hyperlink{class_controller_a6ca97d18c4a34d71eeb52577b7cd3b16}{stack}\hypertarget{class_controller_a6ca97d18c4a34d71eeb52577b7cd3b16}{}\label{class_controller_a6ca97d18c4a34d71eeb52577b7cd3b16}
+
+\begin{DoxyCompactList}\small\item\em Pile de la calculette. \end{DoxyCompactList}\item 
+std\+::map$<$ std\+::string, std\+::function$<$ void(\hyperlink{class_stack}{Stack} $\ast$s)$>$ $>$ \hyperlink{class_controller_a4cfc54d738e2454b3bc3c5f5a5e2cb0f}{dispatcher}\hypertarget{class_controller_a4cfc54d738e2454b3bc3c5f5a5e2cb0f}{}\label{class_controller_a4cfc54d738e2454b3bc3c5f5a5e2cb0f}
+
+\begin{DoxyCompactList}\small\item\em Operateurs de la calculette. \end{DoxyCompactList}\item 
+std\+::map$<$ std\+::string, std\+::string $>$ \hyperlink{class_controller_a84c6c9092e5281447bcc70c9d696254f}{vars}\hypertarget{class_controller_a84c6c9092e5281447bcc70c9d696254f}{}\label{class_controller_a84c6c9092e5281447bcc70c9d696254f}
+
+\begin{DoxyCompactList}\small\item\em Variables crees par l\textquotesingle{}utilisateur. \end{DoxyCompactList}\item 
+std\+::map$<$ std\+::string, std\+::string $>$ \hyperlink{class_controller_a6fde9e3c035a8eb5380ae21340573f71}{prgms}\hypertarget{class_controller_a6fde9e3c035a8eb5380ae21340573f71}{}\label{class_controller_a6fde9e3c035a8eb5380ae21340573f71}
+
+\begin{DoxyCompactList}\small\item\em Programmes crees par l\textquotesingle{}utilisateur. \end{DoxyCompactList}\item 
+std\+::stack$<$ \hyperlink{class_stack_memento}{Stack\+Memento} $\ast$ $>$ \hyperlink{class_controller_a6ba6ca8a5507204c722996702160eb57}{undo\+Stack}\hypertarget{class_controller_a6ba6ca8a5507204c722996702160eb57}{}\label{class_controller_a6ba6ca8a5507204c722996702160eb57}
+
+\begin{DoxyCompactList}\small\item\em Etats precedents de la calculette. \end{DoxyCompactList}\item 
+std\+::stack$<$ \hyperlink{class_stack_memento}{Stack\+Memento} $\ast$ $>$ \hyperlink{class_controller_aef80f477e5791ba5361d0d22ab2943f1}{redo\+Stack}\hypertarget{class_controller_aef80f477e5791ba5361d0d22ab2943f1}{}\label{class_controller_aef80f477e5791ba5361d0d22ab2943f1}
+
+\begin{DoxyCompactList}\small\item\em Etats suivants de la calculette. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Gere les variables, les programmes, le parser, les etats de la pile et les erreurs. 
+
+Controleur de la calculette Permet le lien entre la pile et la vue, en controlant les donn√©es envoyes par l\textquotesingle{}utilisation et en les mettant dans la pile 
+
+\subsection{Member Function Documentation}
+\index{Controller@{Controller}!begin\+Stack@{begin\+Stack}}
+\index{begin\+Stack@{begin\+Stack}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{begin\+Stack() const }{beginStack() const }}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<${\bf I\+Literal}$\ast$$>$\+::const\+\_\+reverse\+\_\+iterator Controller\+::begin\+Stack (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{class_controller_a846060845ee72a7240778d9156f9693b}{}\label{class_controller_a846060845ee72a7240778d9156f9693b}
+
+
+renvoie le debut de l\textquotesingle{}iterator de la pile. 
+
+Renvoie un iterator sur le debut de la pile.
+
+\begin{DoxyReturn}{Returns}
+std\+::vector$<$\+I\+Literal$\ast$$>$\+::const\+\_\+reverse\+\_\+iterator Iterator sur le debut de la pile. 
+\end{DoxyReturn}
+\index{Controller@{Controller}!change\+State@{change\+State}}
+\index{change\+State@{change\+State}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{change\+State}{changeState}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::change\+State (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [signal]}}\hypertarget{class_controller_a783956d7ffd422c814c8d62926c38f5c}{}\label{class_controller_a783956d7ffd422c814c8d62926c38f5c}
+
+
+Signal pour prevenir qu\textquotesingle{}il y a un changement de l\textquotesingle{}etat de la pile. 
+
+Signal a la vue qu\textquotesingle{}il y a un changement d\textquotesingle{}etat de la pile. \index{Controller@{Controller}!command@{command}}
+\index{command@{command}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{command(const std\+::string \&str)}{command(const std::string &str)}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::command (
+\begin{DoxyParamCaption}
+\item[{const std\+::string \&}]{str}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_a0d63fc78835ccac86a76fd8ced6e0493}{}\label{class_controller_a0d63fc78835ccac86a76fd8ced6e0493}
+
+
+Execute des fonctions selon la string. 
+
+Methode qui permet de lire une string envoyee en parametre, de la parse et d\textquotesingle{}effectuer des actions selon celle-\/ci.
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & \+: la commande a† executer. \\
+\hline
+\end{DoxyParams}
+\index{Controller@{Controller}!create\+Atome@{create\+Atome}}
+\index{create\+Atome@{create\+Atome}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{create\+Atome(std\+::string name, std\+::string value)}{createAtome(std::string name, std::string value)}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::create\+Atome (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{name, }
+\item[{std\+::string}]{value}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_aa3873536ad6e6be5b4f929ba7347fea4}{}\label{class_controller_aa3873536ad6e6be5b4f929ba7347fea4}
+
+
+Creer une variable ou un programme. 
+
+Creer, selon le nom, une variable ou un programme et l\textquotesingle{}ajoute a la map correspondante avec en cle sa valeur.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & nom de l\textquotesingle{}atome. Le nom commence par une majuscule. \\
+\hline
+{\em value} & valeur de l\textquotesingle{}atome. Un programme doit commencer par \mbox{[} sinon c\textquotesingle{}est une variable. \\
+\hline
+\end{DoxyParams}
+\index{Controller@{Controller}!delete\+Atome@{delete\+Atome}}
+\index{delete\+Atome@{delete\+Atome}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{delete\+Atome(std\+::string name)}{deleteAtome(std::string name)}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::delete\+Atome (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{name}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_ae243ab9d63d518f9a9c0be3a3509c0fb}{}\label{class_controller_ae243ab9d63d518f9a9c0be3a3509c0fb}
+
+
+Supprime un atome. 
+
+Supprime un atome selon son nom. Si il n\textquotesingle{}est pas dans vars il est forcement dans prgms.
+
+
+\begin{DoxyParams}{Parameters}
+{\em name} & Nom de l\textquotesingle{}atome a supprimer. \\
+\hline
+\end{DoxyParams}
+\index{Controller@{Controller}!end\+Stack@{end\+Stack}}
+\index{end\+Stack@{end\+Stack}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{end\+Stack() const }{endStack() const }}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<${\bf I\+Literal}$\ast$$>$\+::const\+\_\+reverse\+\_\+iterator Controller\+::end\+Stack (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{class_controller_ae6efcb698a186b0de605b8878bf105a2}{}\label{class_controller_ae6efcb698a186b0de605b8878bf105a2}
+
+
+renvoie la fin de l\textquotesingle{}iterator de la pile. 
+
+Renvoie un iterator sur la fin de la pile.
+
+\begin{DoxyReturn}{Returns}
+std\+::vector$<$\+I\+Literal$\ast$$>$\+::const\+\_\+reverse\+\_\+iterator Iterator sur la fin de la pile. 
+\end{DoxyReturn}
+\index{Controller@{Controller}!execute@{execute}}
+\index{execute@{execute}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{execute(std\+::string op)}{execute(std::string op)}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::execute (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{op}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_a61a7e0cd9d6c886c6e3dda8152a4f97c}{}\label{class_controller_a61a7e0cd9d6c886c6e3dda8152a4f97c}
+
+
+Execute l\textquotesingle{}operateur envoye en param. 
+
+Recherche l\textquotesingle{}operateur dans la liste dispatcher et l\textquotesingle{}execute. Si l\textquotesingle{}operateur a execute est U\+N\+DO ou R\+E\+DO on appelle nous meme la methode correspondant dans le controler.
+
+
+\begin{DoxyParams}{Parameters}
+{\em op} & \+: l\textquotesingle{}operateur a executer. \\
+\hline
+\end{DoxyParams}
+\index{Controller@{Controller}!get\+Nb\+Display@{get\+Nb\+Display}}
+\index{get\+Nb\+Display@{get\+Nb\+Display}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{get\+Nb\+Display() const }{getNbDisplay() const }}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int Controller\+::get\+Nb\+Display (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}\hypertarget{class_controller_a869d95a3345cb48983ab64fae0fac519}{}\label{class_controller_a869d95a3345cb48983ab64fae0fac519}
+
+
+Getter de Nb\+Display. 
+
+Appeler par la vue pour savoir le nombre d\textquotesingle{}element a afficher.
+
+\begin{DoxyReturn}{Returns}
+unsigned int \+: nombre d\textquotesingle{}element a afficher. 
+\end{DoxyReturn}
+\index{Controller@{Controller}!get\+Operators@{get\+Operators}}
+\index{get\+Operators@{get\+Operators}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{get\+Operators()}{getOperators()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::string $>$ Controller\+::get\+Operators (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_aa140be0706aba10fbd067244164e5fda}{}\label{class_controller_aa140be0706aba10fbd067244164e5fda}
+
+
+Getter des keys de dispatcher. 
+
+Renvoie la liste des noms des operateurs stockes dans dispatcher.
+
+\begin{DoxyReturn}{Returns}
+std\+::vector$<$std\+::string$>$ \+: liste des noms des operateurs. 
+\end{DoxyReturn}
+\index{Controller@{Controller}!get\+Path\+Prog@{get\+Path\+Prog}}
+\index{get\+Path\+Prog@{get\+Path\+Prog}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{get\+Path\+Prog()}{getPathProg()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::string Controller\+::get\+Path\+Prog (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_ad556badaa746c3443dabe9a19d172e76}{}\label{class_controller_ad556badaa746c3443dabe9a19d172e76}
+
+
+Renvoie le chemin ou sont stockes les programmes. 
+
+Renvoie le chemin absolu (par rapport au projet) ou sont stockes les programmes.
+
+\begin{DoxyReturn}{Returns}
+std\+::string \+: chemin ou sont stockes les programmes. 
+\end{DoxyReturn}
+\index{Controller@{Controller}!get\+Path\+Var@{get\+Path\+Var}}
+\index{get\+Path\+Var@{get\+Path\+Var}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{get\+Path\+Var()}{getPathVar()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::string Controller\+::get\+Path\+Var (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_a92b5c005c4e850fd54bd6601e358fc07}{}\label{class_controller_a92b5c005c4e850fd54bd6601e358fc07}
+
+
+Renvoie le chemin ou sont stockes les variables. 
+
+Renvoie le chemin absolu (par rapport au projet) ou sont stockes les variables.
+
+\begin{DoxyReturn}{Returns}
+std\+::string \+: chemin ou sont stockes les variables. 
+\end{DoxyReturn}
+\index{Controller@{Controller}!get\+Programmes@{get\+Programmes}}
+\index{get\+Programmes@{get\+Programmes}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{get\+Programmes()}{getProgrammes()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::map$<$ std\+::string, std\+::string $>$ Controller\+::get\+Programmes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_a3f55dc59477f0c9626ff427206bc409e}{}\label{class_controller_a3f55dc59477f0c9626ff427206bc409e}
+
+
+Getter de prgms. 
+
+Renvoie la liste des programmes dans une map $<$nom, valeur$>$.
+
+\begin{DoxyReturn}{Returns}
+std\+::map$<$std\+::string, std\+::string$>$ \+: map de programmes $<$nom, valeur$>$. 
+\end{DoxyReturn}
+\index{Controller@{Controller}!get\+Variable@{get\+Variable}}
+\index{get\+Variable@{get\+Variable}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{get\+Variable()}{getVariable()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::map$<$ std\+::string, std\+::string $>$ Controller\+::get\+Variable (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_a9ad371c267b0f5b2a0199d1fc81edd81}{}\label{class_controller_a9ad371c267b0f5b2a0199d1fc81edd81}
+
+
+Getter de vars. 
+
+Renvoie la liste des variables dans une map $<$nom, valeur$>$.
+
+\begin{DoxyReturn}{Returns}
+std\+::map$<$std\+::string, std\+::string$>$ \+: map de variable $<$nom, valeur$>$. 
+\end{DoxyReturn}
+\index{Controller@{Controller}!init\+Atome@{init\+Atome}}
+\index{init\+Atome@{init\+Atome}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{init\+Atome()}{initAtome()}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::init\+Atome (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_aeb8164eff0f45fc260e7772069fee191}{}\label{class_controller_aeb8164eff0f45fc260e7772069fee191}
+
+
+Recuper les atomes dans des fichiers. 
+
+Recupere dans les fichiers les variables et les parametres. et initialise les listes au lancement du programme. \index{Controller@{Controller}!instance@{instance}}
+\index{instance@{instance}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{instance()}{instance()}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Controller} \& Controller\+::instance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_controller_a20267babbfaf02b1d198292ffd1c3dd5}{}\label{class_controller_a20267babbfaf02b1d198292ffd1c3dd5}
+Instance singleton du controleur \index{Controller@{Controller}!redo@{redo}}
+\index{redo@{redo}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{redo()}{redo()}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::redo (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_aeb55fe16b48f14b00c179e95a0372a17}{}\label{class_controller_aeb55fe16b48f14b00c179e95a0372a17}
+
+
+Fais un redo sur la pile. 
+
+Ajoute l\textquotesingle{}etat actuel de la pile dans undo si jamais on veut annuler le redo Affiche l\textquotesingle{}etat de la pile en haut de la pile de redo Throw si la pile de undo est vide et donc qu\textquotesingle{}il n\textquotesingle{}y a rien a redo. \index{Controller@{Controller}!save\+Atome@{save\+Atome}}
+\index{save\+Atome@{save\+Atome}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{save\+Atome()}{saveAtome()}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::save\+Atome (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_a40d713f44478b4d71821176ecd17b64c}{}\label{class_controller_a40d713f44478b4d71821176ecd17b64c}
+
+
+Sauvegarde les atomes dans des fichiers. 
+
+Appeler a la fin du programme pour sauvegarder vars et prgms dans des fichiers separes. \index{Controller@{Controller}!set\+Nb\+Display@{set\+Nb\+Display}}
+\index{set\+Nb\+Display@{set\+Nb\+Display}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{set\+Nb\+Display(unsigned int nb)}{setNbDisplay(unsigned int nb)}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::set\+Nb\+Display (
+\begin{DoxyParamCaption}
+\item[{unsigned int}]{nb}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_affcac054dbc82c6f408d228cb181e60e}{}\label{class_controller_affcac054dbc82c6f408d228cb181e60e}
+
+
+Setter nb\+Display. 
+
+Permet de mettre a jour le nombre d\textquotesingle{}element a afficher. \index{Controller@{Controller}!show\+Error@{show\+Error}}
+\index{show\+Error@{show\+Error}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{show\+Error}{showError}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::show\+Error (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{error}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [signal]}}\hypertarget{class_controller_a82364c4f38974097562fb51658a0fe57}{}\label{class_controller_a82364c4f38974097562fb51658a0fe57}
+
+
+Signal pour prevenir qu\textquotesingle{}il y a une erreur a afficher. 
+
+Signal a la vue l\textquotesingle{}erreur a afficher.
+
+
+\begin{DoxyParams}{Parameters}
+{\em error} & l\textquotesingle{}erreur a afficher. \\
+\hline
+\end{DoxyParams}
+\index{Controller@{Controller}!undo@{undo}}
+\index{undo@{undo}!Controller@{Controller}}
+\subsubsection[{\texorpdfstring{undo()}{undo()}}]{\setlength{\rightskip}{0pt plus 5cm}void Controller\+::undo (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_controller_a52b8812ceca0b4368dea2e2b4399d860}{}\label{class_controller_a52b8812ceca0b4368dea2e2b4399d860}
+
+
+Fais un undo sur la pile. 
+
+Ajoute l\textquotesingle{}etat actuel de la pile dans redo si jamais on veut annuler le undo Affiche l\textquotesingle{}etat de la pile en haut de la pile de undo Throw si la pile de undo est vide et donc qu\textquotesingle{}il n\textquotesingle{}y a rien a undo. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Cours/\+U\+T\+C/\+P16/\+L\+O21/\+U\+T\+Computer/\+U\+T\+Computer/\hyperlink{_controller_8h}{Controller.\+h}\item 
+D\+:/\+Cours/\+U\+T\+C/\+P16/\+L\+O21/\+U\+T\+Computer/\+U\+T\+Computer/Controller.\+cpp\item 
+D\+:/\+Cours/\+U\+T\+C/\+P16/\+L\+O21/\+U\+T\+Computer/\+U\+T\+Computer/debug/moc\+\_\+\+Controller.\+cpp\end{DoxyCompactItemize}

@@ -136,7 +136,6 @@ void Controller::command(const std::string& str) {
             try {
 				transform(t.begin(), t.end(), t.begin(), ::toupper);
                 execute(t);
-				
 				changeState();
             } catch(OperatorException oe) {
                 showError(oe.getInfo());
@@ -171,16 +170,9 @@ void Controller::createAtome(std::string nom, std::string value) {
 
 	if (value[0] == '[') {
 		prgms[nom] = value;
-		//if (prgms.find(nom) != prgms.end())
-		//	prgms.erase(it);
-		//prgms.insert(nom, value);
 	}
 	else {
 		vars[nom] = value;
-		//it = vars.find(nom);
-		//if (it != vars.end())
-		//	vars.erase(it);
-		//vars.insert(nom, value);
 	}
 }
 
