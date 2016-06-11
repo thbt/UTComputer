@@ -54,6 +54,7 @@ Controller::Controller() : stack(), NumberDisplay(5) {
     dispatcher.emplace("UNDO", UndoOp());
     dispatcher.emplace("REDO", RedoOp());
 	dispatcher.emplace("IFT", IftOp());
+	dispatcher.emplace("EVAL", EvalOp());
 
 	initAtome();
 }
@@ -109,7 +110,7 @@ void Controller::command(const std::string& str) {
 				newToken = "";
 			}
 		} else if(nestedProgCounter > 0) {
-			newToken += item + ' ';
+			newToken += item;
 
 			if(item[0] == '[') nestedProgCounter++;
 
@@ -119,6 +120,8 @@ void Controller::command(const std::string& str) {
 					tokens.push_back(newToken);
 					newToken = "";
 				}
+			} else {
+				newToken += ' ';
 			}
 		} else {
 			if(item[0] == '`') {
@@ -129,11 +132,14 @@ void Controller::command(const std::string& str) {
 				} else 
 					inExpression = true;
 			} else if(item[0] == '[' || newToken[0] == '[') {
-				newToken += item + ' ';
+				newToken += item;
 				if(item.back() == ']') {
 					tokens.push_back(newToken);
 					newToken = "";
-				} else nestedProgCounter++;
+				} else {
+					newToken += ' ';
+					nestedProgCounter++;
+				}
 			} else
 				tokens.push_back(item);
 		}
