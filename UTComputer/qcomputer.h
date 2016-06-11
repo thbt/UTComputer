@@ -1,3 +1,12 @@
+/**
+* \file qcomputer.h
+* \brief Vue de la calculette
+* \author Thibaut ROY, Romain HUBER
+* \version 0.1
+* \date 12 Juin 2016
+*/
+
+
 #pragma once
 
 #include <QWidget>
@@ -11,13 +20,17 @@
 #include <QMenu>
 #include <QMenuBar>
 
-
+/*! \class QComputer
+* \brief Vue de la calculette
+*
+* Partie IHM de la calculette
+*/
 class QComputer : public QWidget {
 	Q_OBJECT
-		//Layout
-	QVBoxLayout *LayoutPrincipale;
-	QHBoxLayout *LayoutMid;
-	QHBoxLayout *LayoutCommande;
+	//Layout
+	QVBoxLayout *LayoutPrincipale; /*!< \brief Layout globale de la vue */
+	QHBoxLayout *LayoutMid; /*!< \brief Layout du milieu, contient l'affichage de la pile et du pave tactile */
+	QHBoxLayout *LayoutCommande; /*!< \brief Layout du bas, contient  */
 
 	//Layout cliquable
 	QWidget *WidgetCliquable;

@@ -45,7 +45,7 @@ public:
 	*
 	*  Methode principale de l'operateur : execute une action definie pour chaque operateur
 	*
-	*  Genere une erreur si il y n'y a moins d'element dans la pile que l'arité de l'opérateur.
+	*  Genere une erreur si il y n'y a moins d'element dans la pile que l'arite de l'operateur.
 	*  \param s : Reference sur la stack pour executer l'operateur
 	*/
 	virtual void operator()(Stack* s) = 0; // Foncteur = classe-fonction
@@ -70,7 +70,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole + et arité 2
+	*  Construit l'operateur avec le symbole + et arite 2
 	*/
 	PlusOp() : IOperator("+", 2) {}
 
@@ -92,7 +92,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole - et arité 2
+	*  Construit l'operateur avec le symbole - et arite 2
 	*/
 	MinusOp() : IOperator("-", 2) {}
 
@@ -114,7 +114,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole * et arité 2
+	*  Construit l'operateur avec le symbole * et arite 2
 	*/
 	MultiOp() : IOperator("*", 2) {}
 
@@ -136,7 +136,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole / et arité 2
+	*  Construit l'operateur avec le symbole / et arite 2
 	*/
 	DivOp() : IOperator("/", 2) {}
 
@@ -158,7 +158,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole DIV et arité 2
+	*  Construit l'operateur avec le symbole DIV et arite 2
 	*/
 	DivEntOp() : IOperator("DIV", 2) {}
 
@@ -180,7 +180,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole MOD et arité 2
+	*  Construit l'operateur avec le symbole MOD et arite 2
 	*/
 	ModulOp() : IOperator("MOD", 2) {}
 
@@ -203,7 +203,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole NEG et arité 1
+	*  Construit l'operateur avec le symbole NEG et arite 1
 	*/
 	NegOp() : IOperator("NEG", 1) {}
 
@@ -225,7 +225,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole NUM et arité 1
+	*  Construit l'operateur avec le symbole NUM et arite 1
 	*/
 	NumOp() : IOperator("NUM", 1) {}
 
@@ -249,7 +249,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole DEN et arité 1
+	*  Construit l'operateur avec le symbole DEN et arite 1
 	*/
 	DenOp() : IOperator("DEN", 1) {}
 
@@ -274,12 +274,12 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole $ et arité 2
+	*  Construit l'operateur avec le symbole $ et arite 2
 	*/
 	$Op() : IOperator("$", 2) {}
 
 	/**
-	*	Construit un complexe à partir des deux premiers elements de la pile
+	*	Construit un complexe a partir des deux premiers elements de la pile
 	*	Le premier devient la partie imaginaire, le deuxieme la partie reelle
 	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel ou un rationnel.
 	*
@@ -298,13 +298,13 @@ public :
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole RE et arité 1
+	*  Construit l'operateur avec le symbole RE et arite 1
 	*/
 	ReOp() : IOperator("RE", 1) {}
 
 	/**
 	*	Recupere le premier element de la pile et met sa partie reelle dedans.
-	*	L'element est inchangé si c'est un entier, un reel ou un rationnel.
+	*	L'element est inchange si c'est un entier, un reel ou un rationnel.
 	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
 	*
 	*   \param s : Reference sur la stack pour executer l'operateur
@@ -322,7 +322,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole IM et arité 1
+	*  Construit l'operateur avec le symbole IM et arite 1
 	*/
 	ImOp() : IOperator("IM", 1) {}
 
@@ -346,7 +346,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole DUP et arité 1
+	*  Construit l'operateur avec le symbole DUP et arite 1
 	*/
 	DupOp() : IOperator("DUP", 1) {}
 
@@ -369,7 +369,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole DROP et arité 1
+	*  Construit l'operateur avec le symbole DROP et arite 1
 	*/
 	DropOp() : IOperator("DROP", 1) {}
 
@@ -393,13 +393,13 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole SWAP et arité 0
+	*  Construit l'operateur avec le symbole SWAP et arite 0
 	*/
 	SwapOp() : IOperator("SWAP", 2) {}
 
 
 	/**
-	*	Recupere les deux premiers elements de la pile et échange leur position
+	*	Recupere les deux premiers elements de la pile et echange leur position
 	*	Genere une erreur si un de ces deux elements n'est pas un entier, un reel, un rationnel ou un complexe
 	*
 	*   \param s : Reference sur la stack pour executer l'operateur
@@ -410,14 +410,14 @@ public:
 /*! \class ClearOp
 * \brief Vide la pile
 *
-* Permet de supprimer tous les élements de la pile
+* Permet de supprimer tous les elements de la pile
 */
 class ClearOp : public IOperator {
 public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole CLEAR et arité 0
+	*  Construit l'operateur avec le symbole CLEAR et arite 0
 	*/
 	ClearOp() : IOperator("CLEAR", 0) {}
 
@@ -440,7 +440,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole = et arité 2
+	*  Construit l'operateur avec le symbole = et arite 2
 	*/
 	EqualOp() : IOperator("=", 2) {}
 
@@ -465,7 +465,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole != et arité 2
+	*  Construit l'operateur avec le symbole != et arite 2
 	*/
 	DifferentOp() : IOperator("!=", 2) {}
 
@@ -489,7 +489,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole <= et arité 2
+	*  Construit l'operateur avec le symbole <= et arite 2
 	*/
 	InfEqOp() : IOperator("<=", 2) {}
 
@@ -513,7 +513,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole < et arité 2
+	*  Construit l'operateur avec le symbole < et arite 2
 	*/
 	InfOp() : IOperator("<", 2){}
 
@@ -537,7 +537,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole > et arité 2
+	*  Construit l'operateur avec le symbole > et arite 2
 	*/
 	SupOp() : IOperator(">", 2){}
 
@@ -561,7 +561,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole >= et arité 2
+	*  Construit l'operateur avec le symbole >= et arite 2
 	*/
 	SupEqOp() : IOperator(">=", 2){}
 
@@ -586,7 +586,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole AND et arité 2
+	*  Construit l'operateur avec le symbole AND et arite 2
 	*/
 	AndOp() : IOperator("AND", 2){}
 
@@ -611,7 +611,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole OR et arité 2
+	*  Construit l'operateur avec le symbole OR et arite 2
 	*/
 	OrOp() : IOperator("OR", 2){}
 
@@ -636,7 +636,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole NOT et arité 1
+	*  Construit l'operateur avec le symbole NOT et arite 1
 	*/
 	NotOp() : IOperator("NOT", 1){}
 
@@ -659,7 +659,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole UNDO et arité 0
+	*  Construit l'operateur avec le symbole UNDO et arite 0
 	*/
 	UndoOp() : IOperator("UNDO", 0) {}
 
@@ -680,7 +680,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole REDO et arité 0
+	*  Construit l'operateur avec le symbole REDO et arite 0
 	*/
 	RedoOp() : IOperator("REDO", 0) {}
 
@@ -702,7 +702,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole EVAL et arité 1
+	*  Construit l'operateur avec le symbole EVAL et arite 1
 	*/
 	EvalOp() : IOperator("EVAL", 1) {}
 
@@ -726,7 +726,7 @@ public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole IFT et arité 2
+	*  Construit l'operateur avec le symbole IFT et arite 2
 	*/
 	IftOp() : IOperator("IFT", 2) {}
 
@@ -744,30 +744,30 @@ public:
 /*! \class StoOp
 * \brief Stock un atome
 *
-* Stocke un atome (représentant un programme ou une littérale)
+* Stocke un atome (representant un programme ou une litterale)
 */
 class StoOp : public IOperator {
 public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole EVAL et arité 1
+	*  Construit l'operateur avec le symbole EVAL et arite 1
 	*/
 	StoOp() : IOperator("STO", 2) {}
 	void operator()(Stack* s);
 };
 
 /*! \class StoOp
-* \brief Oublie un atome déjà stocké
+* \brief Oublie un atome deja stocke
 *
-* Supprime un atome (référençant un programme ou une autre littérale) de la liste des atomes connus
+* Supprime un atome (referençant un programme ou une autre litterale) de la liste des atomes connus
 */
 class ForgetOp : public IOperator {
 public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole EVAL et arité 1
+	*  Construit l'operateur avec le symbole EVAL et arite 1
 	*/
 	ForgetOp() : IOperator("FORGET", 2) {}
 	void operator()(Stack* s);
@@ -776,14 +776,14 @@ public:
 /*! \class StoOp
 * \brief Stock un atome
 *
-* Stocke un atome (représentant un programme ou une littérale)
+* Stocke un atome (representant un programme ou une litterale)
 */
 class EditOp : public IOperator {
 public:
 	/**
 	*  \brief Constructeur de l'operateur
 	*
-	*  Construit l'operateur avec le symbole EVAL et arité 1
+	*  Construit l'operateur avec le symbole EVAL et arite 1
 	*/
 	EditOp() : IOperator("EDIT", 2) {}
 	void operator()(Stack* s);
