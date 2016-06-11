@@ -36,8 +36,8 @@ class Controller : public QObject {
     unsigned int NumberDisplay; /*!< \brief Nombre de variable a afficher */
     Stack stack; /*!< \brief Pile de la calculette */
     std::map<std::string, std::function<void(Stack* s)>> dispatcher; /*!< \brief Operateurs de la calculette */
-	std::map<std::string, std::string> vars; /*!< \brief Variables crees par l'utilisateur */
-	std::map<std::string, std::string> prgms; /*!< \brief Programmes crees par l'utilisateur */
+	std::map<std::string, std::string> variables; /*!< \brief Variables crees par l'utilisateur */
+	std::map<std::string, std::string> programs; /*!< \brief Programmes crees par l'utilisateur */
     std::stack<StackMemento*> undoStack; /*!< \brief Etats precedents de la calculette */
     std::stack<StackMemento*> redoStack; /*!< \brief Etats suivants de la calculette */
 
