@@ -21,8 +21,8 @@ class Controller : public QObject {
     unsigned int NumberDisplay;
     Stack stack;
     std::map<std::string, std::function<void(Stack* s)>> dispatcher;
-	std::map<std::string, std::string> vars;
-	std::map<std::string, std::string> prgms;
+	std::map<std::string, std::string> variables;
+	std::map<std::string, std::string> programs;
     std::stack<StackMemento*> undoStack;
     std::stack<StackMemento*> redoStack;
 
@@ -51,8 +51,8 @@ public:
 	void createAtome(std::string name, std::string value);
 	void initAtome();
 	void deleteAtome(std::string name);
-	std::map<std::string, std::string> getVariable();
-	std::map<std::string, std::string> getProgrammes();
+	std::map<std::string, std::string> getVariables();
+	std::map<std::string, std::string> getPrograms();
 	std::string getPathVar();
 	std::string getPathProg();
 	void saveAtome();

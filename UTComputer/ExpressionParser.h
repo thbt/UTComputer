@@ -9,4 +9,4 @@ public:
 };
 
 unsigned int precedence(char op);
-void parse(std::string exp);
+std::string toRPN(std::string exp);

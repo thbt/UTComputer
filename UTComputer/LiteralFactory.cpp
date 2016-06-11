@@ -19,11 +19,10 @@ ILiteral* LiteralFactory::makeLiteral(double n) const {
 }
 
 ILiteral* LiteralFactory::makeLiteral(std::pair<int, int> n) const{
-	RationalLiteral* R = new RationalLiteral(n.first, n.second);
-	if (R->getValue().second == 1)
-		return new IntegerLiteral(R->getValue().first);
+	if (n.second == 1)
+		return new IntegerLiteral(n.first);
 	else
-		return R;
+		return new RationalLiteral(n.first, n.second);
 }
 
 ILiteral* LiteralFactory::makeLiteral(INumberLiteral* re, INumberLiteral* im) const{
