@@ -1567,7 +1567,7 @@ void NumOp::operator()(Stack* s) {
 
 	if (t != INTEGER && t != RATIONAL) {
 		s->push(number);
-		throw OperatorException("Erreur :NUM n'accepte que les entiers ou les rationnels");
+		throw OperatorException("Erreur : NUM n'accepte que les entiers ou les rationnels");
 	}
 
 	if (t == INTEGER)
@@ -1659,7 +1659,7 @@ void ImOp::operator()(Stack* s) {
 
 
 	if (t == INTEGER || t == RATIONAL || t == REAL)
-		s->push(number);
+		s->push(new IntegerLiteral(0));
 	else {
 		Type t = dynamic_cast<ComplexLiteral*>(number)->Re().getType();
 		switch (t) {

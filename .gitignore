@@ -21,3 +21,6 @@ DerivedData/
 
 # runtime files
 UTComputer/SaveFiles/*
+
+# Doxygen
+Documentation/
