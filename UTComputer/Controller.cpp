@@ -55,6 +55,9 @@ Controller::Controller() : stack(), NumberDisplay(5) {
     dispatcher.emplace("REDO", RedoOp());
 	dispatcher.emplace("IFT", IftOp());
 	dispatcher.emplace("EVAL", EvalOp());
+	dispatcher.emplace("STO", StoOp());
+	dispatcher.emplace("FORGET", ForgetOp());
+	dispatcher.emplace("EDIT", EditOp());
 
 	initAtome();
 }
@@ -265,7 +268,25 @@ void Controller::deleteAtome(std::string name) {
 	}
 	else {
 		it = variables.find(name);
-		variables.erase(it);
+		if(it != variables.end())
+			variables.erase(it);
+		else
+			throw OperatorException("La variable "+ name + " n'existe pas");
+	}
+}
+
+void Controller::editAtom(std::string name) {
+	std::map<std::string, std::string>::iterator it;
+
+	it = programs.find(name);
+	if(it != programs.end()) {
+		editProg(name);
+	} else {
+		it = variables.find(name);
+		if(it != variables.end())
+			editVar(name);
+		else
+			throw OperatorException("La variable " + name + " n'existe pas");
 	}
 }
 
