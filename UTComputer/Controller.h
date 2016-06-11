@@ -36,8 +36,8 @@ class Controller : public QObject {
     unsigned int NumberDisplay; /*!< \brief Nombre de variable a afficher */
     Stack stack; /*!< \brief Pile de la calculette */
     std::map<std::string, std::function<void(Stack* s)>> dispatcher; /*!< \brief Operateurs de la calculette */
-	std::map<std::string, std::string> vars; /*!< \brief Variables crees par l'utilisateur */
-	std::map<std::string, std::string> prgms; /*!< \brief Programmes crees par l'utilisateur */
+	std::map<std::string, std::string> variables; /*!< \brief Variables crees par l'utilisateur */
+	std::map<std::string, std::string> programs; /*!< \brief Programmes crees par l'utilisateur */
     std::stack<StackMemento*> undoStack; /*!< \brief Etats precedents de la calculette */
     std::stack<StackMemento*> redoStack; /*!< \brief Etats suivants de la calculette */
 
@@ -157,32 +157,8 @@ public:
 	* \param name Nom de l'atome a supprimer.
 	*/
 	void deleteAtome(std::string name);
-
-	/**
-	*  \brief Getter de vars.
-	*
-	*  Renvoie la liste des variables dans une map <nom, valeur>.
-	*
-	* \return std::map<std::string, std::string> : map de variable <nom, valeur>.
-	*/
-	std::map<std::string, std::string> getVariable();
-
-	/**
-	*  \brief Getter de prgms.
-	*
-	*  Renvoie la liste des programmes dans une map <nom, valeur>.
-	*
-	* \return std::map<std::string, std::string> : map de programmes <nom, valeur>.
-	*/
-	std::map<std::string, std::string> getProgrammes();
-
-	/**
-	*  \brief Renvoie le chemin ou sont stockes les variables.
-	*
-	*  Renvoie le chemin absolu (par rapport au projet) ou sont stockes les variables.
-	*
-	* \return std::string : chemin ou sont stockes les variables.
-	*/
+	std::map<std::string, std::string> getVariables();
+	std::map<std::string, std::string> getPrograms();
 	std::string getPathVar();
 
 	/**
@@ -215,6 +191,20 @@ signals :
 	*  Signal a la vue qu'il y a un changement d'etat de la pile.
 	*/
     void changeState();
+
+	/**
+	*  \brief Signal pour prevenir qu'il y a une variable a éditer.
+	*
+	*  \param name Nom de l'atome variable a mettre à jour.
+	*/
+	void editVar(std::string name);
+
+	/**
+	*  \brief Signal pour prevenir qu'il y a un programme a éditer.
+	*
+	*  \param name Nom de l'atome programme a mettre à jour.
+	*/
+	void editProg(std::string name);
 
 	/**
 	*  \brief Signal pour prevenir qu'il y a une erreur a afficher.

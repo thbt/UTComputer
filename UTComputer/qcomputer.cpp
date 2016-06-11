@@ -303,7 +303,7 @@ void QComputer::creationVar() {
 			message->setText("Valeur incorrecte");
 		}
 		else {
-			std::map<std::string, std::string> prog = Controller::instance().getProgrammes();
+			std::map<std::string, std::string> prog = Controller::instance().getPrograms();
 			std::map<std::string, std::string>::iterator it = prog.find(nom);
 			if (it != prog.end()) {
 				message->setText("Ce nom est déjà pris pour une fonction");
@@ -318,7 +318,7 @@ void QComputer::creationVar() {
 }
 
 void QComputer::modifVar(std::string name) {
-	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	std::map<std::string, std::string> var = Controller::instance().getVariables();
 
 	if (name != "") {
 		std::map<std::string, std::string>::iterator it = var.find(name);
@@ -390,7 +390,7 @@ void QComputer::modifVar(std::string name) {
 }
 
 void QComputer::setVariable(QString value) {
-	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	std::map<std::string, std::string> var = Controller::instance().getVariables();
 	if (!(var[value.toStdString()] == "")) {
 		QLineEdit *senderObj = qobject_cast<QLineEdit*>(sender());
 		senderObj->setText(QString::fromStdString(var[value.toStdString()]));
@@ -398,7 +398,7 @@ void QComputer::setVariable(QString value) {
 }
 
 void QComputer::setFct() {
-	std::map<std::string, std::string> fcts = Controller::instance().getProgrammes();
+	std::map<std::string, std::string> fcts = Controller::instance().getPrograms();
 	QTextEdit *senderObj = qobject_cast<QTextEdit*>(sender());
 	QString value = senderObj->toPlainText();
 	if (!(fcts[value.toStdString()] == "")) {
@@ -415,7 +415,7 @@ void QComputer::setFct() {
 }
 
 void QComputer::supprimerVar() {
-	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	std::map<std::string, std::string> var = Controller::instance().getVariables();
 
 	if (var.size() == 0) {
 		message->setText("Aucune variable à supprimer");
@@ -495,7 +495,7 @@ void QComputer::creationFct() {
 			message->setText("Valeur incorrecte");
 		}
 		else {
-			std::map<std::string, std::string> var = Controller::instance().getVariable();
+			std::map<std::string, std::string> var = Controller::instance().getVariables();
 			std::map<std::string, std::string>::iterator it = var.find(nom);
 			if (it != var.end()) {
 				message->setText("Ce nom est déjà pris pour une variable");
@@ -511,7 +511,7 @@ void QComputer::creationFct() {
 }
 
 void QComputer::modifFct(std::string name) {
-	std::map<std::string, std::string> var = Controller::instance().getProgrammes();
+	std::map<std::string, std::string> var = Controller::instance().getPrograms();
 
 	if (name != "") {
 		std::map<std::string, std::string>::iterator it = var.find(name);
@@ -589,7 +589,7 @@ void QComputer::modifFct(std::string name) {
 }
 
 void QComputer::supprimerFct() {
-	std::map<std::string, std::string> fct = Controller::instance().getProgrammes();
+	std::map<std::string, std::string> fct = Controller::instance().getPrograms();
 
 	if (fct.size() == 0) {
 		message->setText("Aucune fonction à supprimer");
@@ -684,7 +684,7 @@ void QComputer::createVarAndProgAction() {
 		delete lst.at(i);
 	}
 
-	std::map<std::string, std::string> var = Controller::instance().getVariable();
+	std::map<std::string, std::string> var = Controller::instance().getVariables();
 	if (var.size() == 0) {
 		QAction *var = new QAction("Aucune", this);
 		var->setDisabled(true);
@@ -698,7 +698,7 @@ void QComputer::createVarAndProgAction() {
 		}
 	}
 
-	std::map<std::string, std::string> fct = Controller::instance().getProgrammes();
+	std::map<std::string, std::string> fct = Controller::instance().getPrograms();
 
 	if (fct.size() == 0) {
 		QAction *fct = new QAction("Aucune", this);

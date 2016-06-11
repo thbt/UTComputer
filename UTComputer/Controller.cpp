@@ -8,15 +8,12 @@
 
 #include <sstream>
 #include <algorithm>
+#include <fstream>
 
 #include "Controller.h"
 #include "LiteralFactory.h"
 #include "OperatorException.h"
 #include <iostream>
-
-#include <fstream>
-#include <string>
-
 
 const std::string pathVar = "SaveFiles/variable.txt";
 const std::string pathFct = "SaveFiles/fonction.txt";
@@ -57,6 +54,7 @@ Controller::Controller() : stack(), NumberDisplay(5) {
     dispatcher.emplace("UNDO", UndoOp());
     dispatcher.emplace("REDO", RedoOp());
 	dispatcher.emplace("IFT", IftOp());
+	dispatcher.emplace("EVAL", EvalOp());
 	dispatcher.emplace("STO", StoOp());
 	dispatcher.emplace("FORGET", ForgetOp());
 	dispatcher.emplace("EDIT", EditOp());
@@ -98,25 +96,56 @@ void Controller::redo() {
 
 void Controller::command(const std::string& str) {
     // 1. Tokenizer
-    std::stringstream ss(str); // string to stream
+    std::stringstream ss(str);
     std::string item;
     std::vector<std::string> tokens;
     std::string newToken = "";
+
+	unsigned int nestedProgCounter = 0;
+	bool inExpression = false;
+
     while(getline(ss, item, ' ')) {
-        if(item[0] == '`') {
-            newToken += item;
-            if(item.back() == '`') {
-                tokens.push_back(newToken);
-                newToken = "";
-            }
-        } else if(item[0] == '[' || newToken[0] == '[') {
-            newToken = newToken + item + ' ';
-            if(item.back() == ']') {
-                tokens.push_back(newToken);
-                newToken = "";
-            }
-        } else
-            tokens.push_back(item);
+		if(inExpression) {
+			newToken += item;
+			if(item.back() == '`') {
+				inExpression = false;
+				tokens.push_back(newToken);
+				newToken = "";
+			}
+		} else if(nestedProgCounter > 0) {
+			newToken += item;
+
+			if(item[0] == '[') nestedProgCounter++;
+
+			if(item.back() == ']') {
+				nestedProgCounter--;
+				if(nestedProgCounter == 0) {
+					tokens.push_back(newToken);
+					newToken = "";
+				}
+			} else {
+				newToken += ' ';
+			}
+		} else {
+			if(item[0] == '`') {
+				newToken += item;
+				if(item.back() == '`') {
+					tokens.push_back(newToken);
+					newToken = "";
+				} else 
+					inExpression = true;
+			} else if(item[0] == '[' || newToken[0] == '[') {
+				newToken += item;
+				if(item.back() == ']') {
+					tokens.push_back(newToken);
+					newToken = "";
+				} else {
+					newToken += ' ';
+					nestedProgCounter++;
+				}
+			} else
+				tokens.push_back(item);
+		}
     }
 
     std::cout << "affichage tokens :" << std::endl;
@@ -125,31 +154,45 @@ void Controller::command(const std::string& str) {
     }
 
     // 2. Syntactic analysis
-    // TODO try catch pour l'instanciation des littéraux
+    
     for(std::string& t : tokens) {
+		transform(t.begin(), t.end(), t.begin(), ::toupper);
 		if (t[0] == '[' || t[0] == '`' || t[0] == '.' || (t[0] >= '0' && t[0] <= '9')) { // Check if the token is a value (number/complex/expression/program)
-			stack.push(LiteralFactory::getInstance().makeLiteral(t));
+			stack.push(LiteralFactory::getInstance().makeLiteral(t)); // TODO try catch pour l'instanciation des littéraux
 			changeState();
 		}
 		else if (t[0] == '-' && t.length() > 1) { // special case : negative number
 			stack.push(LiteralFactory::getInstance().makeLiteral(t));
 			changeState();
 		}
-        else {// otherwise the token is an operator
-            try {
-				transform(t.begin(), t.end(), t.begin(), ::toupper);
-                execute(t);
-				changeState();
-            } catch(OperatorException oe) {
-                showError(oe.getInfo());
-                std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
-            }
-        }
+        else {
+			std::vector<std::string> opList = getOperators();
 
-        // TODO a supprimer (uniquement pour debugger
-        std::cout << "affichage stack :" << std::endl;
-        for(auto it = stack.begin(); it != stack.end(); it++) {
-        	std::cout << (*it)->toString() << std::endl;
+			std::vector<std::string> varList;
+			for(auto it = variables.begin(); it != variables.end(); ++it)
+				varList.push_back(it->first);
+			
+			std::vector<std::string> progList;
+			for(auto it = programs.begin(); it != programs.end(); ++it)
+				progList.push_back(it->first);
+			
+			if(std::find(opList.begin(), opList.end(), t) != opList.end()) { // token is an operator
+				try {
+					execute(t);
+					changeState();
+				} catch(OperatorException oe) {
+					showError(oe.getInfo());
+					std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
+				}
+			} else if(std::find(varList.begin(), varList.end(), t) != varList.end()) { // token is a variable
+				stack.push(LiteralFactory::getInstance().makeLiteral(variables[t])); // TODO try catch pour l'instanciation des littéraux
+				changeState();
+			} else if(std::find(progList.begin(), progList.end(), t) != progList.end()) { // token is a program
+				command(programs[t].substr(1, programs[t].size() - 2));
+			} else {
+				stack.push(LiteralFactory::getInstance().makeLiteral("`" + t + "`"));
+				changeState();
+			}
         }
     }
 }
@@ -171,12 +214,10 @@ std::vector<std::string> Controller::getOperators() {
 void Controller::createAtome(std::string nom, std::string value) {
 	std::map<std::string, std::string>::iterator it;
 
-	if (value[0] == '[') {
-		prgms[nom] = value;
-	}
-	else {
-		vars[nom] = value;
-	}
+	if (value[0] == '[')
+		programs[nom] = value;
+	else
+		variables[nom] = value;
 }
 
 void Controller::initAtome() {
@@ -188,12 +229,12 @@ void Controller::initAtome() {
 
 	while (std::getline(monFluxVar, line))
 	{
-		vars[line.substr(0, line.find(delimiter))] = line.substr(line.find(delimiter) + 1, line.length());
+		variables[line.substr(0, line.find(delimiter))] = line.substr(line.find(delimiter) + 1, line.length());
 	}
 
 	while (std::getline(monFluxProg, line))
 	{
-		prgms[line.substr(0, line.find(delimiter))] = line.substr(line.find(delimiter) + 1, line.length());
+		programs[line.substr(0, line.find(delimiter))] = line.substr(line.find(delimiter) + 1, line.length());
 	}
 }
 
@@ -201,54 +242,53 @@ void Controller::saveAtome() {
 	std::ofstream monFluxVar(pathVar);
 	std::ofstream monFluxFct(pathFct);
 
-	for (std::map<std::string, std::string>::iterator iter = vars.begin(); iter != vars.end(); ++iter) {
+	for (std::map<std::string, std::string>::iterator iter = variables.begin(); iter != variables.end(); ++iter) {
 		monFluxVar << iter->first << "|" << iter->second;
 	}
 
-	for (std::map<std::string, std::string>::iterator iter = prgms.begin(); iter != prgms.end(); ++iter) {
+	for (std::map<std::string, std::string>::iterator iter = programs.begin(); iter != programs.end(); ++iter) {
 		monFluxFct << iter->first << "|" << iter->second;
 	}
 }
 
-std::map<std::string, std::string> Controller::getVariable() {
-	return vars;
+std::map<std::string, std::string> Controller::getVariables() {
+	return variables;
 }
 
-std::map<std::string, std::string> Controller::getProgrammes() {
-	return prgms;
+std::map<std::string, std::string> Controller::getPrograms() {
+	return programs;
 }
 
 void Controller::deleteAtome(std::string name) {
 	std::map<std::string, std::string>::iterator it;
 
-	it = prgms.find(name);
-	if (it != prgms.end()){
-			prgms.erase(it);
+	it = programs.find(name);
+	if (it != programs.end()){
+			programs.erase(it);
 	}
 	else {
-		it = vars.find(name);
-		if (it != vars.end())
-			vars.erase(it);
+		it = variables.find(name);
+		if(it != variables.end())
+			variables.erase(it);
 		else
-			throw OperatorException("La variable " + name + " n'existe pas");
+			throw OperatorException("La variable "+ name + " n'existe pas");
 	}
 }
 
 void Controller::editAtom(std::string name) {
 	std::map<std::string, std::string>::iterator it;
 
-	it = prgms.find(name);
-	if (it != prgms.end()) {
+	it = programs.find(name);
+	if(it != programs.end()) {
 		editProg(name);
-	}
-	else {
-		it = prgms.find(name);
-		if (it != prgms.end())
+	} else {
+		it = variables.find(name);
+		if(it != variables.end())
 			editVar(name);
 		else
 			throw OperatorException("La variable " + name + " n'existe pas");
 	}
-};
+}
 
 std::string Controller::getPathVar() { return pathVar; };
 std::string Controller::getPathProg() { return pathFct; };

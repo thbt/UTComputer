@@ -14,6 +14,7 @@
     <ProjectGuid>{2BBA9C1C-8FDA-308C-A58A-110E0326F3E5}</ProjectGuid>
     <RootNamespace>UTComputer</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -29,7 +30,7 @@
     <PlatformToolSet>v140</PlatformToolSet>
     <OutputDirectory>debug\</OutputDirectory>
     <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
-    <CharacterSet>NotSet</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
     <ConfigurationType>Application</ConfigurationType>
     <IntermediateDirectory>debug\</IntermediateDirectory>
     <PrimaryOutput>UTComputer</PrimaryOutput>
@@ -56,7 +57,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;"C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt";C:\Qt\Qt5.6.0\5.6\msvc2015_64\include;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore;release;C:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore;release;C:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -75,7 +76,7 @@
       <WarningLevel>Level3</WarningLevel>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\qtmain.lib;shell32.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Widgets.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Gui.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\qtmain.lib;shell32.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Widgets.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Gui.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Core.lib;Qt5Gui.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib;C:\utils\postgresql\pgsql\lib;C:\utils\my_sql\my_sql\lib;$(QTDIR)\lib;"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64";%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -98,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;"C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt";C:\Qt\Qt5.6.0\5.6\msvc2015_64\include;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore;debug;C:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore;debug;C:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -117,7 +118,7 @@
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\qtmaind.lib;shell32.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Widgetsd.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Guid.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\qtmaind.lib;shell32.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Widgetsd.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Guid.lib;C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib\Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Qt\Qt5.6.0\5.6\msvc2015_64\lib;C:\utils\postgresql\pgsql\lib;C:\utils\my_sql\my_sql\lib;$(QTDIR)\lib;"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10240.0\ucrt\x64";%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>"/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' publicKeyToken='6595b64144ccf1df' language='*' processorArchitecture='*'" %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
@@ -164,9 +165,9 @@
     <ClInclude Include="ExpressionParser.h" />
     <ClInclude Include="test.h" />
     <CustomBuild Include="Controller.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_DLL  "-I." "-I\C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\release" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_DLL  "-I." "-IC:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\release" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing Controller.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_DLL  "-I." "-I\C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\debug" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_DLL  "-I." "-IC:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\debug" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing Controller.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -180,9 +181,9 @@
     <ClInclude Include="Stack.h" />
     <ClInclude Include="StackMemento.h" />
     <CustomBuild Include="qcomputer.h">
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_DLL  "-I." "-I\C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\release" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_DLL  "-I." "-IC:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\release" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing qcomputer.h...</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_DLL  "-I." "-I\C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\debug" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o "$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_DLL  "-I." "-IC:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore" "-I.\debug" "-IC:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtWidgets"</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing qcomputer.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
@@ -194,7 +195,7 @@
   <ImportGroup Label="ExtensionTargets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" Qt5Version_x0020_x64="msvc2015_64" />
+      <UserProperties UicDir=".\GeneratedFiles" RccDir=".\GeneratedFiles" Qt5Version_x0020_x64="$(DefaultQtVersion)" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

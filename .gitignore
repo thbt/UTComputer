@@ -19,3 +19,9 @@ x64/
 build/
 DerivedData/
 .DS_Store
+
+# runtime files
+UTComputer/SaveFiles/*
+
+# Doxygen
+Documentation/

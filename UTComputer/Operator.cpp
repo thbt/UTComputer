@@ -6,6 +6,7 @@
 #include "LiteralFactory.h"
 #include "OperatorException.h"
 #include "Controller.h"
+#include "ExpressionParser.h"
 
 void PlusOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
@@ -2634,7 +2635,7 @@ void NotOp::operator()(Stack* s) {
 		}
 		break;
 	}
-	s->push(new IntegerLiteral(0));
+	s->push(new IntegerLiteral(1));
 }
 
 // TODO catch exception
@@ -2658,59 +2659,23 @@ void RedoOp::operator()(Stack* s) {
 
 void EvalOp::operator()(Stack* s) {
 	if (s->size() < this->getArity())
-		throw OperatorException("Erreur : EVAL a besoin d'au moins un argument");
+		throw OperatorException("Erreur : EVAL a besoin d'un argument");
 
 	ILiteral* arg = s->top(); s->pop();
 	Type at = arg->getType();
 
-	if (at != EXPRESSION)
-		throw OperatorException("Erreur : l'argument d'EVAL doit être une expression");
+	std::string str = arg->toString().substr(1, arg->toString().size() - 2);
 
-	// shunting yard
-	Stack rpnStack;
-
-	std::queue<std::string> output;
-	std::stack<std::string> operators;
-
-	std::string expr = dynamic_cast<ExpressionLiteral*>(arg)->getValue();
-
-	while (!expr.empty()) { // tant qu'il reste des tokens
-		std::string token;
-		// check if token is a number
-		char c = expr[0];
-		expr.erase(0, 1);
-		token += c;
-
-		std::string symbols = "+*-/$<>=!";
-
-		// Si c'est un nombre...
-		if (std::isdigit(c)) {
-			while (!expr.empty() && (c = expr[0]) && (std::isdigit(c) || c == '.' || c == '$')) {
-				token += c;
-				expr.erase(0, 1);
-			}
-			output.push(token); // ... On l'ajoute dans la file
-		}
-		else if (symbols.find(c) != std::string::npos) {
-			// Si c'est un opérateur représenté par un symbole : pousse
-			token += c;
-			expr.erase(0, 1);
-
-			// cas particuliers : opérateurs symboliques avec deux caractères
-			if ((c == '!' || c == '>' || c == '<') && (expr[0] == '=')) {
-				token += expr[0];
-				expr.erase(0, 1);
-			}
-			operators.push(token);
-		}
-		else if (std::isalpha(c)) {
-			// sinon c'est un opérateur représenté par une string
-			while (!expr.empty() && (c = expr[0]) && (std::isalpha(c) || std::isdigit(c))) {
-				token += c;
-				expr.erase(0, 1);
-			}
-			operators.push(token);
-		}
+	switch(at) {
+	case PROGRAM:
+		Controller::instance().command(str);
+		break;
+	case EXPRESSION:
+		Controller::instance().command(toRPN(str));
+		break;
+	default:
+		s->push(arg);
+		throw OperatorException("Erreur : L'argument doit être de type EXPRESSION ou PROGRAM");
 	}
 }
 
@@ -2756,21 +2721,20 @@ void IftOp::operator()(Stack* s) {
 }
 
 void StoOp::operator()(Stack* s) {
-	if (s->size() < this->getArity())
+	if(s->size() < this->getArity())
 		throw OperatorException("Erreur : STO a besoin de 2 arguments");
 
 	ILiteral* second = s->top(); s->pop();
 	Type t = second->getType();
 
 	ILiteral* first = s->top(); s->pop();
-
+	
 	// TODO vérifier que le nom n'est bien constitué que d'un seul
-	if (t != EXPRESSION) {
+	if(t != EXPRESSION) {
 		s->push(first);
 		s->push(second);
 		throw OperatorException("Erreur : le second argument doit être une expression");
-	}
-	else {
+	} else {
 		std::string name = second->toString().substr(1, second->toString().size() - 2);
 		std::string value = first->toString();
 
@@ -2779,37 +2743,33 @@ void StoOp::operator()(Stack* s) {
 }
 
 void ForgetOp::operator()(Stack* s) {
-	if (s->size() < this->getArity())
+	if(s->size() < this->getArity())
 		throw OperatorException("Erreur : FORGET a besoin d'un argument");
 
 	ILiteral* arg = s->top(); s->pop();
 	Type t = arg->getType();
 
-	if (t != EXPRESSION) {
+	if(t != EXPRESSION) {
 		s->push(arg);
 		throw OperatorException("Erreur : l'argument doit être une expression");
-	}
-	else {
+	} else {
 		std::string name = arg->toString().substr(1, arg->toString().size() - 2);
 		Controller::instance().deleteAtome(name);
 	}
 }
 
 void EditOp::operator()(Stack* s) {
-	if (s->size() < this->getArity())
+	if(s->size() < this->getArity())
 		throw OperatorException("Erreur : FORGET a besoin d'un argument");
 
 	ILiteral* arg = s->top(); s->pop();
 	Type t = arg->getType();
 
-	if (t != EXPRESSION) {
+	if(t != EXPRESSION) {
 		s->push(arg);
 		throw OperatorException("Erreur : l'argument doit être une expression");
-	}
-	else {
+	} else {
 		std::string name = arg->toString().substr(1, arg->toString().size() - 2);
 		Controller::instance().editAtom(name);
 	}
 }
-
-

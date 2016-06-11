@@ -10,7 +10,7 @@ int main(int argc, char* argv[]){
     QComputer fenetre;
     fenetre.show();
 
-	parse("3+1*5");
+    toRPN("(3+1)*5");
 
     return app.exec();
 }
