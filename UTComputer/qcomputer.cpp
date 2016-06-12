@@ -309,7 +309,7 @@ void QComputer::creationVar() {
 			std::map<std::string, std::string> prog = Controller::instance().getPrograms();
 			std::map<std::string, std::string>::iterator it = prog.find(nom);
 			if (it != prog.end()) {
-				message->setText("Ce nom est déjà pris pour une fonction");
+				message->setText("Ce nom est deja pris pour une fonction");
 			}
 			else {
 				Controller::instance().createAtome(nom, valeur);
@@ -332,7 +332,7 @@ void QComputer::modifVar(std::string name) {
 	}
 
 	if (var.size() == 0) {
-		message->setText("Aucune variable à modifier");
+		message->setText("Aucune variable a modifier");
 		return;
 	}
 
@@ -416,7 +416,7 @@ void QComputer::supprimerVar() {
 	std::map<std::string, std::string> var = Controller::instance().getVariables();
 
 	if (var.size() == 0) {
-		message->setText("Aucune variable à supprimer");
+		message->setText("Aucune variable a supprimer");
 		return;
 	}
 
@@ -496,7 +496,7 @@ void QComputer::creationFct() {
 			std::map<std::string, std::string> var = Controller::instance().getVariables();
 			std::map<std::string, std::string>::iterator it = var.find(nom);
 			if (it != var.end()) {
-				message->setText("Ce nom est déjà pris pour une variable");
+				message->setText("Ce nom est deja pris pour une variable");
 			}
 			else {
 				std::replace(valeur.begin(), valeur.end(), '\n', ' ');
@@ -520,7 +520,7 @@ void QComputer::modifFct(std::string name) {
 	}
 
 	if (var.size() == 0) {
-		message->setText("Aucun programme à modifier");
+		message->setText("Aucun programme a modifier");
 		return;
 	}
 
@@ -590,7 +590,7 @@ void QComputer::supprimerFct() {
 	std::map<std::string, std::string> fct = Controller::instance().getPrograms();
 
 	if (fct.size() == 0) {
-		message->setText("Aucune fonction à supprimer");
+		message->setText("Aucune fonction a supprimer");
 		return;
 	}
 
