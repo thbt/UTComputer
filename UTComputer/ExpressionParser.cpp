@@ -85,7 +85,7 @@ std::string toRPN(std::string exp) {
 						output.append(fun + ' ');
 						operators.pop();
 					} else {
-						std::string str = "Pas d'opérateurs disponibles avec le nom : '" + fun + "'";
+						std::string str = std::string("Pas d'opérateurs disponibles avec le nom : '") + fun + std::string("'");
 						throw ParserException(str);
 					}
                 }
