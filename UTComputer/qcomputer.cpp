@@ -347,7 +347,7 @@ void QComputer::modifVar(std::string name) {
 	QLineEdit* lineVal = new QLineEdit(QString::fromStdString(var.begin()->second));
 
 	for (auto& item : var) {
-		lineNom->addItem(QString::fromStdString(item.first));
+		lineNom->addItem(QString::fromStdString(item.first), QString::fromStdString(item.first));
 	}
 
 	if (name != "") {
@@ -545,7 +545,7 @@ void QComputer::modifFct(std::string name) {
 	lineVal->setPlainText(firstfct);
 
 	for (auto& item : var) {
-		lineNom->addItem(QString::fromStdString(item.first));
+		lineNom->addItem(QString::fromStdString(item.first), QString::fromStdString(item.first));
 	}
 
 	if (name != "") {
