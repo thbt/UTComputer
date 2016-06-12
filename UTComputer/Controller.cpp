@@ -13,6 +13,7 @@
 #include "Controller.h"
 #include "LiteralFactory.h"
 #include "OperatorException.h"
+#include "ParserException.h"
 #include <iostream>
 
 const std::string pathVar = "SaveFiles/variable.txt";
@@ -182,7 +183,10 @@ void Controller::command(const std::string& str) {
 					changeState();
 				} catch(OperatorException oe) {
 					showError(oe.getInfo());
-					std::cerr << oe.getInfo() << std::endl; // prob not enough values in stack
+					std::cerr << oe.getInfo() << std::endl;
+				} catch(ParserException pe) {
+					showError(pe.getInfo());
+					std::cerr << pe.getInfo() << std::endl;
 				}
 			} else if(std::find(varList.begin(), varList.end(), t) != varList.end()) { // token is a variable
 				stack.push(LiteralFactory::getInstance().makeLiteral(variables[t])); // TODO try catch pour l'instanciation des littéraux
