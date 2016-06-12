@@ -216,9 +216,15 @@ std::vector<std::string> Controller::getOperators() {
 }
 
 void Controller::createAtome(std::string name, std::string value) {
-	std::vector<std::string> opList = getOperators();
-	if(std::find(opList.begin(), opList.end(), name) != opList.end())
+	if(dispatcher.find(name) != dispatcher.end())
 		throw OperatorException("Erreur : nom interdit, un opérateur possède déjà le nom : " + name);
+
+	if(variables.find(name) != variables.end())
+		throw OperatorException("Erreur : nom interdit, une variable possède déjà le nom : " + name);
+
+	if(programs.find(name) != programs.end())
+		throw OperatorException("Erreur : nom interdit, un programme possède déjà le nom : " + name);
+
 	if (value[0] == '[')
 		programs[name] = value;
 	else
