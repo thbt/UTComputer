@@ -66,9 +66,9 @@ Controller::Controller() : stack(), NumberDisplay(5) {
 void Controller::execute(std::string op) {
 	// Controle l'existence de la commande
 	if(dispatcher.find(op) == dispatcher.end())
-		throw OperatorException("L'opérateur n'existe pas.");
+		throw OperatorException("L'operateur n'existe pas.");
 	else {
-		// On effectue une opération sur la stack -> on sauvegarde l'état
+		// On effectue une operation sur la stack -> on sauvegarde l'etat
 		if(op != "UNDO" && op != "REDO")
 			undoStack.push(stack.createMemento());
 		dispatcher[op](&stack);
@@ -81,7 +81,7 @@ void Controller::undo() {
 	else {
 		redoStack.push(stack.createMemento());
 		stack.setMemento(undoStack.top());
-		undoStack.pop(); // pop la dernière opération
+		undoStack.pop(); // pop la derniere operation
 	}
 }
 
@@ -159,7 +159,7 @@ void Controller::command(const std::string& str) {
     for(std::string& t : tokens) {
 		transform(t.begin(), t.end(), t.begin(), ::toupper);
 		if (t[0] == '[' || t[0] == '`' || t[0] == '.' || (t[0] >= '0' && t[0] <= '9')) { // Check if the token is a value (number/complex/expression/program)
-			stack.push(LiteralFactory::getInstance().makeLiteral(t)); // TODO try catch pour l'instanciation des littéraux
+			stack.push(LiteralFactory::getInstance().makeLiteral(t)); // TODO try catch pour l'instanciation des litteraux
 			changeState();
 		}
 		else if (t[0] == '-' && t.length() > 1) { // special case : negative number
@@ -189,7 +189,7 @@ void Controller::command(const std::string& str) {
 					std::cerr << pe.getInfo() << std::endl;
 				}
 			} else if(std::find(varList.begin(), varList.end(), t) != varList.end()) { // token is a variable
-				stack.push(LiteralFactory::getInstance().makeLiteral(variables[t])); // TODO try catch pour l'instanciation des littéraux
+				stack.push(LiteralFactory::getInstance().makeLiteral(variables[t])); // TODO try catch pour l'instanciation des litteraux
 				changeState();
 			} else if(std::find(progList.begin(), progList.end(), t) != progList.end()) { // token is a program
 				command(programs[t].substr(1, programs[t].size() - 2));

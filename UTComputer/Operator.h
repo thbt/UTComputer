@@ -769,7 +769,7 @@ public:
 	*
 	*  Construit l'operateur avec le symbole FORGET et arité 1
 	*/
-	ForgetOp() : IOperator("FORGET", 2) {}
+	ForgetOp() : IOperator("FORGET", 1) {}
 	void operator()(Stack* s);
 };
 
