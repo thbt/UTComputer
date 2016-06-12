@@ -2638,23 +2638,12 @@ void NotOp::operator()(Stack* s) {
 	s->push(new IntegerLiteral(0));
 }
 
-// TODO catch exception
 void UndoOp::operator()(Stack* s) {
-	try {
-		Controller::instance().undo();
-	}
-	catch (OperatorException oe) {
-		throw oe;
-	}
+	Controller::instance().undo();
 }
 
 void RedoOp::operator()(Stack* s) {
-	try {
-		Controller::instance().redo();
-	}
-	catch (OperatorException oe) {
-		throw oe;
-	}
+	Controller::instance().redo();
 }
 
 void EvalOp::operator()(Stack* s) {
@@ -2729,7 +2718,7 @@ void StoOp::operator()(Stack* s) {
 
 	ILiteral* first = s->top(); s->pop();
 	
-	// TODO vérifier que le nom n'est bien constitué que d'un seul
+	// TODO vérifier que le nom n'est bien constitué que d'un seul mot
 	if(t != EXPRESSION) {
 		s->push(first);
 		s->push(second);
