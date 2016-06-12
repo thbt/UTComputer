@@ -2725,6 +2725,7 @@ void StoOp::operator()(Stack* s) {
 		throw OperatorException("Erreur : le second argument doit être une expression");
 	} else {
 		std::string name = second->toString().substr(1, second->toString().size() - 2);
+		if(!std::isalpha(name[0])) throw OperatorException("Erreur : Le nom de l'atome doit commencer par une lettre");
 		std::string value = first->toString();
 
 		Controller::instance().createAtome(name, value);

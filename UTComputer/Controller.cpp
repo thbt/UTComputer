@@ -215,11 +215,14 @@ std::vector<std::string> Controller::getOperators() {
 	return v;
 }
 
-void Controller::createAtome(std::string nom, std::string value) {
+void Controller::createAtome(std::string name, std::string value) {
+	std::vector<std::string> opList = getOperators();
+	if(std::find(opList.begin(), opList.end(), name) != opList.end())
+		throw OperatorException("Erreur : nom interdit, un opérateur possède déjà le nom : " + name);
 	if (value[0] == '[')
-		programs[nom] = value;
+		programs[name] = value;
 	else
-		variables[nom] = value;
+		variables[name] = value;
 	changeVarFct();
 }
 
@@ -267,14 +270,16 @@ void Controller::deleteAtome(std::string name) {
 
 	it = programs.find(name);
 	if (it != programs.end()){
-			programs.erase(it);
-	}
-	else {
+		programs.erase(it);
+	} else {
 		it = variables.find(name);
 		if(it != variables.end())
 			variables.erase(it);
-		else
-			throw OperatorException("La variable "+ name + " n'existe pas");
+		else {
+			std::stringstream ss;
+			ss << "La variable " << name << " n'existe pas";
+			throw OperatorException(ss.str());
+		}
 	}
 	changeVarFct();
 }
@@ -289,9 +294,13 @@ void Controller::editAtom(std::string name) {
 		it = variables.find(name);
 		if(it != variables.end())
 			editVar(name);
-		else
-			throw OperatorException("La variable " + name + " n'existe pas");
+		else {
+			std::stringstream ss;
+			ss << "La variable " << name << " n'existe pas";
+			throw OperatorException(ss.str());
+		}	
 	}
+	changeVarFct();
 }
 
 std::string Controller::getPathVar() { return pathVar; };
