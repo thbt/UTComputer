@@ -150,6 +150,14 @@ public:
 	void initAtome();
 
 	/**
+	*  \brief Recuper la pile dans un fichier.
+	*
+	*  Recupere dans un fichier la pile
+	*  et l'initialise au lancement du programme si l'utilisateur le souhaite.
+	*/
+	void initStack();
+
+	/**
 	*  \brief Supprime un atome.
 	*
 	*  Supprime un atome selon son nom. Si il n'est pas dans vars il est forcement dans prgms.

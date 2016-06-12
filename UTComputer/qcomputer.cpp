@@ -213,10 +213,13 @@ QComputer::QComputer(QWidget *parent) {
 
 	setLayout(LayoutPrincipale);
 	layout()->setMenuBar(menuBar);
+
+	refresh();
 }
 
 void QComputer::saveAndQuit() {
 	Controller::instance().saveAtome();
+	Controller::instance().saveStack();
 	QCoreApplication::quit();
 }
 
@@ -742,6 +745,7 @@ void QComputer::createOperatorAction(){
 
 void QComputer::closeEvent(QCloseEvent *event)
 {
+	Controller::instance().saveStack();
 	Controller::instance().saveAtome();
 }
 

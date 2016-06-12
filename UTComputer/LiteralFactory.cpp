@@ -52,7 +52,6 @@ ILiteral* LiteralFactory::makeLiteral(std::string str) const {
 		size_t pos = str.find('$');
 		INumberLiteral* re = makeNumberLiteral(str.substr(0, pos));
 		INumberLiteral* im = makeNumberLiteral(str.substr(pos + 1, str.length()));
-			
 		return new ComplexLiteral(re, im);
 	} else
 		return makeNumberLiteral(str);

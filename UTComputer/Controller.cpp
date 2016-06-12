@@ -62,6 +62,7 @@ Controller::Controller() : stack(), NumberDisplay(5) {
 	dispatcher.emplace("EDIT", EditOp());
 
 	initAtome();
+	initStack();
 }
 
 void Controller::execute(std::string op) {
@@ -251,6 +252,21 @@ void Controller::initAtome() {
 	}
 }
 
+void Controller::initStack() {
+	std::ifstream monFluxStack(pathStack, std::ios_base::app);
+	std::vector<std::string> lines_in_reverse;
+	std::string line;
+	while (std::getline(monFluxStack, line))
+	{
+		lines_in_reverse.insert(lines_in_reverse.begin(), line);
+	}
+	
+	for (auto it = lines_in_reverse.begin(); it != lines_in_reverse.end(); it++)
+	{
+		stack.push(LiteralFactory::getInstance().makeLiteral(*it));
+	}
+}
+
 void Controller::saveAtome() {
 	std::ofstream monFluxVar(pathVar);
 	std::ofstream monFluxFct(pathFct);
@@ -266,8 +282,8 @@ void Controller::saveAtome() {
 
 void Controller::saveStack() {
 	std::ofstream monFluxStack(pathStack);
-	for (std::vector<ILiteral*>::const_reverse_iterator iter = stack.begin(); iter != stack.end(); ++iter) {
-		//monFluxStack << iter->first << "|" << iter->second << std::endl;
+	for (auto it = stack.begin(); it != stack.end(); it++) {
+		monFluxStack << (*it)->toString() << std::endl;
 	}
 }
 
