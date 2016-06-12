@@ -202,6 +202,13 @@ public:
 	void saveAtome();
 
 	/**
+	*  \brief Sauvegarde la pile dans un fichier.
+	*
+	*  Appeler a la fin du programme pour sauvegarder la stack dans un fichier.
+	*/
+	void saveStack();
+
+	/**
 	*  \brief Dispatche le bon signal d'édition auprès de la vue
 	*
 	*  \param name Nom de l'atome a mettre à jour.

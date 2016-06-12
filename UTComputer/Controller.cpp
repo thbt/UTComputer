@@ -18,6 +18,7 @@
 
 const std::string pathVar = "SaveFiles/variable.txt";
 const std::string pathFct = "SaveFiles/fonction.txt";
+const std::string pathStack = "SaveFiles/stack.txt";
 
 Controller& Controller::instance() {
     static Controller instance;
@@ -254,6 +255,13 @@ void Controller::saveAtome() {
 
 	for (std::map<std::string, std::string>::iterator iter = programs.begin(); iter != programs.end(); ++iter) {
 		monFluxFct << iter->first << "|" << iter->second << std::endl;
+	}
+}
+
+void Controller::saveStack() {
+	std::ofstream monFluxStack(pathStack);
+	for (std::vector<ILiteral*>::const_reverse_iterator iter = stack.begin(); iter != stack.end(); ++iter) {
+		//monFluxStack << iter->first << "|" << iter->second << std::endl;
 	}
 }
 
