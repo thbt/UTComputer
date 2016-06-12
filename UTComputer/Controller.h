@@ -157,8 +157,32 @@ public:
 	* \param name Nom de l'atome a supprimer.
 	*/
 	void deleteAtome(std::string name);
+
+	/**
+	*  \brief Getter de variables
+	*
+	*  Renvoie la liste des variables sous forme d'une map <nom, value>
+	*
+	* \return std::map<std::string, std::string> : map de variables <nom, value>
+	*/
 	std::map<std::string, std::string> getVariables();
+
+	/**
+	*  \brief Getter de programmes
+	*
+	*  Renvoie la liste des programmes sous forme d'une map <nom, value>
+	*
+	* \return std::map<std::string, std::string> : map de programmes <nom, value>
+	*/
 	std::map<std::string, std::string> getPrograms();
+
+	/**
+	*  \brief Renvoie le chemin ou sont stockes les variables.
+	*
+	*  Renvoie le chemin absolu (par rapport au projet) ou sont stockes les variables.
+	*
+	* \return std::string : chemin ou sont stockes les variables.
+	*/
 	std::string getPathVar();
 
 	/**
@@ -207,6 +231,11 @@ signals :
 	void editProg(std::string name);
 
 	/**
+	*	\brief Signal d'ajout ou de suppression d'une variable ou d'une fonction
+	*/
+	void changeVarFct();
+
+	/**
 	*  \brief Signal pour prevenir qu'il y a une erreur a afficher.
 	*
 	*  Signal a la vue l'erreur a afficher.
@@ -214,18 +243,4 @@ signals :
 	* \param error l'erreur a afficher.
 	*/
     void showError(std::string error);
-
-	/**
-	*  \brief Signal pour prevenir qu'il y a une variable a éditer.
-	*
-	*  \param name Nom de l'atome variable a mettre à jour.
-	*/
-	void editVar(std::string name);
-
-	/**
-	*  \brief Signal pour prevenir qu'il y a un programme a éditer.
-	*
-	*  \param name Nom de l'atome programme a mettre à jour.
-	*/
-	void editProg(std::string name);
 };

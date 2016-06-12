@@ -212,12 +212,11 @@ std::vector<std::string> Controller::getOperators() {
 }
 
 void Controller::createAtome(std::string nom, std::string value) {
-	std::map<std::string, std::string>::iterator it;
-
 	if (value[0] == '[')
 		programs[nom] = value;
 	else
 		variables[nom] = value;
+	changeVarFct();
 }
 
 void Controller::initAtome() {
@@ -243,11 +242,11 @@ void Controller::saveAtome() {
 	std::ofstream monFluxFct(pathFct);
 
 	for (std::map<std::string, std::string>::iterator iter = variables.begin(); iter != variables.end(); ++iter) {
-		monFluxVar << iter->first << "|" << iter->second;
+		monFluxVar << iter->first << "|" << iter->second << std::endl;
 	}
 
 	for (std::map<std::string, std::string>::iterator iter = programs.begin(); iter != programs.end(); ++iter) {
-		monFluxFct << iter->first << "|" << iter->second;
+		monFluxFct << iter->first << "|" << iter->second << std::endl;
 	}
 }
 
@@ -273,6 +272,7 @@ void Controller::deleteAtome(std::string name) {
 		else
 			throw OperatorException("La variable "+ name + " n'existe pas");
 	}
+	changeVarFct();
 }
 
 void Controller::editAtom(std::string name) {

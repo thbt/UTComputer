@@ -1,5 +1,5 @@
 /**
-* \file Controller.h
+* \file StackMemento.h
 * \brief Pattern memento, represente un etat de la stack a un moment T
 * \author Thibaut ROY, Romain HUBER
 * \version 0.1

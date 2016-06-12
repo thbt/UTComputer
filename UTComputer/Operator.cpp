@@ -2635,7 +2635,7 @@ void NotOp::operator()(Stack* s) {
 		}
 		break;
 	}
-	s->push(new IntegerLiteral(1));
+	s->push(new IntegerLiteral(0));
 }
 
 // TODO catch exception
@@ -2722,7 +2722,7 @@ void IftOp::operator()(Stack* s) {
 
 void StoOp::operator()(Stack* s) {
 	if(s->size() < this->getArity())
-		throw OperatorException("Erreur : STO a besoin de 2 arguments");
+		throw OperatorException("Erreur : STO a besoin de 1 arguments");
 
 	ILiteral* second = s->top(); s->pop();
 	Type t = second->getType();
@@ -2760,7 +2760,7 @@ void ForgetOp::operator()(Stack* s) {
 
 void EditOp::operator()(Stack* s) {
 	if(s->size() < this->getArity())
-		throw OperatorException("Erreur : FORGET a besoin d'un argument");
+		throw OperatorException("Erreur : EDIT a besoin d'un argument");
 
 	ILiteral* arg = s->top(); s->pop();
 	Type t = arg->getType();

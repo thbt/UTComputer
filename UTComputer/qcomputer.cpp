@@ -177,6 +177,9 @@ QComputer::QComputer(QWidget *parent) {
 	//Connect
 	QObject::connect(&Controller::instance(), SIGNAL(changeState()), this, SLOT(refresh()));
 	QObject::connect(&Controller::instance(), SIGNAL(showError(std::string)), this, SLOT(printError(std::string)));
+	QObject::connect(&Controller::instance(), SIGNAL(editVar(std::string)), this, SLOT(modifVar(std::string)));
+	QObject::connect(&Controller::instance(), SIGNAL(editProg(std::string)), this, SLOT(modifFct(std::string)));
+	QObject::connect(&Controller::instance(), SIGNAL(changeVarFct()), this, SLOT(modifVarFct()));
 	QObject::connect(commande, SIGNAL(returnPressed()), this, SLOT(getNextCommande()));
 	QObject::connect(button1, SIGNAL(clicked()), this, SLOT(setTexte()));
 	QObject::connect(button2, SIGNAL(clicked()), this, SLOT(setTexte()));
@@ -365,11 +368,6 @@ void QComputer::modifVar(std::string name) {
 	mainLayout->addWidget(labelVal, 2, 0);
 	mainLayout->addWidget(lineVal, 2, 2, 1, 2);
 	mainLayout->addWidget(buttonBox, 4, 0, 1, 4);
-
-	//mainLayout->addLayout(nameLayout);
-	//mainLayout->addLayout(valeurLayout);
-	//mainLayout->addWidget(buttonBox);
-
 
 	d->setLayout(mainLayout);
 
@@ -714,6 +712,10 @@ void QComputer::createVarAndProgAction() {
 	}
 
 
+}
+
+void QComputer::modifVarFct() {
+	createVarAndProgAction();
 }
 
 void QComputer::createOperatorAction(){
