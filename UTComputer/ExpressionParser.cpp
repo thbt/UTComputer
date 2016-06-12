@@ -4,7 +4,7 @@
 #include <stack>
 #include <string>
 #include <cctype>
-#include <algorithm>    // std::find
+#include <algorithm>    // std::find std::remove_if
 
 #include "Operator.h"
 #include "OperatorException.h"
@@ -22,7 +22,10 @@ unsigned int precedence(char op) {
     }
 }
 
-std::string toRPN(std::string exp) {
+std::string toRPN(const std::string& in) {
+	std::string exp = in;
+	exp.erase(std::remove_if(exp.begin(), exp.end(), std::isspace), exp.end());
+
     std::string output;
     std::stack<std::string> operators;
     std::string symbols = "+*-/";
@@ -31,8 +34,8 @@ std::string toRPN(std::string exp) {
     availableFunctions.push_back("+");
     availableFunctions.push_back("-");
 
-
     while(!exp.empty()) {
+		while(std::isspace(exp[0])) exp.erase(0, 1);
         // TODO parcourir la string pour remplacer les - unaire par des n (pour marquer la négation)
 
         char c = exp[0];
@@ -45,7 +48,8 @@ std::string toRPN(std::string exp) {
 
 
         // 1. Si c'est un nombre on l'ajoute dans la file
-        if(std::isdigit(c)) {
+		if (exp[0] == ' ') exp.erase(0, 1);
+        else if(std::isdigit(c)) {
             // On récupère la suite du nombre
             while(!exp.empty() && (c = exp[0]) && (std::isdigit(c) || c == '.' || c == '$')) {
                 token += c;

@@ -18,4 +18,4 @@ public:
 
 
 unsigned int precedence(char op);
-std::string toRPN(std::string exp);
+std::string toRPN(const std::string& exp);

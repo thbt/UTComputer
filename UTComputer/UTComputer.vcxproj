@@ -102,7 +102,7 @@
       <AdditionalIncludeDirectories>.;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtWidgets;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtGui;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtANGLE;C:\Qt\Qt5.6.0\5.6\msvc2015_64\include\QtCore;debug;C:\Qt\Qt5.6.0\5.6\msvc2015_64\mkspecs\win32-msvc2015;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:strictStrings -Zc:throwingNew -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
-      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformation>true</BrowseInformation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -137,6 +137,9 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;WIN64;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Controller.cpp" />

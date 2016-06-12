@@ -9,6 +9,7 @@
 #include <sstream>
 #include <algorithm>
 #include <fstream>
+#include <cctype>
 
 #include "Controller.h"
 #include "LiteralFactory.h"
@@ -108,7 +109,9 @@ void Controller::command(const std::string& str) {
 	bool inExpression = false;
 
     while(getline(ss, item, ' ')) {
-		if(inExpression) {
+		item.erase(std::remove_if(item.begin(), item.end(), std::isspace), item.end());
+		if(item == "");
+		else if(inExpression) {
 			newToken += item;
 			if(item.back() == '`') {
 				inExpression = false;
