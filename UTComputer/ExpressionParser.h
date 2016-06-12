@@ -1,3 +1,11 @@
+/**
+* \file ExpressionParser.h
+* \brief ??
+* \author Thibaut ROY, Romain HUBER
+* \version 0.1
+* \date 12 Juin 2016
+*/
+
 #pragma once
 #include <string>
 
