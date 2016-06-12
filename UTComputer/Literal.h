@@ -71,7 +71,6 @@ public:
 };
 
 // TODO on conserve le fait que le numérateur soit une entier ou seulement un int ?
-// TODO simplificateur
 class RationalLiteral : public INumberLiteral {
 	int numerator;
 	int denominator;
@@ -114,7 +113,6 @@ public:
 	}
 };
 
-// TODO overload copy operator bc pointers (en fait non parce que personne n'a acces aux pointeurs #encapsulation)
 class ComplexLiteral : public ILiteral {
 	INumberLiteral* real;
 	INumberLiteral* imaginary;

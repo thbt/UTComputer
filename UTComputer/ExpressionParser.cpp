@@ -32,7 +32,7 @@ std::string toRPN(std::string exp) {
 
 
     while(!exp.empty()) {
-        // TODO parcourir la string pour remplacer les - unaire par des n (pour marquer la n�gation)
+        // TODO parcourir la string pour remplacer les - unaire par des n (pour marquer la négation)
 
         char c = exp[0];
         exp.erase(0, 1);
@@ -80,20 +80,15 @@ std::string toRPN(std::string exp) {
             if(!operators.empty()) {
                 std::string fun = operators.top();
                 if(fun != "(") {
-                    if(std::find(availableFunctions.begin(), availableFunctions.end(), operators.top()) != availableFunctions.end()) {
-                        output.append(fun + ' ');
-                        operators.pop();
-                    }
-                    // TODO : regarder aussi la chaine des variables
-
-                    else
-                        //throw std::exception("Pas d'opérateurs disponibles avec le nom : '+ fun +'");
-                        throw std::exception("yolo");
+					if(std::find(availableFunctions.begin(), availableFunctions.end(), operators.top()) != availableFunctions.end()) {
+						output.append(fun + ' ');
+						operators.pop();
+					} else
+                        throw std::exception("Pas d'opérateurs disponibles avec le nom : '+" fun "+'");
                 }
             }
             // 3. Sinon c'est une fonction (ou une variable)
         } else {
-            // TODO traiter variable connues
             while(!exp.empty() && (c = exp[0]) && (std::isalpha(c) || std::isdigit(c))) {
                 token += c;
                 exp.erase(0, 1);
