@@ -744,54 +744,6 @@ public:
 /*! \class StoOp
 * \brief Stock un atome
 *
-* Stocke un atome (representant un programme ou une litterale)
-*/
-class StoOp : public IOperator {
-public:
-	/**
-	*  \brief Constructeur de l'operateur
-	*
-	*  Construit l'operateur avec le symbole EVAL et arite 1
-	*/
-	StoOp() : IOperator("STO", 2) {}
-	void operator()(Stack* s);
-};
-
-/*! \class StoOp
-* \brief Oublie un atome deja stocke
-*
-* Supprime un atome (referençant un programme ou une autre litterale) de la liste des atomes connus
-*/
-class ForgetOp : public IOperator {
-public:
-	/**
-	*  \brief Constructeur de l'operateur
-	*
-	*  Construit l'operateur avec le symbole EVAL et arite 1
-	*/
-	ForgetOp() : IOperator("FORGET", 2) {}
-	void operator()(Stack* s);
-};
-
-/*! \class StoOp
-* \brief Stock un atome
-*
-* Stocke un atome (representant un programme ou une litterale)
-*/
-class EditOp : public IOperator {
-public:
-	/**
-	*  \brief Constructeur de l'operateur
-	*
-	*  Construit l'operateur avec le symbole EVAL et arite 1
-	*/
-	EditOp() : IOperator("EDIT", 2) {}
-	void operator()(Stack* s);
-};
-
-/*! \class StoOp
-* \brief Stock un atome
-*
 * Stocke un atome (représentant un programme ou une littérale)
 */
 class StoOp : public IOperator {
@@ -836,7 +788,3 @@ public:
 	EditOp() : IOperator("EDIT", 1) {}
 	void operator()(Stack* s);
 };
-
-
-
-

@@ -16,5 +16,6 @@ public:
 	std::string getInfo() const { return info; }
 };
 
+
 unsigned int precedence(char op);
 std::string toRPN(std::string exp);

@@ -9,6 +9,7 @@
 #include "Operator.h"
 #include "OperatorException.h"
 #include "Controller.h"
+#include "ParserException.h"
 
 unsigned int precedence(char op) {
     switch(op) {
@@ -72,7 +73,7 @@ std::string toRPN(std::string exp) {
                 operators.pop();
             }
             if(operators.empty() || operators.top() != "(")
-                throw std::exception("Parenthèses dépareillées.");
+                throw ParserException("Parenthèses dépareillées.");
 
             // Pop the left parenthesis from the stack, but not onto the output queue.
             operators.pop();
@@ -83,8 +84,10 @@ std::string toRPN(std::string exp) {
 					if(std::find(availableFunctions.begin(), availableFunctions.end(), operators.top()) != availableFunctions.end()) {
 						output.append(fun + ' ');
 						operators.pop();
-					} else
-                        throw std::exception("Pas d'opérateurs disponibles avec le nom : '+" fun "+'");
+					} else {
+						std::string str = "Pas d'opérateurs disponibles avec le nom : '" + fun + "'";
+						throw ParserException(str);
+					}
                 }
             }
             // 3. Sinon c'est une fonction (ou une variable)
@@ -98,7 +101,7 @@ std::string toRPN(std::string exp) {
     }
     while(!operators.empty()) {
         if(operators.top() == "(" || operators.top() == ")")
-            throw std::exception("Parenthèses dépareillées");
+            throw ParserException("Parenthèses dépareillées");
         else {
             output.append(operators.top() + ' ');
             operators.pop();
